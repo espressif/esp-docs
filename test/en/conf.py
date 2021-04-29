@@ -5,13 +5,8 @@
 # Uses ../conf_common.py for most non-language-specific settings.
 # Importing conf_common adds all the non-language-specific
 # parts to this conf module
-try:
-    from conf_common import *  # noqa: F403,F401
-except ImportError:
-    import os
-    import sys
-    sys.path.insert(0, os.path.abspath('../..'))
-    from conf_common import *  # noqa: F403,F401
+
+from esp_docs.conf_docs import *  # noqa: F403,F401
 
 # General information about the project.
 project = u'ESP-IDF Programming Guide'
@@ -27,7 +22,12 @@ html_logo = None
 latex_logo = None
 html_static_path = []
 
-conditional_include_dict = {'esp32':['esp32_page.rst'],
-                            'esp32s2':['esp32s2_page.rst'],
-                            'SOC_BT_SUPPORTED':['bt_page.rst'],
+conditional_include_dict = {'esp32': ['esp32_page.rst'],
+                            'esp32s2': ['esp32s2_page.rst'],
+                            'SOC_BT_SUPPORTED': ['bt_page.rst'],
                             }
+
+extensions += ['esp_docs.esp_extensions.dummy_build_system']
+
+languages = ['en']
+idf_targets = ['esp32', 'esp32s2']

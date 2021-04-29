@@ -1,26 +1,16 @@
 #!/usr/bin/env python3
 
-import os
-import sys
 import unittest
-from tempfile import TemporaryDirectory
 from unittest.mock import MagicMock
 
 from sphinx.util import tags
-
-try:
-    from idf_extensions import exclude_docs
-except ImportError:
-    sys.path.append('..')
-    from idf_extensions import exclude_docs
-
-from idf_extensions import format_idf_target, gen_idf_tools_links, link_roles
+from esp_docs.esp_extensions import exclude_docs, format_esp_target
 
 
 class TestFormatIdfTarget(unittest.TestCase):
 
     def setUp(self):
-        self.str_sub = format_idf_target.StringSubstituter()
+        self.str_sub = format_esp_target.StringSubstituter()
 
         config = MagicMock()
         config.idf_target = 'esp32'
@@ -74,7 +64,7 @@ class TestExclude(unittest.TestCase):
     def setUp(self):
         self.app = MagicMock()
         self.app.tags = tags.Tags()
-        self.app.config.conditional_include_dict = {'esp32':['esp32.rst', 'bt.rst'], 'esp32s2':['esp32s2.rst']}
+        self.app.config.conditional_include_dict = {'esp32': ['esp32.rst', 'bt.rst'], 'esp32s2': ['esp32s2.rst']}
         self.app.config.docs_to_build = None
         self.app.config.exclude_patterns = []
 
@@ -85,32 +75,6 @@ class TestExclude(unittest.TestCase):
 
         # Check that the set of docs to build and the set of docs to exclude do not overlap
         self.assertFalse(docs_to_build & set(self.app.config.exclude_patterns))
-
-
-class TestGenIDFToolLinks(unittest.TestCase):
-    def setUp(self):
-        self.app = MagicMock()
-        self.app.config.build_dir = '_build'
-        self.app.config.idf_path = os.environ['IDF_PATH']
-
-    def test_gen_idf_tool_links(self):
-
-        with TemporaryDirectory() as temp_dir:
-            self.app.config.build_dir = temp_dir
-            gen_idf_tools_links.generate_idf_tools_links(self.app, None)
-            self.assertTrue(os.path.isfile(os.path.join(self.app.config.build_dir, 'inc', 'idf-tools-inc.rst')))
-
-
-class TestLinkRoles(unittest.TestCase):
-    def test_get_submodules(self):
-        submod_dict = link_roles.get_submodules()
-
-        # Test a known submodule to see if it's in the dict
-        test_submod_name = 'components/asio/asio'
-        self.assertIn(test_submod_name, submod_dict)
-        self.assertIsNotNone(submod_dict[test_submod_name].url)
-        self.assertIsNotNone(submod_dict[test_submod_name].rev)
-        self.assertIsNotNone(submod_dict[test_submod_name].url)
 
 
 if __name__ == '__main__':

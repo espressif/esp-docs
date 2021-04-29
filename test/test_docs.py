@@ -2,7 +2,6 @@
 
 import os
 import subprocess
-import sys
 import unittest
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -14,7 +13,6 @@ IDF_FORMAT_DOC = 'idf_target_format'
 
 
 class DocBuilder():
-    build_docs_py_path = os.path.join(CURRENT_DIR, '..', 'build_docs.py')
 
     def __init__(self, src_dir, build_dir, target, language):
         self.language = language
@@ -24,7 +22,7 @@ class DocBuilder():
         self.html_out_dir = os.path.join(CURRENT_DIR, build_dir, language, target, 'html')
 
     def build(self, opt_args=[]):
-        args = [sys.executable, self.build_docs_py_path, '-b', self.build_dir, '-s', self.src_dir, '-t', self.target, '-l', self.language]
+        args = ['build-docs', '-b', self.build_dir, '-s', self.src_dir, '-t', self.target, '-l', self.language]
         args.extend(opt_args)
         return subprocess.call(args)
 
@@ -33,7 +31,7 @@ class TestDocs(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.builder = DocBuilder('test', '_build/test_docs', 'esp32s2', 'en')
+        cls.builder = DocBuilder('.', '_build/test_docs', 'esp32s2', 'en')
         cls.build_ret_flag = cls.builder.build()
 
     def setUp(self):
@@ -81,7 +79,7 @@ class TestDocs(unittest.TestCase):
 
 class TestBuildSubset(unittest.TestCase):
     def test_build_subset(self):
-        builder = DocBuilder('test', '_build/test_build_subset', 'esp32', 'en')
+        builder = DocBuilder('.', '_build/test_build_subset', 'esp32', 'en')
 
         docs_to_build = 'esp32_page.rst'
 
