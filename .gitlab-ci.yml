@@ -111,7 +111,7 @@ build_idf_docs:
   parallel:
     matrix:
       - DOCLANG: ["en", "zh_CN"]
-        DOCTGT: ["esp32", "esp32s2", "esp32c3"]
+        DOCTGT: ["esp32", "esp32s2", "esp32s3", "esp32c3"]
 
 build_at_docs:
   extends:
@@ -221,4 +221,4 @@ deploy_package:
   dependencies:
     - build_package
   script:
-   - python $ESP_DOCS_PATH/ci/deploy_dist.py
+   - python $ESP_DOCS_PATH/ci/deploy_package.py
