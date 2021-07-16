@@ -9,10 +9,9 @@ variables:
   # Versioned esp-idf-doc env image to use for all document building jobs
   ESP_DOCS_ENV_IMAGE: "$CI_DOCKER_REGISTRY/esp-idf-doc-env:v4.4-1-v1"
   PYTHON_VER: 3.6.10
-  IDF_REPO: ${GITLAB_SSH_SERVER}/idf/esp-idf.git
   ESP_DOCS_PATH: "$CI_PROJECT_DIR"
   IDF_PATH: $CI_PROJECT_DIR/esp-idf
-  IDF_REPO: ${GITLAB_SSH_SERVER}/idf/esp-idf.git
+  IDF_REPO: ${GITLAB_SSH_SERVER}/espressif/esp-idf.git
   AT_PATH: $CI_PROJECT_DIR/esp-at
   AT_REPO: ${GITLAB_SSH_SERVER}/application/esp-at.git
   ADF_PATH: $CI_PROJECT_DIR/esp-adf-internal
