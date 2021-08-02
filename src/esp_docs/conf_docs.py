@@ -284,7 +284,7 @@ latex_elements = {
 
 # The name of an image file (relative to this directory) to place at the bottom of
 # the title page.
-latex_logo = os.path.join(esp_docs_dir, 'espressif2.pdf')
+latex_logo = os.path.join(esp_docs_dir, '_static', 'espressif2.pdf')
 latex_engine = 'xelatex'
 latex_use_xindy = False
 
@@ -332,6 +332,8 @@ def setup(app):
     # Breathe extension variables (depend on build_dir)
     # note: we generate into xml_in and then copy_if_modified to xml dir
     app.add_config_value('build_dir', os.environ['BUILDDIR'], 'env')
+
+    app.add_config_value('latex_template_dir', os.path.join(esp_docs_dir, 'latex_templates'), 'env')
 
     app.config.breathe_projects = {'esp-docs': os.path.join(app.config.build_dir, 'xml_in/')}
     app.config.breathe_default_project = 'esp-docs'
