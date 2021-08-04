@@ -29,7 +29,7 @@ class IdfLatexBuilder(LaTeXBuilder):
 
         PACKAGE_NAME = 'espidf.sty'
         latex_package = ''
-        with open(package_path, 'r') as template:
+        with open(os.path.join(package_path, PACKAGE_NAME), 'r') as template:
 
             latex_package = template.read()
 
@@ -46,8 +46,8 @@ class IdfLatexBuilder(LaTeXBuilder):
     def finish(self):
         super().finish()
 
-        TEMPLATE_PATH = '../latex_templates/espidf.sty'
-        self.prepare_latex_macros(os.path.join(self.confdir, TEMPLATE_PATH), self.config)
+        TEMPLATE_PATH = self.config.latex_template_dir
+        self.prepare_latex_macros(TEMPLATE_PATH, self.config)
 
 
 def setup(app):
