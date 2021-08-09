@@ -212,6 +212,8 @@ deploy_docs_adf:
 deploy_package:
   stage: deploy
   image: $ESP_DOCS_ENV_IMAGE
+  extends:
+    - .before_script_minimal
   tags:
     - build
   only:
@@ -220,4 +222,5 @@ deploy_package:
   dependencies:
     - build_package
   script:
+   - pip3 install .
    - python $ESP_DOCS_PATH/ci/deploy_package.py
