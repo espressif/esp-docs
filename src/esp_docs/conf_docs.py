@@ -71,6 +71,7 @@ extensions = ['breathe',
               'sphinxcontrib.nwdiag',
               'sphinxcontrib.rackdiag',
               'sphinxcontrib.packetdiag',
+              'sphinxcontrib.cairosvgconverter',
 
               'esp_docs.generic_extensions.html_redirects',
               'esp_docs.generic_extensions.toctree_filter',
