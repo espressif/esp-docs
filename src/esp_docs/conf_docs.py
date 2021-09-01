@@ -71,7 +71,6 @@ extensions = ['breathe',
               'sphinxcontrib.nwdiag',
               'sphinxcontrib.rackdiag',
               'sphinxcontrib.packetdiag',
-              'sphinxcontrib.cairosvgconverter',
 
               'esp_docs.generic_extensions.html_redirects',
               'esp_docs.generic_extensions.toctree_filter',
@@ -348,8 +347,10 @@ def setup(app):
 def setup_config_values(app, config):
     # Sets up global config values needed by other extensions
     idf_target_title_dict = {
+        'esp8266': 'ESP8266',
         'esp32': 'ESP32',
         'esp32s2': 'ESP32-S2',
+        'esp32s3': 'ESP32-S3',
         'esp32c3': 'ESP32-C3'
     }
 
