@@ -92,21 +92,39 @@ build_example_doxygen:
     - cd $DOCS_DIR
     - ./build_example.sh
 
-build_idf_docs:
+build_idf_docs_html:
   extends:
     - .build_template
   variables:
     DOCS_DIR: $CI_PROJECT_DIR/esp-idf/docs
-    DOCS_FAST_BUILD: 'yes'
+    IDF_COMMIT_ID: 5f38b766a83d18
   script:
       # add gitlab ssh key
     - cit_add_ssh_key "${GITLAB_KEY_PEM}"
     - git clone "${IDF_REPO}"
+    - $ESP_DOCS_PATH/ci/set_repo.sh $IDF_COMMIT_ID $IDF_PATH
     - cd $IDF_PATH && tools/idf_tools.py --non-interactive install && eval "$(tools/idf_tools.py --non-interactive export)"
-        # build with IDF v.X (test branch for now)
-    - $ESP_DOCS_PATH/ci/set_repo.sh feature/esp_docs $IDF_PATH
     - cd $DOCS_DIR
-    - build-docs -l $DOCLANG -t $DOCTGT -d doxygen
+    - build-docs -l $DOCLANG -t $DOCTGT
+  parallel:
+    matrix:
+      - DOCLANG: ["en", "zh_CN"]
+        DOCTGT: ["esp32", "esp32s2", "esp32s3", "esp32c3"]
+
+build_idf_docs_pdf:
+  extends:
+    - .build_template
+  variables:
+    DOCS_DIR: $CI_PROJECT_DIR/esp-idf/docs
+    IDF_COMMIT_ID: 5f38b766a83d18
+  script:
+      # add gitlab ssh key
+    - cit_add_ssh_key "${GITLAB_KEY_PEM}"
+    - git clone "${IDF_REPO}"
+    - $ESP_DOCS_PATH/ci/set_repo.sh $IDF_COMMIT_ID $IDF_PATH
+    - cd $IDF_PATH && tools/idf_tools.py --non-interactive install && eval "$(tools/idf_tools.py --non-interactive export)"
+    - cd $DOCS_DIR
+    - build-docs -l $DOCLANG -t $DOCTGT -bs latex
   parallel:
     matrix:
       - DOCLANG: ["en", "zh_CN"]
@@ -187,27 +205,8 @@ deploy_docs_idf:
     DOCS_BUILD_DIR: "${CI_PROJECT_DIR}/esp-idf/docs/_build/"
     TYPE: "preview"
   needs:
-    - build_idf_docs
-
-deploy_docs_at:
-  extends:
-    - .deploy_docs_template
-  dependencies:  # set dependencies to null to avoid missing artifacts issue
-  variables:
-    DOCS_BUILD_DIR: "$CI_PROJECT_DIR/esp-at/docs/_build/"
-    TYPE: "preview"
-  needs:
-    - build_at_docs
-
-deploy_docs_adf:
-  extends:
-    - .deploy_docs_template
-  dependencies:  # set dependencies to null to avoid missing artifacts issue
-  variables:
-    DOCS_BUILD_DIR: "$CI_PROJECT_DIR/esp-adf-internal/docs/_build/"
-    TYPE: "preview"
-  needs:
-    - build_adf_docs
+    - build_idf_docs_html
+    - build_idf_docs_pdf
 
 deploy_package:
   stage: deploy
