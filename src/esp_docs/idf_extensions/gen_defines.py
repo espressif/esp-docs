@@ -14,12 +14,13 @@ import subprocess
 
 def generate_defines(app, project_description):
     sdk_config_path = os.path.join(project_description['build_dir'], 'config')
+    compiler = project_description['monitor_toolprefix'] + 'gcc'
     # Parse kconfig macros to pass into doxygen
     #
     # TODO: this should use the set of "config which can't be changed" eventually,
     # not the header
     defines = get_defines(os.path.join(project_description['build_dir'],
-                                       'config', 'sdkconfig.h'), sdk_config_path)
+                                       'config', 'sdkconfig.h'), sdk_config_path, compiler)
 
     # Add all SOC _caps.h headers and kconfig macros to the defines
     #
@@ -30,7 +31,7 @@ def generate_defines(app, project_description):
     assert len(soc_headers) > 0
 
     for soc_header in soc_headers:
-        defines.update(get_defines(soc_header, sdk_config_path))
+        defines.update(get_defines(soc_header, sdk_config_path, compiler))
 
     # write a list of definitions to make debugging easier
     with open(os.path.join(app.config.build_dir, 'macro-definitions.txt'), 'w') as f:
@@ -42,13 +43,13 @@ def generate_defines(app, project_description):
     app.emit('defines-generated', defines)
 
 
-def get_defines(header_path, sdk_config_path):
+def get_defines(header_path, sdk_config_path, compiler):
     defines = {}
     # Note: we run C preprocessor here without any -I arguments (except "sdkconfig.h"), so assumption is
     # that these headers are all self-contained and don't include any other headers
     # not in the same directory
     print('Reading macros from %s...' % (header_path))
-    processed_output = subprocess.check_output(['xtensa-esp32-elf-gcc', '-I', sdk_config_path,
+    processed_output = subprocess.check_output([compiler, '-I', sdk_config_path,
                                                 '-dM', '-E', header_path]).decode()
     for line in processed_output.split('\n'):
         line = line.strip()
