@@ -198,15 +198,37 @@ build_package:
     - deploy-docs
 
 deploy_docs_idf:
+   extends:
+     - .deploy_docs_template
+   dependencies:  # set dependencies to null to avoid missing artifacts issue
+   variables:
+     DOCS_BUILD_DIR: "${CI_PROJECT_DIR}/esp-idf/docs/_build/"
+     TYPE: "preview"
+     DOCS_DEPLOY_PRIVATEKEY: "$DOCS_DEPLOY_KEY"
+     DOCS_DEPLOY_SERVER: "$DOCS_SERVER"
+     DOCS_DEPLOY_SERVER_USER: "$DOCS_SERVER_USER"
+     DOCS_DEPLOY_PATH: "$DOCS_PATH"
+     DOCS_DEPLOY_URL_BASE: "https://$CI_DOCKER_REGISTRY/docs/esp-idf"
+   needs:
+     - build_idf_docs_html
+     - build_idf_docs_pdf
+
+deploy_docs_esp_docs:
   extends:
     - .deploy_docs_template
+  only:
+    - master
   dependencies:  # set dependencies to null to avoid missing artifacts issue
   variables:
-    DOCS_BUILD_DIR: "${CI_PROJECT_DIR}/esp-idf/docs/_build/"
+    DOCS_BUILD_DIR: "${CI_PROJECT_DIR}/examples/basic/_build/"
     TYPE: "preview"
+    DOCS_DEPLOY_PRIVATEKEY: "$DOCS_PROD_DEPLOY_KEY"
+    DOCS_DEPLOY_SERVER: "$DOCS_PROD_SERVER"
+    DOCS_DEPLOY_SERVER_USER: "$DOCS_PROD_SERVER_USER"
+    DOCS_DEPLOY_PATH: "$DOCS_PROD_PATH"
+    DOCS_DEPLOY_URL_BASE: "https://docs.espressif.com/projects/esp-docs"
   needs:
-    - build_idf_docs_html
-    - build_idf_docs_pdf
+    - build_example_basic
 
 deploy_package:
   stage: deploy

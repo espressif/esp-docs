@@ -89,7 +89,8 @@ def main():
     # note: it would be neater to use symlinks for stable, but because of the directory order
     # (language first) it's kind of a pain to do on a remote server, so we just repeat the
     # process but call the version 'stable' this time
-    if is_stable_version(version):
+    do_deploy_stable = os.getenv('DEPLOY_STABLE')
+    if is_stable_version(version) and do_deploy_stable:
         print('Deploying again as stable version...')
         tarball_path, version_urls = build_doc_tarball('stable', git_ver, build_dir)
         deploy('stable', tarball_path, docs_path, docs_server)
