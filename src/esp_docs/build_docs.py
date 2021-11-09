@@ -38,7 +38,7 @@ from .check_docs import check_docs
 
 
 LANGUAGES = ['en', 'zh_CN']
-TARGETS = ['esp8266', 'esp32', 'esp32s2', 'esp32s3', 'esp32c3']
+TARGETS = ['esp8266', 'esp32', 'esp32s2', 'esp32s3', 'esp32c3', 'esp8684']
 
 SPHINX_WARN_LOG = 'sphinx-warning-log.txt'
 SPHINX_SANITIZED_LOG = 'sphinx-warning-log-sanitized.txt'
