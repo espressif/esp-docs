@@ -1,7 +1,7 @@
 from esp_docs.conf_docs import *  # noqa: F403,F401
 
 languages = ['en', 'zh_CN']
-idf_targets = ['esp8266', 'esp32', 'esp32s2', 'esp32s3', 'esp32c3', 'esp8684']
+idf_targets = ['esp8266', 'esp32', 'esp32s2', 'esp32s3', 'esp32c3', 'esp32h2', 'esp8684']
 
 # link roles config
 github_repo = 'espressif/esp-idf'

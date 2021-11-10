@@ -353,6 +353,7 @@ def setup_config_values(app, config):
         'esp32s2': 'ESP32-S2',
         'esp32s3': 'ESP32-S3',
         'esp32c3': 'ESP32-C3',
+        'esp32h2': 'ESP32-H2',
         'esp8684': 'ESP8684',
     }
 
