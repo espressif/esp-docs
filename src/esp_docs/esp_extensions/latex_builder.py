@@ -15,13 +15,19 @@ class IdfLatexBuilder(LaTeXBuilder):
 
     def init_latex_documents(self, app):
 
-        file_name = app.config.pdf_file + '.tex'
+        if app.config.pdf_title is None:
+            raise ValueError('PDF title not configured, configure the value "pdf_title" in your Sphinx config file to build PDFs')
+
+        if app.config.pdf_file_prefix is None:
+            raise ValueError('PDF file name prefix not configured, configure the value "pdf_file_prefix" in your Sphinx config file to build PDFs')
+
+        title = app.config.pdf_title
 
         if app.config.language == 'zh_CN':
-            latex_documents = [('index', file_name, u'ESP-IDF 编程指南', u'乐鑫信息科技', 'manual')]
+            latex_documents = [('index', app.config.pdf_file + '.tex', title, u'乐鑫信息科技', 'manual')]
         else:
             # Default to english naming
-            latex_documents = [('index', file_name, u'ESP-IDF Programming Guide', u'Espressif Systems', 'manual')]
+            latex_documents = [('index', app.config.pdf_file + '.tex', title, u'Espressif Systems', 'manual')]
 
         app.config.latex_documents = latex_documents
 
@@ -50,7 +56,27 @@ class IdfLatexBuilder(LaTeXBuilder):
         self.prepare_latex_macros(TEMPLATE_PATH, self.config)
 
 
+def config_init_callback(app, config):
+    # Keep backwards compatibilty with IDF,
+    # which previously didnt specify these configs
+    if config.project_slug == 'esp-idf':
+        if not config.pdf_file_prefix:
+            config.pdf_file_prefix = 'esp-idf'
+        if not config.pdf_title:
+            config.pdf_title = 'ESP-IDF Programming Guide'
+
+    if config.pdf_file_prefix:
+        config.pdf_file = '{}-{}-{}-{}'.format(config.pdf_file_prefix, config.language, config.version, config.idf_target)
+
+
 def setup(app):
     app.add_builder(IdfLatexBuilder, override=True)
+
+    app.add_config_value('pdf_file_prefix', None, 'env')
+    app.add_config_value('pdf_file', None, 'env')
+    app.add_config_value('pdf_title', None, 'env')
+
+    # Config values that depends on target which is not available when setup is called
+    app.connect('config-inited',  config_init_callback)
 
     return {'parallel_read_safe': True, 'parallel_write_safe': True, 'version': '0.1'}
