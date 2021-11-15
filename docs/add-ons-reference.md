@@ -41,6 +41,14 @@ Sphinx extensions that provides a `.. list::` directive that allows filtering of
 During documentation lifetime, some source files are moved between folders or renamed. This Sphinx extension adds a mechanism to redirect documentation pages that have changed URL by generating in the Sphinx output static HTML redirect pages. The script is used together with a redirection list `html_redirect_pages`. `conf_common.py` builds this list from `docs/page_redirects.txt`.
 
 
+#### [Add warnings](../src/esp_docs/generic_extensions/add_warnings.py)
+
+In some cases it might be useful to be able to add warnings to a list of documents. This is the case in IDF when we introduce a new target, which we build docs for, but not all docs are yet updated with useful information. This extension can then be used to give warnings to readers of documents which are not yet updated.
+
+Configuration values:
+ * `add_warnings_content`: content of the warning which will be added to the top of the documents.
+ * `add_warnings_pages`: list of the documents which the warning will be added to.
+
 ### Third Party Extensions
 
 - `sphinxcontrib` extensions for blockdiag, seqdiag, actdiag, nwdiag, rackdiag & packetdiag diagrams.
