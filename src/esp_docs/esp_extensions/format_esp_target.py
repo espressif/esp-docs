@@ -51,28 +51,38 @@ class StringSubstituter:
         This will define a replacement of the tag {IDF_TARGET_TX_PIN} in the current rst-file, see e.g. uart.rst for example
 
     """
-    TARGET_NAMES = {'esp8266': 'ESP8266', 'esp32': 'ESP32', 'esp32s2': 'ESP32-S2', 'esp32s3': 'ESP32-S3', 'esp32c3': 'ESP32-C3'}
+    TARGET_NAMES = {'esp8266': 'ESP8266', 'esp32': 'ESP32', 'esp32s2': 'ESP32-S2',
+                    'esp32s3': 'ESP32-S3', 'esp32c3': 'ESP32-C3', 'esp8684': 'ESP8684',
+                    'esp32h2': 'ESP32-H2'}
 
     TOOLCHAIN_PREFIX = {'esp8266': 'xtensa-lx106-elf',
                         'esp32': 'xtensa-esp32-elf',
                         'esp32s2': 'xtensa-esp32s2-elf',
                         'esp32s3': 'xtensa-esp32s3-elf',
-                        'esp32c3': 'riscv32-esp-elf'
+                        'esp32c3': 'riscv32-esp-elf',
+                        'esp32h2': 'riscv32-esp-elf',
+                        'esp8684': 'riscv32-esp-elf'
                         }
 
-    CONFIG_PREFIX = {'esp8266': 'esp8266', 'esp32': 'ESP32', 'esp32s2': 'ESP32S2', 'esp32s3': 'ESP32S3', 'esp32c3': 'ESP32C3'}
+    CONFIG_PREFIX = {'esp8266': 'esp8266', 'esp32': 'ESP32', 'esp32s2': 'ESP32S2',
+                     'esp32s3': 'ESP32S3', 'esp32c3': 'ESP32C3', 'esp32h2': 'ESP32H2',
+                     'esp8684': 'ESP8684'}
 
     TRM_EN_URL = {'esp8266': 'https://www.espressif.com/sites/default/files/documentation/esp8266-technical_reference_en.pdf',
                   'esp32': 'https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf',
                   'esp32s2': 'https://www.espressif.com/sites/default/files/documentation/esp32-s2_technical_reference_manual_en.pdf',
                   'esp32c3': 'https://www.espressif.com/sites/default/files/documentation/esp32-c3_technical_reference_manual_en.pdf',
-                  'esp32s3': 'https://www.espressif.com/sites/default/files/documentation/esp32-s3_technical_reference_manual_en.pdf'}
+                  'esp32s3': 'https://www.espressif.com/sites/default/files/documentation/esp32-s3_technical_reference_manual_en.pdf',
+                  'esp32h2': '#',
+                  'esp8684': '#'}
 
     TRM_CN_URL = {'esp8266': 'https://www.espressif.com/sites/default/files/documentation/esp8266-technical_reference_cn.pdf',
                   'esp32': 'https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_cn.pdf',
                   'esp32s2': 'https://www.espressif.com/sites/default/files/documentation/esp32-s2_technical_reference_manual_cn.pdf',
                   'esp32c3': 'https://www.espressif.com/sites/default/files/documentation/esp32-c3_technical_reference_manual_cn.pdf',
-                  'esp32s3': 'https://www.espressif.com/sites/default/files/documentation/esp32-s3_technical_reference_manual_cn.pdf'}
+                  'esp32s3': 'https://www.espressif.com/sites/default/files/documentation/esp32-s3_technical_reference_manual_cn.pdf',
+                  'esp32h2': '#',
+                  'esp8684': '#'}
     RE_PATTERN = re.compile(r'^\s*{IDF_TARGET_(\w+?):(.+?)}', re.MULTILINE)
 
     def __init__(self):
