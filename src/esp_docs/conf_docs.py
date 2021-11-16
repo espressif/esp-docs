@@ -359,9 +359,6 @@ def setup_config_values(app, config):
 
     app.add_config_value('idf_target_title_dict', idf_target_title_dict, 'env')
 
-    pdf_name = 'esp-idf-{}-{}-{}'.format(app.config.language, app.config.version, app.config.idf_target)
-    app.add_config_value('pdf_file', pdf_name, 'env')
-
 
 def setup_html_context(app, config):
     # Setup path for 'edit on github'-link

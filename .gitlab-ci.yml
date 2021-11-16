@@ -12,11 +12,6 @@ variables:
   ESP_DOCS_PATH: "$CI_PROJECT_DIR"
   IDF_PATH: $CI_PROJECT_DIR/esp-idf
   IDF_REPO: ${GITLAB_SSH_SERVER}/espressif/esp-idf.git
-  AT_PATH: $CI_PROJECT_DIR/esp-at
-  AT_REPO: ${GITLAB_SSH_SERVER}/application/esp-at.git
-  ADF_PATH: $CI_PROJECT_DIR/esp-adf-internal
-  ADF_REPO: ${GITLAB_SSH_SERVER}/adf/esp-adf-internal.git
-
 
 .before_script_minimal:
   before_script:
@@ -50,7 +45,6 @@ check_python_style:
   script:
     - python -m flake8 --config=$ESP_DOCS_PATH/.flake8 $ESP_DOCS_PATH
 
-
 test_extensions_ut:
   stage: test
   image: $ESP_DOCS_ENV_IMAGE
@@ -60,7 +54,6 @@ test_extensions_ut:
     - cd test
     - python test_docs.py
     - python test_esp_extensions.py
-
 
 .build_template:
   stage: build
@@ -129,40 +122,6 @@ build_idf_docs_pdf:
     matrix:
       - DOCLANG: ["en", "zh_CN"]
         DOCTGT: ["esp32", "esp32s2", "esp32s3", "esp32c3"]
-
-build_at_docs:
-  extends:
-    - .build_template
-  variables:
-    DOCS_DIR: $CI_PROJECT_DIR/esp-at/docs
-  script:
-      # add gitlab ssh key
-    - cit_add_ssh_key "${GITLAB_KEY_PEM}"
-    - git clone "${AT_REPO}"
-    - $ESP_DOCS_PATH/ci/set_repo.sh test/esp_docs $AT_PATH
-    - cd $DOCS_DIR
-    - build-docs -l $DOCLANG -t $DOCTGT
-  parallel:
-    matrix:
-      - DOCLANG: ["en", "zh_CN"]
-        DOCTGT: ["esp8266", "esp32", "esp32s2", "esp32c3"]
-
-build_adf_docs:
-  extends:
-    - .build_template
-  variables:
-    DOCS_DIR: $CI_PROJECT_DIR/esp-adf-internal/docs
-  script:
-      # add gitlab ssh key
-    - cit_add_ssh_key "${GITLAB_KEY_PEM}"
-    - git clone "${ADF_REPO}"
-    - $ESP_DOCS_PATH/ci/set_repo.sh test/esp_docs $ADF_PATH
-    - cd $DOCS_DIR
-    - build-docs -l $DOCLANG -t $DOCTGT
-  parallel:
-    matrix:
-      - DOCLANG: ["en", "zh_CN"]
-        DOCTGT: ["esp32", "esp32s2"]
 
 build_package:
   stage: build
