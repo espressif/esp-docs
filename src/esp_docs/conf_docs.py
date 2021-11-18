@@ -18,7 +18,6 @@ from __future__ import print_function, unicode_literals
 
 import os
 import os.path
-import re
 import subprocess
 import sys
 
@@ -49,8 +48,6 @@ except subprocess.CalledProcessError:
 # builds on a branch then it's replaced with the branch name
 release = sanitize_version(version)
 
-html_redirect_file_path = 'html_redirect.txt'
-
 print('Version: {0}  Release: {1}'.format(version, release))
 
 # -- General configuration ------------------------------------------------
@@ -77,6 +74,7 @@ extensions = ['breathe',
               'esp_docs.generic_extensions.toctree_filter',
               'esp_docs.generic_extensions.list_filter',
               'esp_docs.generic_extensions.google_analytics',
+              'esp_docs.generic_extensions.add_warnings',
 
               'esp_docs.esp_extensions.format_esp_target',
               'esp_docs.esp_extensions.include_build_file',
@@ -152,22 +150,6 @@ pygments_style = 'sphinx'
 
 
 # -- Options for HTML output ----------------------------------------------
-
-# Custom added feature to allow redirecting old URLs
-#
-# Redirects should be listed in html_redirect_file_path
-#
-html_redirect_file_path = ''
-
-try:
-    with open(html_redirect_file_path) as f:
-        lines = [re.sub(' +', ' ', line.strip()) for line in f.readlines() if line.strip() != '' and not line.startswith('#')]
-        for line in lines:  # check for well-formed entries
-            if len(line.split(' ')) != 2:
-                raise RuntimeError('Invalid line in page_redirects.txt: %s' % line)
-    html_redirect_pages = [tuple(line.split(' ')) for line in lines]
-except FileNotFoundError:
-    pass
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
@@ -312,9 +294,17 @@ texinfo_documents = [
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 # texinfo_no_detailmenu = False
 
+# User callback for "late" initialization,
+# e.g. for values that depend on idf_target
+def setup_user(app, config):
+    if config.user_setup_callback:
+        config.user_setup_callback(app, config)
+    return None
 
 # Override RTD CSS theme to introduce the theme corrections
 # https://github.com/rtfd/sphinx_rtd_theme/pull/432
+
+
 def setup(app):
     app.add_stylesheet('theme_overrides.css')
 
@@ -328,6 +318,7 @@ def setup(app):
 
     app.add_config_value('conditional_include_dict', None, 'env')
     app.add_config_value('docs_to_build', None, 'env')
+    app.add_config_value('user_setup_callback', None, 'env')
 
     # Breathe extension variables (depend on build_dir)
     # note: we generate into xml_in and then copy_if_modified to xml dir
@@ -343,6 +334,7 @@ def setup(app):
     app.connect('config-inited',  setup_html_context)
     app.connect('config-inited',  setup_diag_font)
     app.connect('config-inited',  setup_html)
+    app.connect('config-inited',  setup_user)
 
 
 def setup_config_values(app, config):
