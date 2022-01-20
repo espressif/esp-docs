@@ -346,7 +346,7 @@ def setup_config_values(app, config):
         'esp32s3': 'ESP32-S3',
         'esp32c3': 'ESP32-C3',
         'esp32h2': 'ESP32-H2',
-        'esp8684': 'ESP8684',
+        'esp32c2': 'ESP32-C2',
     }
 
     app.add_config_value('idf_target_title_dict', idf_target_title_dict, 'env')
