@@ -87,6 +87,8 @@ Also supports markup for defining local (single .rst-file) substitions with the 
 
 This will define a replacement of the tag {\IDF_TARGET_TX_PIN} in the current rst-file.
 
+`{IDF_TARGET_DATASHEET_EN_URL}`, `{IDF_TARGET_DATASHEET_CN_URL}`, `{IDF_TARGET_TRM_EN_URL}` and `{IDF_TARGET_TRM_CN_URL}` can be used to add links to a chips datasheet and TRM respectively.
+
 The extension also overrides the default `.. include::` directive in order to format any included content using the same rules.
 
 These replacements cannot be used inside markup that rely on alignment of characters, e.g. tables.

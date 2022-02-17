@@ -44,6 +44,8 @@ class StringSubstituter:
         {IDF_TARGET_CFG_PREFIX}, replaced with the prefix used for config parameters, e.g. ESP32S2
         {IDF_TARGET_TRM_EN_URL}, replaced with the url to the English technical reference manual
         {IDF_TARGET_TRM_CH_URL}, replaced with the url to the Chinese technical reference manual
+        {IDF_TARGET_DATASHEET_EN_URL}, replaced with the url to the English datasheet
+        {IDF_TARGET_DATASHEET_CH_URL}, replaced with the url to the Chinese datasheet
 
         Also supports defines of local (single rst file) with the format:
         {IDF_TARGET_TX_PIN:default="IO3",esp32="IO4",esp32s2="IO5"}
@@ -83,6 +85,23 @@ class StringSubstituter:
                   'esp32s3': 'https://www.espressif.com/sites/default/files/documentation/esp32-s3_technical_reference_manual_cn.pdf',
                   'esp32h2': '#',
                   'esp32c2': '#'}
+
+    DATASHEET_EN_URL = {'esp8266': 'https://www.espressif.com/sites/default/files/documentation/0a-esp8266ex_datasheet_en.pdf',
+                        'esp32': 'https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf',
+                        'esp32s2': 'https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf',
+                        'esp32c3': 'https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf',
+                        'esp32s3': 'https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf',
+                        'esp32h2': '#',
+                        'esp32c2': '#'}
+
+    DATASHEET_CN_URL = {'esp8266': 'https://www.espressif.com/sites/default/files/documentation/0a-esp8266ex_datasheet_cn.pdf',
+                        'esp32': 'https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_cn.pdf',
+                        'esp32s2': 'https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_cn.pdf',
+                        'esp32c3': 'https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_cn.pdf',
+                        'esp32s3': 'https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_cn.pdf',
+                        'esp32h2': '#',
+                        'esp32c2': '#'}
+
     RE_PATTERN = re.compile(r'^\s*{IDF_TARGET_(\w+?):(.+?)}', re.MULTILINE)
 
     def __init__(self):
@@ -101,6 +120,8 @@ class StringSubstituter:
         self.add_pair('{IDF_TARGET_CFG_PREFIX}', self.CONFIG_PREFIX[config.idf_target])
         self.add_pair('{IDF_TARGET_TRM_EN_URL}', self.TRM_EN_URL[config.idf_target])
         self.add_pair('{IDF_TARGET_TRM_CN_URL}', self.TRM_CN_URL[config.idf_target])
+        self.add_pair('{IDF_TARGET_DATASHEET_EN_URL}', self.DATASHEET_EN_URL[config.idf_target])
+        self.add_pair('{IDF_TARGET_DATASHEET_CN_URL}', self.DATASHEET_CN_URL[config.idf_target])
 
     def add_local_subs(self, matches):
 
