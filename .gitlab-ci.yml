@@ -7,8 +7,8 @@ stages:
 
 variables:
   # Versioned esp-idf-doc env image to use for all document building jobs
-  ESP_DOCS_ENV_IMAGE: "$CI_DOCKER_REGISTRY/esp-idf-doc-env:v4.4-1-v4"
-  PYTHON_VER: 3.6.10
+  ESP_DOCS_ENV_IMAGE: "$CI_DOCKER_REGISTRY/esp-idf-doc-env-v5.0:2-2"
+  PYTHON_VER: 3.7.10
   ESP_DOCS_PATH: "$CI_PROJECT_DIR"
   IDF_PATH: $CI_PROJECT_DIR/esp-idf
   IDF_REPO: ${GITLAB_SSH_SERVER}/espressif/esp-idf.git
@@ -90,13 +90,14 @@ build_idf_docs_html:
     - .build_template
   variables:
     DOCS_DIR: $CI_PROJECT_DIR/esp-idf/docs
-    IDF_COMMIT_ID: 5f38b766a83d18
+    IDF_COMMIT_ID: 989cb70289af8
   script:
       # add gitlab ssh key
     - cit_add_ssh_key "${GITLAB_KEY_PEM}"
     - git clone "${IDF_REPO}"
     - $ESP_DOCS_PATH/ci/set_repo.sh $IDF_COMMIT_ID $IDF_PATH
     - cd $IDF_PATH && tools/idf_tools.py --non-interactive install && eval "$(tools/idf_tools.py --non-interactive export)"
+    - $IDF_PATH/tools/idf_tools.py install-python-env
     - cd $DOCS_DIR
     - build-docs -l $DOCLANG -t $DOCTGT
   parallel:
@@ -109,13 +110,14 @@ build_idf_docs_pdf:
     - .build_template
   variables:
     DOCS_DIR: $CI_PROJECT_DIR/esp-idf/docs
-    IDF_COMMIT_ID: 5f38b766a83d18
+    IDF_COMMIT_ID: 989cb70289af8
   script:
       # add gitlab ssh key
     - cit_add_ssh_key "${GITLAB_KEY_PEM}"
     - git clone "${IDF_REPO}"
     - $ESP_DOCS_PATH/ci/set_repo.sh $IDF_COMMIT_ID $IDF_PATH
     - cd $IDF_PATH && tools/idf_tools.py --non-interactive install && eval "$(tools/idf_tools.py --non-interactive export)"
+    - $IDF_PATH/tools/idf_tools.py install-python-env
     - cd $DOCS_DIR
     - build-docs -l $DOCLANG -t $DOCTGT -bs latex
   parallel:

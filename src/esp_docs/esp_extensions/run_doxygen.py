@@ -6,6 +6,8 @@ import os.path
 import re
 import subprocess
 from io import open
+from collections import defaultdict
+from dataclasses import dataclass
 
 from ..util.util import copy_if_modified
 
@@ -19,6 +21,14 @@ ALL_KINDS = [
 ]
 """list of items that will be generated for a single API file
 """
+
+
+@dataclass
+class ApiPath:
+    header_path: str = ''
+    api_name: str = ''
+    xml_file_path: str = ''
+    inc_file_path: str = ''
 
 
 def setup(app):
@@ -84,6 +94,45 @@ def generate_doxygen(app, defines):
     convert_api_xml_to_inc(app, doxygen_paths)
 
 
+def get_header_paths(app, doxyfiles, inc_directory_path, xml_directory_path):
+    header_paths = [p for d in doxyfiles for p in get_doxyfile_input_paths(app, d)]
+
+    duplicate_dict = defaultdict(list)
+    api_path_list = []
+
+    # Detect headers with the same name, as Doxygen threats these differently
+    for header_path in header_paths:
+        name = get_api_name(header_path)
+
+        if header_path in duplicate_dict[name]:
+            # Dont allow identical headers to be added to the Doxyfile
+            raise RuntimeError('Doxyfile contains duplicate header: {}'.format(header_path))
+
+        duplicate_dict[name].append(header_path)
+
+    for header_path in header_paths:
+        api_path = ApiPath()
+
+        api_path.api_name = get_api_name(header_path)
+        api_path.header_path = header_path
+
+        # If header name is unique then the file name is simply the header name
+        if len(duplicate_dict[api_path.api_name]) == 1:
+            api_path.xml_file_path = header_to_xml_path(api_path.api_name, xml_directory_path)
+            api_path.inc_file_path = inc_directory_path + '/' + api_path.api_name + '.inc'
+        # If not unique then doxygen will use the shortest unique path as the file name
+        else:
+            common_path = os.path.commonpath(duplicate_dict[api_path.api_name])
+            shortest_unique_path = os.path.relpath(header_path, common_path)
+            api_path.xml_file_path = header_to_xml_path(shortest_unique_path, xml_directory_path)
+            # For non-unique header names include path will be the full header path
+            api_path.inc_file_path = inc_directory_path + '/' + header_path.replace('.h', '') + '.inc'
+
+        api_path_list.append(api_path)
+
+    return api_path_list
+
+
 def convert_api_xml_to_inc(app, doxyfiles):
     """ Generate header_file.inc files
     with API reference made of doxygen directives
@@ -103,28 +152,31 @@ def convert_api_xml_to_inc(app, doxyfiles):
     if not os.path.exists(inc_directory_path):
         os.makedirs(inc_directory_path)
 
-    header_paths = [p for d in doxyfiles for p in get_doxyfile_input_paths(app, d)]
+    api_paths = get_header_paths(app, doxyfiles, inc_directory_path, xml_directory_path)
 
     print("Generating 'api_name.inc' files with Doxygen directives")
-    for header_file_path in header_paths:
-        api_name = get_api_name(header_file_path)
-        inc_file_path = inc_directory_path + '/' + api_name + '.inc'
-        rst_output = generate_directives(header_file_path, xml_directory_path)
+    for api_path in api_paths:
+        rst_output = generate_directives(api_path.header_path, api_path.xml_file_path)
+
+        # Create subfolders if needed
+        dir_name = os.path.dirname(api_path.inc_file_path)
+        if dir_name:
+            os.makedirs(dir_name, exist_ok=True)
 
         previous_rst_output = ''
-        if os.path.isfile(inc_file_path):
-            with open(inc_file_path, 'r', encoding='utf-8') as inc_file_old:
+        if os.path.isfile(api_path.inc_file_path):
+            with open(api_path.inc_file_path, 'r', encoding='utf-8') as inc_file_old:
                 previous_rst_output = inc_file_old.read()
 
         if previous_rst_output != rst_output:
-            with open(inc_file_path, 'w', encoding='utf-8') as inc_file:
+            with open(api_path.inc_file_path, 'w', encoding='utf-8') as inc_file:
                 inc_file.write(rst_output)
 
         # For fast builds we wipe the doxygen api documention.
         # Parsing this output during the sphinx build process is
         # what takes 95% of the build time
         if fast_build:
-            with open(inc_file_path, 'w', encoding='utf-8') as inc_file:
+            with open(api_path.inc_file_path, 'w', encoding='utf-8') as inc_file:
                 inc_file.write('')
 
 
@@ -192,7 +244,19 @@ def get_api_name(header_file_path):
     return api_name
 
 
-def generate_directives(header_file_path, xml_directory_path):
+def header_to_xml_path(header_file, xml_directory_path):
+    # in XLT file name each "_" in the api name is expanded by Doxygen to "__"
+    xlt_api_name = header_file.replace('_', '__')
+    # in XLT file name each "/" in the api name is expanded by Doxygen to "_2"
+    xlt_api_name = xlt_api_name.replace('/', '_2')
+    xlt_api_name = xlt_api_name.replace('.h', '')
+
+    xml_file_path = '%s/%s_8h.xml' % (xml_directory_path, xlt_api_name)
+
+    return xml_file_path
+
+
+def generate_directives(header_file_path, xml_file_path):
     """Generate API reference with Doxygen directives for a header file.
 
     Args:
@@ -202,12 +266,6 @@ def generate_directives(header_file_path, xml_directory_path):
         Doxygen directives for the header file.
 
     """
-
-    api_name = get_api_name(header_file_path)
-
-    # in XLT file name each "_" in the api name is expanded by Doxygen to "__"
-    xlt_api_name = api_name.replace('_', '__')
-    xml_file_path = '%s/%s_8h.xml' % (xml_directory_path, xlt_api_name)
 
     rst_output = ''
     rst_output = ".. File automatically generated by 'gen-dxd.py'\n"

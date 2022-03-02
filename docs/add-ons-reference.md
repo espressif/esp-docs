@@ -65,6 +65,8 @@ Pushes a number of target-specific custom environment variables into Doxygen, in
 
 This means we can generate different Doxygen files, depending on the target we are building docs for.
 
+For headers with unique names the path to the generated `.inc` will be the header name itself, e.g.: `inc/my_header.inc`, while for headers with non-unique names the whole header path will be used, e.g.: `inc/component/folder/my_header.inc`.
+
 #### [Exclude Docs](../src/esp_docs/esp_extensions/exclude_docs.py)
 Sphinx extension that updates the excluded documents according to the conditional_include_dict {tag:documents}. If the tag is set, then the list of documents will be included.
 
