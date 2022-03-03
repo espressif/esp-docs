@@ -119,14 +119,14 @@ def get_header_paths(app, doxyfiles, inc_directory_path, xml_directory_path):
         # If header name is unique then the file name is simply the header name
         if len(duplicate_dict[api_path.api_name]) == 1:
             api_path.xml_file_path = header_to_xml_path(api_path.api_name, xml_directory_path)
-            api_path.inc_file_path = inc_directory_path + '/' + api_path.api_name + '.inc'
+            api_path.inc_file_path = os.path.splitext(inc_directory_path + '/' + api_path.api_name)[0] + '.inc'
         # If not unique then doxygen will use the shortest unique path as the file name
         else:
             common_path = os.path.commonpath(duplicate_dict[api_path.api_name])
             shortest_unique_path = os.path.relpath(header_path, common_path)
             api_path.xml_file_path = header_to_xml_path(shortest_unique_path, xml_directory_path)
             # For non-unique header names include path will be the full header path
-            api_path.inc_file_path = inc_directory_path + '/' + header_path.replace('.h', '') + '.inc'
+            api_path.inc_file_path = inc_directory_path + '/' + os.path.splitext(header_path)[0] + '.inc'
 
         api_path_list.append(api_path)
 
@@ -210,7 +210,7 @@ def get_doxyfile_input_paths(app, doxyfile_path):
             # process only lines that are not comments
             if line.find('#') == -1:
                 # extract header file path inside project folder
-                m = re.search('\(PROJECT_PATH\)/(.*\.h)', line)  # noqa: W605 - regular expression
+                m = re.search('\(PROJECT_PATH\)/(.*\.h[p]*)', line)  # noqa: W605 - regular expression
                 if m is None:
                     raise ValueError("Doxygen input statements should be specified using $(PROJECT_PATH) env variable, instead got {}".format(line))
                 header_file_path = m.group(1)
@@ -221,38 +221,36 @@ def get_doxyfile_input_paths(app, doxyfile_path):
 
             # proceed reading next line
             line = input_file.readline()
-
     return doxyfile_INPUT
 
 
 def get_api_name(header_file_path):
-    """Get name of API from header file path.
+    """Get name of API and extention from header file path.
 
     Args:
         header_file_path: path to the header file.
 
     Returns:
-        The name of API.
+        API name and the extention
 
     """
-    api_name = ''
-    regex = r'.*/(.*)\.h'
+    regex = r'.*/(.*)\.(hp*)'
     m = re.search(regex, header_file_path)
     if m:
-        api_name = m.group(1)
+        return m.group(1) + "." + m.group(2)
 
-    return api_name
+    return ''
 
 
 def header_to_xml_path(header_file, xml_directory_path):
     # in XLT file name each "_" in the api name is expanded by Doxygen to "__"
+    extension = "hpp" if header_file.endswith(".hpp") else "h"
     xlt_api_name = header_file.replace('_', '__')
     # in XLT file name each "/" in the api name is expanded by Doxygen to "_2"
     xlt_api_name = xlt_api_name.replace('/', '_2')
-    xlt_api_name = xlt_api_name.replace('.h', '')
+    xlt_api_name = xlt_api_name.replace('.' + extension, '')
 
-    xml_file_path = '%s/%s_8h.xml' % (xml_directory_path, xlt_api_name)
-
+    xml_file_path = '%s/%s_8%s.xml' % (xml_directory_path, xlt_api_name, extension)
     return xml_file_path
 
 
