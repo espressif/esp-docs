@@ -10,3 +10,5 @@ API Reference
 -------------
 
 .. include-build-file:: inc/my_api.inc
+
+.. include-build-file:: inc/my_cxx_api.inc

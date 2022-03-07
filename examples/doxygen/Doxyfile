@@ -21,7 +21,8 @@ PROJECT_NAME = "Esp-docs simple example"
 ## and used to include in API reference documentation
 
 INPUT = \
-    $(PROJECT_PATH)/api/my_api.h
+    $(PROJECT_PATH)/api/my_api.h \
+    $(PROJECT_PATH)/api/my_cxx_api.hpp
 
 
 ## Get warnings for functions that have no documentation for their parameters or return value
