@@ -17,7 +17,8 @@ ALL_KINDS = [
     ('struct', 'Structures'),
     ('define', 'Macros'),
     ('typedef', 'Type Definitions'),
-    ('enum', 'Enumerations')
+    ('enum', 'Enumerations'),
+    ('class', 'Classes'),
 ]
 """list of items that will be generated for a single API file
 """
@@ -302,57 +303,35 @@ def get_rst_header(header_name):
     return rst_output
 
 
-def select_unions(innerclass_list):
-    """Select unions from innerclass list.
+def select_container(innerclass_list, container):
+    """Select container (struct, union, class) type from innerclass list.
 
     Args:
-        innerclass_list: raw list with unions and structures
+        innerclass_list: raw list with structs, unions or classes
                          extracted from Dogygen's xml file.
 
     Returns:
-        Doxygen directives with unions selected from the list.
+        Doxygen directives with containers (structs, unions, classes) selected from the list.
+        Note: some structs are excluded as described on code below.
 
     """
 
     rst_output = ''
     for line in innerclass_list.splitlines():
-        # union is denoted by "union" at the beginning of line
-        if line.find('union') == 0:
-            union_id, union_name = re.split(r'\t+', line)
-            rst_output += '.. doxygenunion:: '
-            rst_output += union_name
-            rst_output += '\n'
-
-    return rst_output
-
-
-def select_structs(innerclass_list):
-    """Select structures from innerclass list.
-
-    Args:
-        innerclass_list: raw list with unions and structures
-                         extracted from Dogygen's xml file.
-
-    Returns:
-        Doxygen directives with structures selected from the list.
-        Note: some structures are excluded as described on code below.
-
-    """
-
-    rst_output = ''
-    for line in innerclass_list.splitlines():
-        # structure is denoted by "struct" at the beginning of line
-        if line.find('struct') == 0:
+        # container is denoted by the keyword "struct", "union" or "class" at the beginning of line
+        if line.startswith(container):
             # skip structures that are part of union
             # they are documented by 'doxygenunion' directive
-            if line.find('::') > 0:
+            if container == "struct" and line.find('::') > 0:
                 continue
-            struct_id, struct_name = re.split(r'\t+', line)
-            rst_output += '.. doxygenstruct:: '
-            rst_output += struct_name
+            _, name = re.split(r'\t+', line)
+
+            rst_output += '.. doxygen%s:: ' % (container)
+            rst_output += name
             rst_output += '\n'
-            rst_output += '    :members:\n'
-            rst_output += '\n'
+            if container in ["struct", "class"]:
+                rst_output += '    :members:\n'
+                rst_output += '\n'
 
     return rst_output
 
@@ -371,14 +350,11 @@ def get_directives(tree, kind):
     """
 
     rst_output = ''
-    if kind in ['union', 'struct']:
+    if kind in ['union', 'struct', 'class']:
         innerclass_list = ''
         for elem in tree.iterfind('compounddef/innerclass'):
             innerclass_list += elem.attrib['refid'] + '\t' + elem.text + '\n'
-        if kind == 'union':
-            rst_output += select_unions(innerclass_list)
-        else:
-            rst_output += select_structs(innerclass_list)
+        rst_output += select_container(innerclass_list, kind)
     else:
         for elem in tree.iterfind(
                 'compounddef/sectiondef/memberdef[@kind="%s"]' % kind):
