@@ -17,7 +17,8 @@ ALL_KINDS = [
     ('struct', 'Structures'),
     ('define', 'Macros'),
     ('typedef', 'Type Definitions'),
-    ('enum', 'Enumerations')
+    ('enum', 'Enumerations'),
+    ('class', 'Classes'),
 ]
 """list of items that will be generated for a single API file
 """
@@ -119,14 +120,14 @@ def get_header_paths(app, doxyfiles, inc_directory_path, xml_directory_path):
         # If header name is unique then the file name is simply the header name
         if len(duplicate_dict[api_path.api_name]) == 1:
             api_path.xml_file_path = header_to_xml_path(api_path.api_name, xml_directory_path)
-            api_path.inc_file_path = inc_directory_path + '/' + api_path.api_name + '.inc'
+            api_path.inc_file_path = os.path.join(inc_directory_path, os.path.splitext(api_path.api_name)[0] + '.inc')
         # If not unique then doxygen will use the shortest unique path as the file name
         else:
             common_path = os.path.commonpath(duplicate_dict[api_path.api_name])
             shortest_unique_path = os.path.relpath(header_path, common_path)
             api_path.xml_file_path = header_to_xml_path(shortest_unique_path, xml_directory_path)
             # For non-unique header names include path will be the full header path
-            api_path.inc_file_path = inc_directory_path + '/' + header_path.replace('.h', '') + '.inc'
+            api_path.inc_file_path = os.path.join(inc_directory_path, os.path.splitext(header_path)[0] + '.inc')
 
         api_path_list.append(api_path)
 
@@ -210,7 +211,7 @@ def get_doxyfile_input_paths(app, doxyfile_path):
             # process only lines that are not comments
             if line.find('#') == -1:
                 # extract header file path inside project folder
-                m = re.search('\(PROJECT_PATH\)/(.*\.h)', line)  # noqa: W605 - regular expression
+                m = re.search('\(PROJECT_PATH\)/(.*\.hp*)', line)  # noqa: W605 - regular expression
                 if m is None:
                     raise ValueError("Doxygen input statements should be specified using $(PROJECT_PATH) env variable, instead got {}".format(line))
                 header_file_path = m.group(1)
@@ -221,27 +222,25 @@ def get_doxyfile_input_paths(app, doxyfile_path):
 
             # proceed reading next line
             line = input_file.readline()
-
     return doxyfile_INPUT
 
 
 def get_api_name(header_file_path):
-    """Get name of API from header file path.
+    """Get name of API and extension from header file path.
 
     Args:
         header_file_path: path to the header file.
 
     Returns:
-        The name of API.
+        API name with the file extension
 
     """
-    api_name = ''
-    regex = r'.*/(.*)\.h'
+    regex = r'.*/(.*)\.(hp*)'
     m = re.search(regex, header_file_path)
     if m:
-        api_name = m.group(1)
+        return m.group(1) + "." + m.group(2)
 
-    return api_name
+    return ''
 
 
 def header_to_xml_path(header_file, xml_directory_path):
@@ -249,10 +248,9 @@ def header_to_xml_path(header_file, xml_directory_path):
     xlt_api_name = header_file.replace('_', '__')
     # in XLT file name each "/" in the api name is expanded by Doxygen to "_2"
     xlt_api_name = xlt_api_name.replace('/', '_2')
-    xlt_api_name = xlt_api_name.replace('.h', '')
+    xlt_api_name, ext = os.path.splitext(xlt_api_name)
 
-    xml_file_path = '%s/%s_8h.xml' % (xml_directory_path, xlt_api_name)
-
+    xml_file_path = '%s/%s_8%s.xml' % (xml_directory_path, xlt_api_name, ext[1:])  # extension without "."
     return xml_file_path
 
 
@@ -305,57 +303,35 @@ def get_rst_header(header_name):
     return rst_output
 
 
-def select_unions(innerclass_list):
-    """Select unions from innerclass list.
+def select_container(innerclass_list, container):
+    """Select container (struct, union, class) type from innerclass list.
 
     Args:
-        innerclass_list: raw list with unions and structures
+        innerclass_list: raw list with structs, unions or classes
                          extracted from Dogygen's xml file.
 
     Returns:
-        Doxygen directives with unions selected from the list.
+        Doxygen directives with containers (structs, unions, classes) selected from the list.
+        Note: some structs are excluded as described on code below.
 
     """
 
     rst_output = ''
     for line in innerclass_list.splitlines():
-        # union is denoted by "union" at the beginning of line
-        if line.find('union') == 0:
-            union_id, union_name = re.split(r'\t+', line)
-            rst_output += '.. doxygenunion:: '
-            rst_output += union_name
-            rst_output += '\n'
-
-    return rst_output
-
-
-def select_structs(innerclass_list):
-    """Select structures from innerclass list.
-
-    Args:
-        innerclass_list: raw list with unions and structures
-                         extracted from Dogygen's xml file.
-
-    Returns:
-        Doxygen directives with structures selected from the list.
-        Note: some structures are excluded as described on code below.
-
-    """
-
-    rst_output = ''
-    for line in innerclass_list.splitlines():
-        # structure is denoted by "struct" at the beginning of line
-        if line.find('struct') == 0:
+        # container is denoted by the keyword "struct", "union" or "class" at the beginning of line
+        if line.startswith(container):
             # skip structures that are part of union
             # they are documented by 'doxygenunion' directive
-            if line.find('::') > 0:
+            if container == "struct" and line.find('::') > 0:
                 continue
-            struct_id, struct_name = re.split(r'\t+', line)
-            rst_output += '.. doxygenstruct:: '
-            rst_output += struct_name
+            _, name = re.split(r'\t+', line)
+
+            rst_output += '.. doxygen%s:: ' % (container)
+            rst_output += name
             rst_output += '\n'
-            rst_output += '    :members:\n'
-            rst_output += '\n'
+            if container in ["struct", "class"]:
+                rst_output += '    :members:\n'
+                rst_output += '\n'
 
     return rst_output
 
@@ -374,14 +350,11 @@ def get_directives(tree, kind):
     """
 
     rst_output = ''
-    if kind in ['union', 'struct']:
+    if kind in ['union', 'struct', 'class']:
         innerclass_list = ''
         for elem in tree.iterfind('compounddef/innerclass'):
             innerclass_list += elem.attrib['refid'] + '\t' + elem.text + '\n'
-        if kind == 'union':
-            rst_output += select_unions(innerclass_list)
-        else:
-            rst_output += select_structs(innerclass_list)
+        rst_output += select_container(innerclass_list, kind)
     else:
         for elem in tree.iterfind(
                 'compounddef/sectiondef/memberdef[@kind="%s"]' % kind):
