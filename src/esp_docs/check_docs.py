@@ -6,6 +6,7 @@ LogMessage = namedtuple('LogMessage', 'original_text sanitized_text')
 
 SANITIZE_FILENAME_REGEX = re.compile('[^:]*/([^/:]*)(:.*)')
 SANITIZE_LINENUM_REGEX = re.compile('([^:]*)(:[0-9]+:)(.*)')
+SANITIZE_DUPLICATE_LINENUM_REGEX = re.compile(r'([^:]*)(:[0-9]+\.)(.*)')
 
 
 def sanitize_line(line):
@@ -15,10 +16,12 @@ def sanitize_line(line):
     filter:
         - only filename, no path at the beginning
         - no line numbers after the filename
+        - no line numbers from duplicate definitions
     """
 
     line = re.sub(SANITIZE_FILENAME_REGEX, r'\1\2', line)
     line = re.sub(SANITIZE_LINENUM_REGEX, r'\1:line:\3', line)
+    line = re.sub(SANITIZE_DUPLICATE_LINENUM_REGEX, r'\1:line.\3', line)
     return line
 
 

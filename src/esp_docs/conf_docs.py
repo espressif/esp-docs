@@ -306,7 +306,7 @@ def setup_user(app, config):
 
 
 def setup(app):
-    app.add_stylesheet('theme_overrides.css')
+    app.add_css_file('theme_overrides.css')
 
     # config values that are pushed in by build_docs,py
     if 'idf_target' not in app.config:

@@ -54,3 +54,9 @@ a.internal + em::before {
 .tool-sha256 {
   word-break: break-all;
 }
+
+/* Fix extra space in nested toctrees */
+.toctree-wrapper ul li>* {
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
+}
