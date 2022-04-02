@@ -99,7 +99,7 @@ build_idf_docs_html:
     - cd $IDF_PATH && tools/idf_tools.py --non-interactive install && eval "$(tools/idf_tools.py --non-interactive export)"
     - $IDF_PATH/tools/idf_tools.py install-python-env
     - cd $DOCS_DIR
-    - build-docs -l $DOCLANG -t $DOCTGT
+    - build-docs --skip-reqs-check -l $DOCLANG -t $DOCTGT
   parallel:
     matrix:
       - DOCLANG: ["en", "zh_CN"]
@@ -119,7 +119,7 @@ build_idf_docs_pdf:
     - cd $IDF_PATH && tools/idf_tools.py --non-interactive install && eval "$(tools/idf_tools.py --non-interactive export)"
     - $IDF_PATH/tools/idf_tools.py install-python-env
     - cd $DOCS_DIR
-    - build-docs -l $DOCLANG -t $DOCTGT -bs latex
+    - build-docs --skip-reqs-check -l $DOCLANG -t $DOCTGT -bs latex
   parallel:
     matrix:
       - DOCLANG: ["en", "zh_CN"]

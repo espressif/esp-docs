@@ -35,6 +35,7 @@ import re
 import subprocess
 import sys
 from .check_docs import check_docs
+import pkg_resources
 
 
 LANGUAGES = ['en', 'zh_CN']
@@ -52,6 +53,36 @@ DXG_KNOWN_WARNINGS = 'doxygen-known-warnings.txt'
 
 languages = LANGUAGES
 targets = TARGETS
+
+
+def check_python_requirements(requirements_path):
+    try:
+        with open(requirements_path) as f:
+            not_satisfied = []
+
+            for line in f:
+                line = line.strip()
+                # pkg_resources.require() cannot handle the full requirements file syntax so we need to make
+                # adjustments for options which we use.
+                if line.startswith('file://'):
+                    line = os.path.basename(line)
+                if line.startswith('-e') and '#egg=' in line:  # version control URLs, take the egg= part at the end only
+                    line = re.search(r'#egg=([^\s]+)', line).group(1)
+                try:
+                    pkg_resources.require(line)
+                except Exception:
+                    not_satisfied.append(line)
+
+            if len(not_satisfied) > 0:
+                print('The following Python requirements from the current directory\'s requirements.txt are not satisfied:')
+                for requirement in not_satisfied:
+                    print(requirement)
+                print('This check can be skipped by running with --skip-reqs-check')
+                sys.exit(1)
+
+    except FileNotFoundError:
+        # If there isnt any requirements.txt in the current directory then we just skip the check
+        pass
 
 
 def main():
@@ -85,6 +116,7 @@ def main():
     parser.add_argument('--input-docs', '-i', nargs='+', default=[''],
                         help='List of documents to build relative to the doc base folder, i.e. the language folder. Defaults to all documents')
     parser.add_argument('--fast-build', '-f', action='store_true', help='Skips including doxygen generated APIs into the Sphinx build')
+    parser.add_argument('--skip-reqs-check', action='store_true', help='Skips checking python requirements.txt found in the current directory')
 
     action_parsers = parser.add_subparsers(dest='action')
 
@@ -96,6 +128,9 @@ def main():
     action_parsers.add_parser('gh-linkcheck', help='Checking for hardcoded GitHub links')
 
     args = parser.parse_args()
+
+    if not args.skip_reqs_check:
+        check_python_requirements('requirements.txt')
 
     global languages
     if args.language is None:
