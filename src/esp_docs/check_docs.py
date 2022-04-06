@@ -1,24 +1,8 @@
 import re
-import subprocess
 
-from packaging import version
 from collections import namedtuple
 
 LogMessage = namedtuple('LogMessage', 'original_text sanitized_text')
-
-DXG_CI_VERSION = version.parse('1.8.11')
-
-
-def check_doxygen_version():
-    # Different version of doxygen may produce different warnings
-    # This could cause a build to fail locally, but pass CI and vice versa
-    process = subprocess.run(['doxygen', '--version'], encoding='utf-8', stdout=subprocess.PIPE)
-    doxygen_ver = process.stdout.strip()
-
-    if version.parse(doxygen_ver) > DXG_CI_VERSION:
-        print('Local doxygen version {} is newer than CI doxygen version {}. Local build may contain '
-              'warnings that will not be raised when built by CI.'.format(doxygen_ver, DXG_CI_VERSION))
-
 
 SANITIZE_FILENAME_REGEX = re.compile('[^:]*/([^/:]*)(:.*)')
 SANITIZE_LINENUM_REGEX = re.compile('([^:]*)(:[0-9]+:)(.*)')
@@ -92,7 +76,6 @@ def check_docs(language, target, log_file, known_warnings_file, out_sanitized_lo
             print('%s/%s: %s' % (language, target, msg.original_text), end='')
         print('\n%s/%s: (Check files %s and %s for full details.)' % (language, target, known_warnings_file, log_file))
 
-        check_doxygen_version()
         return 1
 
     return 0
