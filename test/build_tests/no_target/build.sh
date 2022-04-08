@@ -1,0 +1,1 @@
+build-docs --project-path src -bs latex html

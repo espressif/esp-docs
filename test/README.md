@@ -2,14 +2,19 @@
 
 This folder contains the files needed for running tests the ESP-IDF documentation building system.
 
-Tests are divided into two categories: unit tests and integration tests:
+Tests are divided into three categories: build tests, unit tests and integration tests:
+
+## Build Tests
+These tests only check that we are able to build docs without warnings for different configs.
+
+Tests can be run from `build_tests/build_all.sh`
 
 ## Unit Tests
 
 The Sphinx IDF extensions are unit-tested in [test_sphinx_idf_extensions.py](test_sphinx_idf_extensions.py)
 
 ## Integration Tests
-Due to the thigh integration with Sphinx some functionality is difficult to test with simple unit tests.
+Due to the thight integration with Sphinx some functionality is difficult to test with simple unit tests.
 
  To check that the output from the Sphinx build process is as expected [test_docs.py](test_docs.py) builds a test subset of the documentation, found in the [en](en/) folder. The HTML output is then checked to see that it contains the expected content.
 

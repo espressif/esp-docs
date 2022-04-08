@@ -51,9 +51,18 @@ test_extensions_ut:
   extends:
     - .before_script_prepare_build
   script:
-    - cd test
+    - cd test/unit_tests
     - python test_docs.py
     - python test_esp_extensions.py
+
+test_builds:
+  stage: test
+  image: $ESP_DOCS_ENV_IMAGE
+  extends:
+    - .before_script_prepare_build
+  script:
+    - cd test/build_tests
+    - ./build_all.sh
 
 .build_template:
   stage: build
