@@ -39,7 +39,7 @@ class IdfLatexBuilder(LaTeXBuilder):
 
             latex_package = template.read()
 
-        idf_target_title = config.idf_target_title_dict[config.idf_target]
+        idf_target_title = config.idf_target_title_dict.get(config.idf_target, "")
         latex_package = latex_package.replace('<idf_target_title>', idf_target_title)
 
         # Release name for the PDF front page, remove '_' as this is used for subscript in Latex
@@ -66,7 +66,10 @@ def config_init_callback(app, config):
             config.pdf_title = 'ESP-IDF Programming Guide'
 
     if config.pdf_file_prefix:
-        config.pdf_file = '{}-{}-{}-{}'.format(config.pdf_file_prefix, config.language, config.version, config.idf_target)
+        config.pdf_file = '{}-{}-{}'.format(config.pdf_file_prefix, config.language, config.version)
+
+        if config.idf_target:
+            config.pdf_file += '-{}'.format(config.idf_target)
 
 
 def setup(app):
