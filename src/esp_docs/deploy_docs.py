@@ -80,8 +80,15 @@ def main():
     print('Docs URLs:')
     doc_deploy_type = os.getenv('TYPE')
     for vurl in version_urls:
-        language, _, target = vurl.split('/')
-        tag = '{}_{}'.format(language, target)
+        url_paths = vurl.split('/')
+
+        if len(url_paths) == 3:
+            language, _, target = url_paths
+            tag = '{}_{}'.format(language, target)
+        else:
+            language, _ = url_paths
+            tag = '{}'.format(language)
+
         url = '{}/{}/index.html'.format(url_base, vurl)  # (index.html needed for the preview server)
         url = re.sub(r'([^:])//', r'\1/', url)  # get rid of any // that isn't in the https:// part
         print('[document {}][{}] {}'.format(doc_deploy_type, tag, url))
@@ -156,7 +163,11 @@ def build_doc_tarball(version, git_ver, build_dir):
             language = os.path.basename(os.path.dirname(target_dirname))
 
             # when deploying, we want the top-level directory layout 'language/version/target'
-            archive_path = '{}/{}/{}'.format(language, version, target)
+            archive_path = '{}/{}'.format(language, version)
+
+            if target != 'generic':
+                archive_path += '/{}'.format(target)
+
             print("Archiving '{}' as '{}'...".format(html_dir, archive_path))
             tarball.add(html_dir, archive_path, filter=not_sources_dir)
             version_paths.append(archive_path)
@@ -170,7 +181,13 @@ def build_doc_tarball(version, git_ver, build_dir):
             language = os.path.basename(os.path.dirname(target_dirname))
 
             # when deploying, we want the layout 'language/version/target/pdf'
-            archive_path = '{}/{}/{}/{}'.format(language, version, target, pdf_filename)
+            archive_path = '{}/{}'.format(language, version)
+
+            if target != 'generic':
+                archive_path += '/{}'.format(target)
+
+            archive_path += '/{}'.format(pdf_filename)
+
             print("Archiving '{}' as '{}'...".format(pdf_path, archive_path))
             tarball.add(pdf_path, archive_path)
 

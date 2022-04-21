@@ -141,8 +141,8 @@ def main():
 
     global targets
     if args.target is None:
-        print('Building all targets')
-        targets = TARGETS
+        print('Building without a target')
+        targets = ['generic']
     else:
         targets = args.target
 
@@ -250,16 +250,19 @@ def sphinx_call(build_info, builder):
             '-j', str(build_info['sphinx_parallel_jobs']),
             '-b', builder,
             '-d', os.path.join(build_info['build_dir'], 'doctrees'),
-            '-w', SPHINX_WARN_LOG,
-            '-t', build_info['target'],
-            '-D', 'idf_target={}'.format(build_info['target']),
-            '-D', 'docs_to_build={}'.format(','. join(build_info['input_docs'])),
-            '-D', 'config_dir={}'.format(os.path.abspath(os.path.dirname(__file__))),
-            '-D', 'doxyfile_dir={}'.format(os.path.abspath(build_info['doxyfile_dir'])),
-            '-D', 'project_path={}'.format(os.path.abspath(build_info['project_path'])),
-            build_info['source_dir'],
-            os.path.join(build_info['build_dir'], builder)                    # build directory
+            '-w', SPHINX_WARN_LOG
             ]
+
+    if build_info['target'] != 'generic':
+        args += ['-t', build_info['target'], '-D', 'idf_target={}'.format(build_info['target'])]
+
+    args += ['-D', 'docs_to_build={}'.format(','. join(build_info['input_docs'])),
+             '-D', 'config_dir={}'.format(os.path.abspath(os.path.dirname(__file__))),
+             '-D', 'doxyfile_dir={}'.format(os.path.abspath(build_info['doxyfile_dir'])),
+             '-D', 'project_path={}'.format(os.path.abspath(build_info['project_path'])),
+             build_info['source_dir'],
+             os.path.join(build_info['build_dir'], builder)                    # build directory
+             ]
 
     saved_cwd = os.getcwd()
     os.chdir(build_info['build_dir'])  # also run sphinx in the build directory

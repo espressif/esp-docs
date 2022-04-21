@@ -112,6 +112,10 @@ class StringSubstituter:
         self.substitute_strings[tag] = replace_value
 
     def init_sub_strings(self, config):
+
+        if not config.idf_target:
+            return
+
         self.target_name = config.idf_target
 
         self.add_pair('{IDF_TARGET_NAME}', self.TARGET_NAMES[config.idf_target])

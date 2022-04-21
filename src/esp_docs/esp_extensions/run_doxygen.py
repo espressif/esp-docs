@@ -60,20 +60,22 @@ def generate_doxygen(app, defines):
     doxy_env.update({
         'ENV_DOXYGEN_DEFINES': ' '.join('{}={}'.format(key, value) for key, value in defines.items()),
         'PROJECT_PATH': app.config.project_path,
-        'IDF_TARGET': app.config.idf_target,
+        'IDF_TARGET': app.config.idf_target if app.config.idf_target else "",
     })
 
     doxyfile_dir = find_doxygen_dir(app.config.doxyfile_dir)
     doxyfile_main = os.path.join(doxyfile_dir, 'Doxyfile')
-    doxyfile_target = os.path.join(doxyfile_dir, 'Doxyfile_' + app.config.idf_target)
 
     if not os.path.isfile(doxyfile_main):
         print("No doxyfile found at {}. Either specify directory for Doxyfile with -d or disable the run_doxygen plugin".format(doxyfile_main))
         raise RuntimeError("{} do not exist".format(doxyfile_main))
 
     doxygen_paths = [doxyfile_main]
-    if os.path.isfile(doxyfile_target):
-        doxygen_paths.append(doxyfile_target)
+
+    if app.config.idf_target:
+        doxyfile_target = os.path.join(doxyfile_dir, 'Doxyfile_' + app.config.idf_target)
+        if os.path.isfile(doxyfile_target):
+            doxygen_paths.append(doxyfile_target)
 
     print('Running doxygen with doxyfiles {}'.format(doxygen_paths))
 
@@ -216,7 +218,8 @@ def get_doxyfile_input_paths(app, doxyfile_path):
                     raise ValueError("Doxygen input statements should be specified using $(PROJECT_PATH) env variable, instead got {}".format(line))
                 header_file_path = m.group(1)
                 # Replace env variable used for multi target header
-                header_file_path = header_file_path.replace('$(IDF_TARGET)', app.config.idf_target)
+                if app.config.idf_target:
+                    header_file_path = header_file_path.replace('$(IDF_TARGET)', app.config.idf_target)
 
                 doxyfile_INPUT.append(header_file_path)
 
