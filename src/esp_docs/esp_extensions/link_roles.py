@@ -150,7 +150,7 @@ class TranslationLinkNodeTransform(SphinxPostTransform):
                 (language, link_text) = text.split(':')
                 env = self.document.settings.env
                 docname = env.docname
-                doc_path = env.doc2path(docname)
+                doc_path = env.doc2path(docname, False)
                 return_path = '../' * doc_path.count('/')  # path back to the root from 'docname'
                 # then take off 2/3 more paths for language/release/targetname and build the new URL
                 if env.config.idf_target:
