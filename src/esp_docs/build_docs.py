@@ -374,12 +374,11 @@ def build_pdf(language, target, latex_dir):
 
 
 def action_linkcheck(args):
-    args.builders = 'linkcheck'
     return parallel_call(args, call_linkcheck)
 
 
-def call_linkcheck(entry):
-    return sphinx_call(*entry)
+def call_linkcheck(build_info):
+    return sphinx_call(build_info, 'linkcheck')
 
 
 # https://github.com/espressif/esp-idf/tree/
