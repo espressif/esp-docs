@@ -55,6 +55,12 @@ def setup(app):
 
 def generate_idf_info(app, config):
     print('Running CMake on dummy project to get build info...')
+
+    if not app.config.idf_target:
+        raise RuntimeError('A valid target is needed to build docs for ESP-IDF. '
+                           'Please re-run build-docs with a target specified, e.g: '
+                           'build-docs -t esp32')
+
     build_dir = os.path.dirname(app.doctreedir.rstrip(os.sep))
     cmake_build_dir = os.path.join(build_dir, 'build_dummy_project')
     idf_py_path = os.path.join(app.config.project_path, 'tools', 'idf.py')
