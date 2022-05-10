@@ -99,7 +99,7 @@ build_idf_docs_html:
     - .build_template
   variables:
     DOCS_DIR: $CI_PROJECT_DIR/esp-idf/docs
-    IDF_COMMIT_ID: 197be02748e5f7718d2eb4ff004c529d20e83b85
+    IDF_COMMIT_ID: 3faf5ba8f784f
   script:
       # add gitlab ssh key
     - cit_add_ssh_key "${GITLAB_KEY_PEM}"
@@ -119,7 +119,7 @@ build_idf_docs_pdf:
     - .build_template
   variables:
     DOCS_DIR: $CI_PROJECT_DIR/esp-idf/docs
-    IDF_COMMIT_ID: 197be02748e5f7718d2eb4ff004c529d20e83b85
+    IDF_COMMIT_ID: 3faf5ba8f784f
   script:
       # add gitlab ssh key
     - cit_add_ssh_key "${GITLAB_KEY_PEM}"
