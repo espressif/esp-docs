@@ -302,11 +302,22 @@ def call_build_docs(build_info):
 
         # Warnings are checked after each builder as logs are overwritten
         # check Doxygen warnings only if we actually have a doxyfile:
-        if os.path.isfile(os.path.join(build_info['doxyfile_dir'], 'Doxyfile_common')):
+        def has_doxyfile(doxyfile_dir):
+            if os.path.isfile(os.path.join(doxyfile_dir, 'Doxyfile')):
+                return True
+            elif os.path.isfile(os.path.join('doxygen', 'Doxyfile')):  # kept for backwards compatibility
+                return True
+            else:
+                return False
+
+        if has_doxyfile(build_info['doxyfile_dir']):
             ret += check_docs(build_info['language'], build_info['target'],
                               log_file=os.path.join(build_info['build_dir'], DXG_WARN_LOG),
                               known_warnings_file=DXG_KNOWN_WARNINGS,
                               out_sanitized_log_file=os.path.join(build_info['build_dir'], DXG_SANITIZED_LOG))
+        else:
+            print('No Doxyfile found, skipping check of doxygen errors')
+
         # check Sphinx warnings:
         ret += check_docs(build_info['language'], build_info['target'],
                           log_file=os.path.join(build_info['build_dir'], SPHINX_WARN_LOG),
