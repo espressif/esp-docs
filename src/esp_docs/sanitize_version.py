@@ -35,7 +35,9 @@ def sanitize_version(original_version):
     except KeyError:
         version = original_version
 
-    if version == 'master':
+    latest_branch_name = os.environ.get('ESP_DOCS_LATEST_BRANCH_NAME', 'master')
+
+    if version == latest_branch_name:
         return 'latest'
 
     version = version.replace('/', '-')
