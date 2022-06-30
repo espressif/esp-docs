@@ -1,3 +1,4 @@
+
 stages:
   - check
   - test
@@ -99,14 +100,16 @@ build_idf_docs_html:
     - .build_template
   variables:
     DOCS_DIR: $CI_PROJECT_DIR/esp-idf/docs
-    IDF_COMMIT_ID: 3faf5ba8f784f
+    IDF_COMMIT_ID: 7d680980894fbcc1532f6934c1e3a2f0f8181d64
   script:
       # add gitlab ssh key
     - cit_add_ssh_key "${GITLAB_KEY_PEM}"
     - git clone "${IDF_REPO}"
     - $ESP_DOCS_PATH/ci/set_repo.sh $IDF_COMMIT_ID $IDF_PATH
-    - cd $IDF_PATH && tools/idf_tools.py --non-interactive install && eval "$(tools/idf_tools.py --non-interactive export)"
+    - cd $IDF_PATH && tools/idf_tools.py --non-interactive install
     - $IDF_PATH/tools/idf_tools.py install-python-env
+    - eval "$($IDF_PATH/tools/idf_tools.py export)"
+    - pip install $ESP_DOCS_PATH
     - cd $DOCS_DIR
     - build-docs --skip-reqs-check -l $DOCLANG -t $DOCTGT
   parallel:
@@ -119,14 +122,16 @@ build_idf_docs_pdf:
     - .build_template
   variables:
     DOCS_DIR: $CI_PROJECT_DIR/esp-idf/docs
-    IDF_COMMIT_ID: 3faf5ba8f784f
+    IDF_COMMIT_ID: 7d680980894fbcc1532f6934c1e3a2f0f8181d64
   script:
       # add gitlab ssh key
     - cit_add_ssh_key "${GITLAB_KEY_PEM}"
     - git clone "${IDF_REPO}"
     - $ESP_DOCS_PATH/ci/set_repo.sh $IDF_COMMIT_ID $IDF_PATH
-    - cd $IDF_PATH && tools/idf_tools.py --non-interactive install && eval "$(tools/idf_tools.py --non-interactive export)"
+    - cd $IDF_PATH && tools/idf_tools.py --non-interactive install
     - $IDF_PATH/tools/idf_tools.py install-python-env
+    - eval "$($IDF_PATH/tools/idf_tools.py export)"
+    - pip install $ESP_DOCS_PATH
     - cd $DOCS_DIR
     - build-docs --skip-reqs-check -l $DOCLANG -t $DOCTGT -bs latex
   parallel:

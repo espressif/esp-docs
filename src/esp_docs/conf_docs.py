@@ -162,6 +162,9 @@ html_context = {
     'github_version': get_github_rev(),
 }
 
+# Set optional name used by latest branch (defaults to "master")
+latest_branch_name = os.environ.get('ESP_DOCS_LATEST_BRANCH_NAME', 'master')
+
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
