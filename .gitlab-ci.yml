@@ -46,7 +46,7 @@ check_python_style:
   script:
     - python -m flake8 --config=$ESP_DOCS_PATH/.flake8 $ESP_DOCS_PATH
 
-test_extensions_ut:
+test_uts:
   stage: test
   image: $ESP_DOCS_ENV_IMAGE
   extends:
@@ -55,6 +55,7 @@ test_extensions_ut:
     - cd test/unit_tests
     - python test_docs.py
     - python test_esp_extensions.py
+    - python test_deploy.py
 
 test_builds:
   stage: test

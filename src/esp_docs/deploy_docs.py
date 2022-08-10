@@ -203,7 +203,9 @@ def create_and_add_symlinks(version, git_ver, pdfs):
     symlinks = []
     if 'stable' in version or 'latest' in version:
         for pdf_path in pdfs:
-            symlink_path = pdf_path.replace(git_ver, version)
+            # Sub the version info, file name is {language}-{version}-{target}.pdf
+            symlink_path = re.sub(r'(en-|zh_CN-)(.*?)(-esp[\w\d]*?\.pdf)', r'\1' + version + r'\3', pdf_path)
+
             os.symlink(pdf_path, symlink_path)
             symlinks.append(symlink_path)
 
