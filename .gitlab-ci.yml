@@ -9,14 +9,12 @@ stages:
 variables:
   # Versioned esp-idf-doc env image to use for all document building jobs
   ESP_DOCS_ENV_IMAGE: "$CI_DOCKER_REGISTRY/esp-idf-doc-env-v5.0:2-2"
-  PYTHON_VER: 3.7.10
   ESP_DOCS_PATH: "$CI_PROJECT_DIR"
   IDF_PATH: $CI_PROJECT_DIR/esp-idf
   IDF_REPO: ${GITLAB_SSH_SERVER}/espressif/esp-idf.git
 
 .before_script_minimal:
   before_script:
-    - source ci/setup_python.sh
     - source ci/utils.sh
 
 .before_script_prepare_build:
@@ -24,11 +22,10 @@ variables:
     # Use CI Tools
     - curl -sSL ${CIT_LOADER_URL} | sh
     - source citools/import_functions
-    - source ci/setup_python.sh
     - source ci/utils.sh
     # Purge any old esp-docs versions
-    - pip3 uninstall -y esp-docs
-    - pip3 install .
+    - pip uninstall -y esp-docs
+    - pip install .
 
 check_setup:
   stage: check
@@ -36,7 +33,7 @@ check_setup:
   extends:
     - .before_script_minimal
   script:
-    - pip3 install .
+    - pip install .
 
 check_python_style:
   stage: check
@@ -71,12 +68,6 @@ test_builds:
   image: $ESP_DOCS_ENV_IMAGE
   extends:
     - .before_script_prepare_build
-  artifacts:
-    when: always
-    paths:
-      - $DOCS_DIR/_build/*/*/html/*
-      - $DOCS_DIR/_build/*/*/*.txt
-    expire_in: 4 days
 
 build_example_basic:
   extends:
@@ -102,14 +93,17 @@ build_idf_docs_html:
   variables:
     DOCS_DIR: $CI_PROJECT_DIR/esp-idf/docs
     IDF_COMMIT_ID: 7d680980894fbcc1532f6934c1e3a2f0f8181d64
+  artifacts:
+    when: always
+    paths:
+      - $DOCS_DIR/_build/*/*/html/*
+      - $DOCS_DIR/_build/*/*/*.txt
+    expire_in: 4 days
   script:
       # add gitlab ssh key
     - cit_add_ssh_key "${GITLAB_KEY_PEM}"
-    - git clone "${IDF_REPO}"
-    - $ESP_DOCS_PATH/ci/set_repo.sh $IDF_COMMIT_ID $IDF_PATH
-    - cd $IDF_PATH && tools/idf_tools.py --non-interactive install
-    - $IDF_PATH/tools/idf_tools.py install-python-env
-    - eval "$($IDF_PATH/tools/idf_tools.py export)"
+    - $ESP_DOCS_PATH/ci/setup_idf.sh ${IDF_REPO} $IDF_COMMIT_ID $IDF_PATH $DOCTGT
+    - eval "$($IDF_PATH/tools/idf_tools.py --non-interactive export)"
     - pip install $ESP_DOCS_PATH
     - cd $DOCS_DIR
     - build-docs --skip-reqs-check -l $DOCLANG -t $DOCTGT
@@ -124,14 +118,17 @@ build_idf_docs_pdf:
   variables:
     DOCS_DIR: $CI_PROJECT_DIR/esp-idf/docs
     IDF_COMMIT_ID: 7d680980894fbcc1532f6934c1e3a2f0f8181d64
+  artifacts:
+    when: always
+    paths:
+      - $DOCS_DIR/_build/*/*/html/*
+      - $DOCS_DIR/_build/*/*/*.txt
+    expire_in: 4 days
   script:
       # add gitlab ssh key
     - cit_add_ssh_key "${GITLAB_KEY_PEM}"
-    - git clone "${IDF_REPO}"
-    - $ESP_DOCS_PATH/ci/set_repo.sh $IDF_COMMIT_ID $IDF_PATH
-    - cd $IDF_PATH && tools/idf_tools.py --non-interactive install
-    - $IDF_PATH/tools/idf_tools.py install-python-env
-    - eval "$($IDF_PATH/tools/idf_tools.py export)"
+    - $ESP_DOCS_PATH/ci/setup_idf.sh ${IDF_REPO} $IDF_COMMIT_ID $IDF_PATH $DOCTGT
+    - eval "$($IDF_PATH/tools/idf_tools.py --non-interactive export)"
     - pip install $ESP_DOCS_PATH
     - cd $DOCS_DIR
     - build-docs --skip-reqs-check -l $DOCLANG -t $DOCTGT -bs latex
@@ -216,5 +213,5 @@ deploy_package:
   dependencies:
     - build_package
   script:
-   - pip3 install .
+   - pip install .
    - python $ESP_DOCS_PATH/ci/deploy_package.py
