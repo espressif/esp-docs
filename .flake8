@@ -4,4 +4,5 @@ max-line-length = 160
 per-file-ignores =
     # conf.py files use star imports to setup config variables
     examples/*/conf*.py: F405
+    docs/conf*.py: F405
     test/*/conf*py: F405

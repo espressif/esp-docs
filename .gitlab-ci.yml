@@ -93,6 +93,42 @@ build_example_doxygen:
     - cd $DOCS_DIR
     - ./build_example.sh
 
+build_esp_docs_html:
+  extends:
+    - .build_template
+  variables:
+    DOCS_DIR: $CI_PROJECT_DIR/docs
+  artifacts:
+    when: always
+    paths:
+      - $DOCS_DIR/_build/*/*/html/*
+      - $DOCS_DIR/_build/*/*/*.txt
+    expire_in: 4 days
+  script:
+    - cd $DOCS_DIR
+    - build-docs --skip-reqs-check -l $DOCLANG
+  parallel:
+    matrix:
+      - DOCLANG: ["en"]
+
+build_esp_docs_pdf:
+  extends:
+    - .build_template
+  variables:
+    DOCS_DIR: $CI_PROJECT_DIR/docs
+  artifacts:
+    when: always
+    paths:
+      - $DOCS_DIR/_build/*/*/latex/*
+      - $DOCS_DIR/_build/*/*/*.txt
+    expire_in: 4 days
+  script:
+    - cd $DOCS_DIR
+    - build-docs --skip-reqs-check -l $DOCLANG
+  parallel:
+    matrix:
+      - DOCLANG: ["en"]
+
 build_idf_docs_html:
   extends:
     - .build_template
@@ -127,7 +163,7 @@ build_idf_docs_pdf:
   artifacts:
     when: always
     paths:
-      - $DOCS_DIR/_build/*/*/html/*
+      - $DOCS_DIR/_build/*/*/latex/*
       - $DOCS_DIR/_build/*/*/*.txt
     expire_in: 4 days
   script:
@@ -175,6 +211,23 @@ build_package:
     - export GIT_VER=$(git describe --always)
     - deploy-docs
 
+deploy_docs_esp_docs:
+  extends:
+    - .deploy_docs_template
+  only:
+    - master
+  variables:
+    DOCS_BUILD_DIR: "${CI_PROJECT_DIR}/docs/_build/"
+    TYPE: "preview"
+    DOCS_DEPLOY_PRIVATEKEY: "$DOCS_PROD_DEPLOY_KEY"
+    DOCS_DEPLOY_SERVER: "$DOCS_PROD_SERVER"
+    DOCS_DEPLOY_SERVER_USER: "$DOCS_PROD_SERVER_USER"
+    DOCS_DEPLOY_PATH: "$DOCS_PROD_PATH"
+    DOCS_DEPLOY_URL_BASE: "https://docs.espressif.com/projects/esp-docs"
+  needs:
+    - build_esp_docs_html
+    - build_esp_docs_pdf
+
 deploy_docs_idf:
    extends:
      - .deploy_docs_template
@@ -189,22 +242,6 @@ deploy_docs_idf:
    needs:
      - build_idf_docs_html
      - build_idf_docs_pdf
-
-deploy_docs_esp_docs:
-  extends:
-    - .deploy_docs_template
-  only:
-    - master
-  variables:
-    DOCS_BUILD_DIR: "${CI_PROJECT_DIR}/examples/basic/_build/"
-    TYPE: "preview"
-    DOCS_DEPLOY_PRIVATEKEY: "$DOCS_PROD_DEPLOY_KEY"
-    DOCS_DEPLOY_SERVER: "$DOCS_PROD_SERVER"
-    DOCS_DEPLOY_SERVER_USER: "$DOCS_PROD_SERVER_USER"
-    DOCS_DEPLOY_PATH: "$DOCS_PROD_PATH"
-    DOCS_DEPLOY_URL_BASE: "https://docs.espressif.com/projects/esp-docs"
-  needs:
-    - build_example_basic
 
 deploy_package:
   stage: deploy
