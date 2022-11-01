@@ -172,7 +172,7 @@ build_package:
     DOCS_DEPLOY_URL_BASE: "https://$CI_DOCKER_REGISTRY/docs/esp-idf"
   script:
     - add_doc_server_ssh_keys $DOCS_DEPLOY_PRIVATEKEY $DOCS_DEPLOY_SERVER $DOCS_DEPLOY_SERVER_USER
-    - export GIT_VER=$(git describe --always)
+    - export GIT_VER=$(git describe --abbrev=10 --always)
     - deploy-docs
 
 deploy_docs_idf:

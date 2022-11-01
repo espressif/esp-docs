@@ -40,7 +40,7 @@ suppress_warnings = ['image.nonlocal_uri']
 # This is the full exact version, canonical git version description
 # visible when you open index.html.
 try:
-    version = subprocess.check_output(['git', 'describe']).strip().decode('utf-8')
+    version = subprocess.check_output(['git', 'describe', '--abbrev=10']).strip().decode('utf-8')
 except subprocess.CalledProcessError:
     version = 'master'
 
