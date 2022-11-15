@@ -113,6 +113,8 @@ The ``include-build-file`` directive is like the built-in ``include-file`` direc
 IDF-Specific Extensions
 ^^^^^^^^^^^^^^^^^^^^^^^
 
+.. _build_system_integration:
+
 `Build System Integration <../src/esp_docs/idf_extensions/build_system/__init__.py>`__
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
