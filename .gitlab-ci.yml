@@ -107,6 +107,7 @@ build_esp_docs_html:
   script:
     - cd $DOCS_DIR
     - build-docs --skip-reqs-check -l $DOCLANG
+    - echo "ESP-Docs documentation preview available at $CI_JOB_URL/artifacts/file/docs/_build/$DOCLANG/generic/html/index.html"
   parallel:
     matrix:
       - DOCLANG: ["en"]
