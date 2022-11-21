@@ -89,26 +89,9 @@ Subscribes to ``defines-generated`` as it relies on the Sphinx tags to determine
 `Format ESP Target <../src/esp_docs/esp_extensions/format_esp_target.py>`__
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-An extension for replacing generic target-related names with the idf_target passed to the Sphinx command line.
+This is an extension for replacing generic target-related names with the idf_target passed to the Sphinx command line. It supports markup for defining local (single .rst file) substitutions and it also overrides the default ``.. include::`` directive in order to format any included content using the same rules.
 
-This is a {IDF_TARGET_NAME}, with /{IDF_TARGET_PATH_NAME}/soc.c, compiled with ``{IDF_TARGET_TOOLCHAIN_PREFIX}-gcc``
-with ``CONFIG_{IDF_TARGET_CFG_PREFIX}_MULTI_DOC``
-will, if the backspaces are removed, render as
-
-This is a {IDF_TARGET_NAME}, with /{IDF_TARGET_PATH_NAME}/soc.c, compiled with ``{IDF_TARGET_TOOLCHAIN_PREFIX}-gcc`` with ``CONFIG_{IDF_TARGET_CFG_PREFIX}_MULTI_DOC``.
-
-
-Also supports markup for defining local (single .rst-file) substitions with the following syntax:
-
-{IDF_TARGET_TX_PIN:default="IO3",esp32="IO4",esp32s2="IO5"}
-
-This will define a replacement of the tag {IDF_TARGET_TX_PIN} in the current rst-file.
-
-``{IDF_TARGET_DATASHEET_EN_URL}``, ``{IDF_TARGET_DATASHEET_CN_URL}``, ``{IDF_TARGET_TRM_EN_URL}``, and ``{IDF_TARGET_TRM_CN_URL}`` can be used to add links to a chip datasheet and TRM respectively.
-
-The extension also overrides the default ``.. include::`` directive in order to format any included content using the same rules.
-
-These replacements cannot be used inside markup that rely on alignment of characters, e.g. tables.
+For more information about the extension, refer to :doc:`Target-Specific Inline Text - Using Substitution Macros <../writing-documentation/writing-for-multiple-targets>`.
 
 `Link Roles <../src/esp_docs/esp_extensions/link_roles.py>`__
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
