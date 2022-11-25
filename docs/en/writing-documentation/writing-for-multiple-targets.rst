@@ -5,6 +5,7 @@ Espressif provides a rich list of chip products, e.g., ESP32, ESP32-S2, ESP32-C3
 
 To facilitate the writing of documents that can be reused for multiple different chips, several functionalities are provided in ``ESP-Docs`` for writers to deal with target-specific inline text, paragraph, bullet point, and even document while building the documentation for all Espressif's chips from the same files.
 
+.. _target-specific-inline-text:
 
 Target-Specific Inline Text
 ---------------------------
@@ -110,6 +111,7 @@ In the above case, if the label ``section_2_label`` does not correctly link to t
     ^^^^^^^^^
     Section 2 content
 
+.. _target-specific-bullet-point:
 
 Target-Specific Bullet Point
 ------------------------------
@@ -126,6 +128,7 @@ The ``:TAG:`` role provided by ``ESP-Docs`` comes in handy when you need to defi
 
 Then Sphinx will only generate the first bullet point for ESP32 documentation, the second bullet point for ESP32-C2 and ESP32-C3 documentations, and the third bullet point for targets that support Bluetooth after you define the ``SOC_BT_SUPPORTED`` tag.
 
+.. _target-specific-doc:
 
 Target-Specific Document
 -------------------------
