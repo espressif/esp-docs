@@ -5,4 +5,3 @@ Building Documentation
     :maxdepth: 1
 
      Building Documentation Locally <building-documentation-locally>
-     Troubleshooting <troubleshooting>

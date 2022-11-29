@@ -40,6 +40,7 @@ The guide consists of the following major sections:
     Writing Documentation <writing-documentation/index>
     Building Documentation <building-documentation/index>
     Configuring ESP-Docs Projects <configuring-esp-docs-projects/index>
+    Troubleshooting <troubleshooting/index>
     Contributing Guide <contributing-guide>
     Related Resources <related-resources>
 
