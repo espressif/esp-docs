@@ -24,4 +24,4 @@ For documentation about esp-docs please see https://github.com/espressif/esp-doc
 .. toctree::
     :maxdepth: 1
 
-    Subpage <sub_page>
+    Subpage <subpage>

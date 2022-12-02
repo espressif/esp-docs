@@ -4,6 +4,6 @@ Configuring ESP-Docs Projects
 .. toctree::
     :maxdepth: 1
 
-    Implementing ESP-Docs in Your Git Project <implementing-esp-docs-in-your-git-project>
+    Integrating ESP-Docs into Your Project <integrating-esp-docs-into-your-project>
     Adding Extensions <adding-extensions>
     Collecting User Analytics <collecting-user-analytics>

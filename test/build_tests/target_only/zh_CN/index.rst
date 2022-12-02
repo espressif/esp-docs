@@ -5,5 +5,5 @@ ESP-Docs Generic Target Test App
 .. toctree::
     :maxdepth: 1
 
-    Subpage <sub_page>
+    Subpage <subpage>
     Subfolder page <subfolder/page>
