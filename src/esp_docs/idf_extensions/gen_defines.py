@@ -41,6 +41,7 @@ def generate_defines(app, project_description):
     add_tags(app, defines)
 
     app.emit('defines-generated', defines)
+    app.emit('format-esp-target-add-sub', defines)
 
 
 def get_defines(header_path, sdk_config_path, compiler):

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os.path as path
 import unittest
 from unittest.mock import MagicMock
 
@@ -14,6 +15,7 @@ class TestFormatIdfTarget(unittest.TestCase):
 
         config = MagicMock()
         config.idf_target = 'esp32'
+        config.build_dir = path.dirname(path.realpath(__file__))
         self.str_sub.init_sub_strings(config)
 
     def test_add_subs(self):

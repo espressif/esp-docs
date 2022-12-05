@@ -35,6 +35,17 @@ The above line will define a substitution for the tag ``IDF_TARGET_TX_PIN``, whi
     * These single-file definitions can be placed anywhere in the reStructuredText file on their own line, but the name of the directive must start with ``IDF_TARGET_``.
     * Also note that these replacements cannot be used inside markup that rely on alignment of characters, e.g., tables.
 
+ESP-Docs also allows other extensions to add additional substitutions through Sphinx events. For example, in ESP-IDF it is possible to use defines from ``soc_caps.h``::
+
+    The target has {IDF_TARGET_SOC_SPI_PERIPH_NUM} SPI peripherals.
+
+The text will be rendered for ESP32-S2 as the following::
+
+    The target has 3 SPI peripherals.
+
+For a full overview of available substitutions in your project, you can take a look at ``IDF_TARGET-substitutions.txt``, which is generated in the build folder when a project is built.
+
+
 
 Target-Specific Paragraph
 --------------------------
