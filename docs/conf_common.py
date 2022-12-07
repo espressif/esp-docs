@@ -26,3 +26,6 @@ project_slug = 'esp-docs'
 
 # Final PDF filename will contains target and version
 pdf_file_prefix = u'esp-docs'
+
+linkcheck_exclude_documents = ['index',  # several false positives due to the way we link to different sections
+                               ]
