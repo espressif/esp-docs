@@ -43,6 +43,7 @@ The guide consists of the following major sections:
     Troubleshooting <troubleshooting/index>
     Contributing Guide <contributing-guide>
     Related Resources <related-resources>
+    Glossary <glossary>
 
 .. note::
 
