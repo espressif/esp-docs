@@ -312,7 +312,7 @@ Syntax and example:
 
     For details, please refer to *ESP32-S3 Technical Reference Manual* > *I2C Controller (I2C)* [`PDF <{IDF_TARGET_TRM_EN_URL}#i2c>`__].
 
-For the specific hypertargets of chapters in different ESP TRMs, please refer to `Link to Parts of PDF Using Hypertargets <https://gitlab.espressif.cn:6688/espressif/esp-idf/-/wikis/dev-proc/Link-to-Parts-of-PDF-Using-Hypertargets>`_.
+For the specific hypertargets of chapters in different ESP TRMs, please go to Documentation Team Site > Section ESP-Docs User Guide > Hypertargets of chapters.
 
 Resources
 ---------

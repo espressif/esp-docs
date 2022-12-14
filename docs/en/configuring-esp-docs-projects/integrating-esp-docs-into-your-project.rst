@@ -119,9 +119,9 @@ Update CI Configuration File
 
 The GitLab CI configuration file, ``.gitlab-ci.yml``, is where you add jobs to enable the automatic and continuous building and deploying of your documentation to the ``www.espressif.com`` server.
 
-In the ``.gitlab-ci.yml`` of your project, do the steps given below. For examples, please refer to `esp-docs/.gitlab-ci.yml <https://gitlab.espressif.cn:6688/espressif/esp-docs/-/blob/master/.gitlab-ci.yml>`__ and `esp-idf/.gitlab/ci/docs.yml <https://gitlab.espressif.cn:6688/espressif/esp-idf/-/blob/master/.gitlab/ci/docs.yml>`__.
+In the ``.gitlab-ci.yml`` of your project, do the steps given below. For examples, please refer to `esp-docs/.gitlab-ci.yml <https://github.com/espressif/esp-docs/blob/master/.gitlab-ci.yml>`__ and `esp-idf/.gitlab/ci/docs.yml <https://github.com/espressif/esp-idf/blob/master/.gitlab/ci/docs.yml>`__.
 
-1. Use an appropriate docker image to build the documentation. For convenience, you can reuse the image used by ESP-IDF, ``$CI_DOCKER_REGISTRY/esp-idf-doc-env-v5.0:2-3``. For the latest version of this image, check the `esp-docker <https://gitlab.espressif.cn:6688/idf/esp-dockerfiles>`__ repo or contact Documentation Team.
+1. Use an appropriate docker image to build the documentation. For convenience, you can reuse the image used by ESP-IDF, ``$CI_DOCKER_REGISTRY/esp-idf-doc-env-v5.0:2-3``. For the latest version of this image, go to Documentation Team Site > Section ESP-Docs User Guide > esp-idf-doc-env image.
 2. Add the jobs to build documentation in HTML and PDF. For examples, please refer to the ``build_esp_docs_html`` and ``build_esp_docs_pdf`` jobs in :project_file:`.gitlab-ci.yml`.
 3. In the above building documentation jobs, add ``pip install -r requirements.txt`` to install package dependencies.
 4. Add the jobs to deploy the built documentation to the server:
@@ -131,7 +131,7 @@ In the ``.gitlab-ci.yml`` of your project, do the steps given below. For example
 
 5. Configure the variables mentioned in the jobs that deploy documentation:
 
-  a. Find out who the server's admin is. To know who this person is and more information about the variables, please refer to `Deploying documentation to docs.espressif.com <https://gitlab.espressif.cn:6688/espressif/esp-docs/-/wikis/Deploying-documentation-to-docs.espressif.com>`__.
+  a. Find out who the server's admin is. To know who this person is and more information about the variables, please go to Documentation Team Site > Section ESP-Docs User Guide > Deploying documentation to docs.espressif.com.
   b. Ask the admin to create an SSH key for you and a directory for your documentation on the server.
   c. Go to your project's **Settings** > **CI/CD** and expand the **Variables** section. Select **Add variable** and fill in the details for your variables. For more information on how to add a variable to a project, see the `GitLab documentation <https://docs.gitlab.com/ee/ci/variables/#add-a-cicd-variable-to-a-project>`__.
 

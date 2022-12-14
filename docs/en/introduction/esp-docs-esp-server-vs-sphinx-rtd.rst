@@ -17,8 +17,8 @@ This document compares the above two ways of building and deploying Espressif do
     - ✅ More :ref:`features <esp-docs-features>`, including 1) those provided by Sphinx 2) those provided by Sphinx third-party extensions, which are standardized to fixed versions to reduce build or deploy issues 3) those developed only for Espressif documentation, such as support for multiple targets. They are actively maintained and contribution to new or existing extensions is very welcome.
     - ❌ Fewer features, including 1) those provided by Sphinx 2) those provided by Sphinx third-party extensions, some of which are not set to fixed versions, thus causing build or deploy issues from time to time.
   * - Configuring deployment
-    - ❌ More workload. See :ref:`update-ci-conf-file` for more information.
-    - ✅ Easier. See `Read the Docs Configuration Notes for Espressif doc <https://espressifsystems.sharepoint.com/sites/Documentation/Internal%20Documents1/Forms/AllItems.aspx?id=%2Fsites%2FDocumentation%2FInternal%20Documents1%2FReadTheDocs%5FConfiguration%5FNotes%5F20211231%2Epdf&parent=%2Fsites%2FDocumentation%2FInternal%20Documents1>`_ for more information.
+    - ❌ More workload. For deployment information, see :ref:`update-ci-conf-file`.
+    - ✅ Easier. For deployment information, see Documentation Team Site > Section ESP-Docs User Guide > Read the Docs Configuration Notes for Espressif doc.
   * - Debugging deployment issues
     - ✅ Independent debugging without engaging third parties, thus quicker.
     - ❌ Needing support from RTD team, because RTD often breaks in ways we can not debug ourselves.

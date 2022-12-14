@@ -18,5 +18,5 @@ Related Resources
 
 - To try Markdown in your documentation, `Recommonmark parser’s documentation page <https://recommonmark.readthedocs.io/en/latest>`__ presents an approach to write CommonMark inside of Sphinx projects.
 - An overview of ESP-Docs is given in the `ESP DevCon22 talk <https://youtu.be/8l29cTFS27w?t=9141>`__ *How to create awesome documentation for your ESP32-X using ESP-Docs*. The video starts at 2:32:21.
-- `Espressif Manual of Style <https://espressifsystems.sharepoint.com/sites/Documentation/Internal%20Documents1/Forms/AllItems.aspx?id=%2Fsites%2FDocumentation%2FInternal%20Documents1%2FEspressif%2DManual%2Dof%2DStyle%2Epdf&parent=%2Fsites%2FDocumentation%2FInternal%20Documents1>`__ answers some writing style questions.
-- To seek help from the Documentation Team, please check `Documentation <https://espressifsystems.sharepoint.com/sites/Documentation>`__ site. Type the keywords in the search box, and all relevant ready-made documents will show up.
+- Espressif Manual of Style answers some writing style questions.
+- To seek help from the Documentation Team, please check Documentation Team Site. Type the keywords in the search box, and all relevant ready-made documents will show up.

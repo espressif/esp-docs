@@ -50,4 +50,4 @@ This approach could be benificial in the following ways:
 
 .. note::
 
-    This document only describes formatting rules that facilitate translation. For other formatting rules, see `Espressif Manual of Style <https://espressifsystems.sharepoint.com/sites/Documentation/Internal%20Documents1/Espressif-Manual-of-Style.pdf>`_.
+    This document only describes formatting rules that facilitate translation. For other formatting rules, see Espressif Manual of Style.
