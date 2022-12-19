@@ -10,4 +10,4 @@ Provides:
  * Sphinx extensions used at Espressif
  * Scripts for deploying docs
 
-For a more indepth guide on how to install, write, and compile documentation please see `ESP-Docs User Guide <https://docs.espressif.com/projects/esp-docs/en/latest/index.html#>`__.
+For a more in-depth guide on how to install, write, and compile documentation please see [ESP-Docs User Guide](https://docs.espressif.com/projects/esp-docs/en/latest/index.html).

@@ -22,15 +22,11 @@ The guide consists of the following major sections:
 .. |Introduction| image:: ../_static/introduction.png
 .. _Introduction: introduction/index.html
 .. |Writing Doc| image:: ../_static/writing-documentation.png
-.. _Writing Doc: introduction/writing-documentation.html
+.. _Writing Doc: writing-documentation/index.html
 .. |Building Doc| image:: ../_static/building-documentation.png
-.. _Building Doc: introduction/building-documentation.html
+.. _Building Doc: building-documentation/index.html
 .. |Configuring ESP-Docs Projects| image:: ../_static/configuring-esp-docs-projects.png
-.. _Configuring ESP-Docs Projects: introduction/configuring-esp-docs-projects.html
-.. |Contributing Guide| image:: ../_static/contributing-guide.png
-.. _Contributing Guide: introduction/contributing-guide.html
-.. |Related Resources| image:: ../_static/related-resources.png
-.. _Related Resources: introduction/related-resources.html
+.. _Configuring ESP-Docs Projects: configuring-esp-docs-projects/index.html
 
 
 .. toctree::
