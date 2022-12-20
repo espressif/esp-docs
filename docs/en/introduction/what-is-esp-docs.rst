@@ -3,8 +3,11 @@ What Is ESP-Docs?
 
 ESP-Docs is a documentation-building system developed by Espressif based on `Sphinx <http://www.sphinx-doc.org/>`__ and `Read the Docs <https://readthedocs.org>`__. It expands Sphinx functionality and extensions with the features needed for Espressif's documentation and bundles this into a single package. It takes text source files written in `reStructuredText <https://en.wikipedia.org/wiki/ReStructuredText>`__ and builds them into target formats, including HTML and PDF.
 
+ESP-Docs is an open-source and common project. You are always welcome to contribute any functionality! See :doc:`/contributing-guide` for more information.
+
 ESP-Docs is available as a `Python package <https://pypi.org/project/esp-docs/>`__.
 
+.. _esp-docs-features:
 
 Features
 --------
