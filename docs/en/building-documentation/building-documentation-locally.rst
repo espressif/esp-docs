@@ -1,20 +1,60 @@
 Building Documentation Locally
 ==============================
 
-The purpose of this description is to provide a summary on how to build documentation using ``esp-docs``.
+The purpose of this description is to provide a summary on how to build documentation locally using ESP-Docs.
 
-Install Dependencies
---------------------
 
-You can setup environment to build documentation locally on your PC by installing:
+.. _building-documentation-1:
 
-1. Doxygen - http://doxygen.nl/
-2. Esp-docs - https://github.com/espressif/esp-docs
+Building HTML Locally on Your PC
+--------------------------------
 
-Docs building now supports Python 3 only. Python 2 installations will not work.
+ESP-Docs allows you to build your rst documentation into HTML pages on you local computer with the same `style <https://github.com/espressif/sphinx_idf_theme>`__ exactly as how it will be rendered on the server. In this way, you can:
+
+* Catch and fix any potential build errors (due to markup syntax, incorrect links, labels, missing images, etc.) early, instead of waiting on CI errors.
+* Of course, have a peek of your final documentation early.
+
+If you just want to roughly preview your rst files while your write and don't care too much about styles and broken links at this moment, then go to Section :doc:`Previewing Documentation inside Your Text Editor <../building-documentation/previewing-documentation-inside-your-text-editor>`
+
+Installing Dependencies
+^^^^^^^^^^^^^^^^^^^^^^^
+In order to build documentation locally on your PC, you need to install the following prerequisites:
+
+1. ESP-Docs - https://github.com/espressif/esp-docs
+2. CairoSVG - https://cairosvg.org/documentation/
+3. Doxygen (only needed when generating API documentation from header files)- http://doxygen.nl
+
+.. note::
+   Docs building now supports Python 3 only. Python 2 installations will not work.
+
+.. note::
+   If you are a Windows user or simply want to use a Docker container, then go directly to :ref:`Using a Docker Container <using-a-docker-container>` at the end of this section.
+
+ESP-Docs
+""""""""
+
+All applications needed are `Python <https://www.python.org/>`__ packages, and you can install them in one step as follows:
+
+::
+
+   pip install --user esp-docs
+
+This will pull in all the necessary dependencies such as Sphinx, Breathe, etc.
+
+
+CairoSVG
+""""""""
+
+CairoSVG is an SVG 1.1 to PNG, PDF, PS and SVG converter. You can install it as follows:
+
+::
+
+   pip3 install cairosvg
+
+If you have issues, please check out `CairoSVG documentation <https://cairosvg.org/documentation/>`__.
 
 Doxygen
-^^^^^^^
+"""""""
 
 Installation of Doxygen is OS dependent:
 
@@ -24,151 +64,182 @@ Installation of Doxygen is OS dependent:
 
    sudo apt-get install doxygen
 
-**Windows** - install in Windows Command Prompt console
-
-::
-
-   pacman -S doxygen
-
 **MacOS**
 
 ::
 
    brew install doxygen
 
-If you are installing on Windows MSYS2 system (Linux and MacOS users should skip this note, Windows users who don’t use MSYS2 will need to find other alternatives), **before** going further, execute two extra steps below. These steps are required to install dependencies of “blockdiag” discussed under :ref:``add-illustrations``.
+.. _building-html-pages:
 
-1. Update all the system packages:
+After these steps, you should be able to build HTML pages on your PC already. To see the details, go to :ref:`Building HTML Pages <building-html-pages>`.
 
+Building HTML Pages
+^^^^^^^^^^^^^^^^^^^
+
+After completing the above-mentioned preparation, you can navigate to your docs folders (``cd ~/$PROJECT_PATH/docs``), then build HTML pages locally with the `build-docs` command.
+
+.. note::
+   If ``$PROJECT_PATH`` is not the parent to the ``docs`` folder, then please specify the project path with ``--project-path`` option. This is only required when you want to build API documentation.
+
+* Build HTML pages for "generic" documentation that doesn't contain a target
    ::
 
-      $ pacman -Syu
+      build-docs build
 
-   This process will likely require restarting of the MSYS2 MINGW32 console and repeating above commands, until update is complete.
-
-2. Install *pillow*, that is one of dependences of the *blockdiag*:
-
+* Build HTML pages for a single language
    ::
 
-      $ pacman -S mingw32/mingw-w64-i686-python-pillow
+      build-docs -l en
 
-   Check the log on the screen that ``mingw-w64-i686-python-pillow-4.3.0-1`` or newer is installed. Previous versions of *pillow* will not work.
+   Choices for language (``-l``) are ``en`` and ``zh_CN``.
 
-A downside of Windows installation is that fonts of the ``blockdiag pictures`` do not render correctly, you will see some random characters instead. Until this issue is fixed, you can use the `interactive shell <http://interactive.blockdiag.com/?compression=deflate&src=eJxlUMFOwzAMvecrrO3aITYQQirlAIIzEseJQ5q4TUSIq8TVGIh_J2m7jbKc7Ge_5_dSO1Lv2soWvoVYgieNoMh7VGzJR9FJtugZ7lYQ0UcKEbYNOY36rRQHZHUPT68vV5tceGLbWCUzPfeaFFMoBZzecVc56vWwJFnWMmJ59CCZg617xpOFbTSyw0pmvT_HJ7hxtFNGBr6wvuu5SCkchcrZ1vAeXZomznh5YgTqfcpR02cBO6vZVDeXBRjMjKEcFRbLh8f18-Z2UUBDnqP9wmp9ncRmSSfND2ldGo2h_zse407g0Mxc1q7HzJ3-4jzYYTJjtQH3iSV-fgFzx50J>`__ to see how the complete picture looks like.
+* Build HTML pages for a single target
+   ::
 
-ESP-Docs
-^^^^^^^^
+      build-docs -t esp32
 
-All remaining applications are `Python <https://www.python.org/>`__ packages and you can install them in one step as follows:
+   Choices for target (``-t``) are any supported chip targets (for example ``esp32`` and ``esp32s2``).
 
-::
+* Build HTML pages for a single language and target combination only
+   ::
 
-   pip install --user esp-docs
+      build-docs -t esp32 -l en
 
-This will pull in all the necessary dependencies such as Sphinx, Breathe etc.
+   Choices for language (``-l``) are ``en`` and ``zh_CN``, and for target (``-t``) are any supported chip targets (for example ``esp32`` and ``esp32s2``).
 
-.. _building-documentation-1:
+* Build HTML pages excluding Doxygen-generated API documentation, which drastically reduces build time
+   ::
 
-Building Documentation
-----------------------
+      build-docs -f
 
-::
+   or by setting the environment variable ``DOCS_FAST_BUILD``. To set an environment variable, go to your project's **Settings** > **CI/CD** and expand the **Variables** section. Select **Add variable** and fill in the details for your variables. For more information on how to add a variable to a project, see the `GitLab documentation <https://docs.gitlab.com/ee/ci/variables/#add-a-cicd-variable-to-a-project>`__.
 
-   cd ~/$PROJECT_PATH/docs
+   .. note::
+      To set an environment variable, you need to be a project admin or contact the project admin for help.
 
-Now you should be ready to build documentation by invoking:
+   .. note::
+      The time it takes to build is mainly determined by the amount of Doxygen API included. This is the reason why build with option `-f` for fast build is much faster.
 
-::
+   .. todo::
+      It seems "setting the environment variable ``DOCS_FAST_BUILD``" is not related to building documentation locally? or this is not an CI environment variable? To be verified.
 
-   build-docs build
+* Build HTML pages for a single document or a subset of documentation
+   For a single document
+   ::
 
-This will build docs for all supported languages & targets. This can take some time, although jobs will run in parallel up to the number of CPU cores you have (can modify this with the ``--sphinx-parallel-builds`` option, see ``build-docs --help`` for details). The ``build`` argument is optional, if no subcommand it specified ``build-docs`` defaults to ``build``
+      build-docs -t esp32 -l en -i api-reference/peripherals/can.rst
 
-To build for a single language and target combination only:
+   For a subset of documentation by listing all of them
+   ::
 
-::
+      build-docs -t esp32 -l en -i api-reference/peripherals/can.rst api-reference/peripherals/adc.rst
 
-   build-docs -t esp32 -l en
+   For a subset of documentation by using wildcards:
+   ::
 
-Choices for language (``-l``) are ``en`` and ``zh_CN``. Choices for target (``-t``) are any supported chip targets (for example ``esp32`` and ``esp32s2``).
+      build-docs -l en -t esp32 -i api-reference/peripherals/* build
 
-Build documentation will be placed in ``_build/<language>/<target>/html`` folder. To see it, open the ``index.html`` inside this directory in a web browser.
+   .. note::
+      Note that when you only build a single document or a subset of documentation. The HTML output won't be perfect, i.e. it will not build a proper index that lists all the documents, and any references to documents that are not built will result in warnings.
 
-Fast build
-^^^^^^^^^^
+* To see the complete list of options:
+   ::
 
-A trick to speed up building is to skip including doxygen generated API documention into the Sphinx build process, skipping this drastically reduces build time.
+      build-docs --help
 
-This can be achieved by adding the fast-build argument:
+Checking Output
+^^^^^^^^^^^^^^^
 
-::
+The built HTML pages will be placed in ``_build/<language>/<target>/html`` folder.
 
-   build-docs -f
+.. note::
+   There are a couple of spurious warnings that cannot be resolved without doing updates to the Sphinx or Doxygen source code. For such specific cases, respective warnings can be documented in ``docs/sphinx-known-warnings.txt`` and ``docs/doxygen-known-warnings.txt`` files, which are checked during the build process to ignore these spurious warnings.
 
-or by setting the environment variable ``DOCS_FAST_BUILD``.
+Building PDF Documentation Locally on Your PC
+---------------------------------------------
 
-Building a subset of the documentation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ESP-Docs also allows you to build your rst files into PDF files on your local PC. To do this, on top of all the packages and steps described in :ref:`building-documentation-1`, you also need to complete some additional steps.
 
-Since building the full documentation can be quite slow, it might be useful to just build just the subset of the documentation you are interested in.
+Installing Dependencies
+^^^^^^^^^^^^^^^^^^^^^^^
 
-This can be achieved by listing the document you want to build:
+1. Install the following LaTeX packages:
 
-::
+   * latexmk
+   * texlive-latex-recommended
+   * texlive-fonts-recommended
+   * texlive-xetex
 
-   build-docs -t esp32 -l en -i api-reference/peripherals/can.rst
+2. Install the following fonts:
 
-Building multiple documents is also possible:
+   * Freefont Serif, Sans and Mono OpenType fonts, available as the package ``fonts-freefont-otf`` on Ubuntu
+   * Lmodern, available as the package ``fonts-lmodern`` on Ubuntu
+   * Fandol, can be downloaded from `ctan.org <https://ctan.org/tex-archive/fonts/fandol>`__ archive
 
-::
+.. note::
+   Another alternative is to simply install `TeX Live <https://www.tug.org/texlive/>`__, which contains all LaTeX packages and fonts required to build PDF files. However, it may take you hours to install.
 
-   build-docs -t esp32 -l en -i api-reference/peripherals/can.rst api-reference/peripherals/adc.rst
+.. note::
+   If you are a Windows user or simply want to use a Docker container, then go directly to :ref:`Using a Docker Container <using-a-docker-container>` at the end of this section.
 
-As well as wildcards:
+After these steps, you should be able to build PDF files on your PC already. To see the details, go to :ref:`Building PDF Documents <building-pdf-documents>`.
 
-::
+.. _building-pdf-documents:
 
-   build-docs -l en -t esp32 -i api-reference/peripherals/* build
+Building PDF Documents
+^^^^^^^^^^^^^^^^^^^^^^
+Now you can navigate to your docs folders (``cd ~/$PROJECT_PATH/docs``), then build PDF documents with the same `build-docs` command, but with the ``-bs latex`` option.
 
-Note that this is a feature intended to simply testing and debugging during writing of documentation. The HTML output won’t be perfect, i.e. it will not build a proper index that lists all the documents, and any references to documents that are not built will result in warnings.
+* Build PDF for "generic" documentation that doesn't contain a target
+   ::
 
-Building PDF
-^^^^^^^^^^^^
+    build-docs -bs latex
 
-It is also possible to build LaTeX files and a PDF of the documentation using ``build-docs``. To do this the following Latex packages are required to be installed:
+* Build PDF for a single language and target combination only
+   ::
 
--  latexmk
--  texlive-latex-recommended
--  texlive-fonts-recommended
--  texlive-xetex
+     build-docs -bs latex -t esp32 -l en
 
-The following fonts are also required to be installed:
+   Choices for language (``-l``) are ``en`` and ``zh_CN``, and for target (``-t``) are any supported chip targets (for example ``esp32`` and ``esp32s2``).
 
--  Freefont Serif, Sans and Mono OpenType fonts, available as the package ``fonts-freefont-otf`` on Ubuntu
--  Lmodern, available as the package ``fonts-lmodern`` on Ubuntu
--  Fandol, can be downloaded from `ctan.org <https://ctan.org/tex-archive/fonts/fandol>`__ archive
+* Or alternatively build both HTML and PDF:
+   ::
 
-Now you can build the PDF for a target by invoking:
+    build-docs -bs html latex -l en -t esp32
 
-::
+Checking Output
+^^^^^^^^^^^^^^^
 
-   build-docs -bs latex -l en -t esp32
+The built LaTeX and PDF files will be placed in ``_build/<language>/<target>/latex/build`` folder.
 
-Or alternatively build both html and PDF:
+.. note::
+   There are a couple of spurious warnings that cannot be resolved without doing updates to the Sphinx or Doxygen source code. For such specific cases, respective warnings can be documented in ``docs/sphinx-known-warnings.txt`` and ``docs/doxygen-known-warnings.txt`` files, which are checked during the build process to ignore these spurious warnings.
 
-::
 
-   build-docs -bs html latex -l en -t esp32
+.. _using-a-docker-container:
 
-Latex files and the PDF will be placed in ``_build/<language>/<target>/latex`` folder.
+Using a Docker Container
+------------------------
 
-Deploy Docs
------------
+A Docker container image is a lightweight, standalone, executable package of software that can be prepared to include everything needed to run an application: code, runtime, system tools, system libraries, and in our case, to build the documentation locally. This approach saves you the trouble to configure your PC.
 
-ESP-Docs comes with a helper script for deploying docs to the Espressif webserver:
+To build documentation locally in a Docker container, complete the steps below:
 
-::
+1. Navigate to your project folder. For example ``cd esp/esp-docs``.
+2. Create a container for your project using the image provided by Espressif.
+   ::
 
-   deploy-docs
+    docker run -v $PWD:/esp-docs -w /esp-docs -it ciregistry.espressif.cn:8443/esp-idf-doc-env-v5.0
 
-See ``deploy_docs_template`` in `.gitlab-ci.yml <../.gitlab-ci.yml>`__ for an example on how to define the variables required.
+3. Configure your container by running ``pip install -U esp-docs``.
+
+After these steps, you can build docs following the instructions described in Sections :ref:`Building HTML Pages <building-html-pages>` and :ref:`Building PDF Documents <building-pdf-documents>`.
+
+Troubleshooting
+---------------
+
+If you experience any warning or error when building documentation locally:
+
+* Check :doc:`Troubleshooting Build Errors and Warnings <../troubleshooting/troubleshooting>`;
+* Or contact us by submitting a documentation feedback.
