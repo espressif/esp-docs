@@ -189,6 +189,8 @@ Syntax and examples:
 
 If you use ``:ref:`CONFIG_APP_COMPATIBLE_PRE_V3_1_BOOTLOADERS``` in ESP-IDF documents, this can lead you to the `description of this Kconfig reference <https://docs.espressif.com/projects/esp-idf/en/release-v5.0/esp32/api-reference/kconfig.html#config-app-compatible-pre-v3-1-bootloaders>`__.
 
+.. _link-api-member:
+
 Linking to Classes, Functions, Enumerations, etc
 ------------------------------------------------
 
