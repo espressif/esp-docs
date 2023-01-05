@@ -9,7 +9,7 @@ The guide consists of the following major sections:
 
 +-----------------+-------------------------------------------------------------------------------------------------+----------------------------------+----------------------------------------------------------------------------------------------------------------------------+
 | |Introduction|_ | Overview, features, extensions, supported markup language of ESP-Docs.                          | |Writing Doc|_                   | ESP-Docs-specific syntax and generic Sphinx and restructuredText syntax,                                                   |
-|                 |                                                                                                 |                                  | including :doc:`basic syntax </writing-documentation/basic-syntax>` and :doc:`link syntax </writing-documentation/link>`.  |
+|                 |                                                                                                 |                                  | including :doc:`basic syntax </writing-documentation/basic-syntax>` and :doc:`link syntax </writing-documentation/links>`. |
 | `Introduction`_ |                                                                                                 | `Writing Doc`_                   |                                                                                                                            |
 +-----------------+-------------------------------------------------------------------------------------------------+----------------------------------+----------------------------------------------------------------------------------------------------------------------------+
 |                                                                                                                                                                                                                                                                                   |
@@ -40,7 +40,3 @@ The guide consists of the following major sections:
     contributing-guide
     related-resources
     glossary
-
-.. note::
-
-    The guide is a work in progress, so you may see some blank documents with only a title.

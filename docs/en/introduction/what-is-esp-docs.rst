@@ -134,10 +134,10 @@ See :ref:`target-specific-inline-text` for an example.
 
 This is an implementation of a custom `Sphinx Roles <https://www.sphinx-doc.org/en/master/usage/restructuredtext/roles.html>`__ to help to link from documentation to specific files and folders in project repositories.
 
-See :doc:`Links to files on GitHub <../writing-documentation/link>` for an example.
+See :doc:`Links to files on GitHub <../writing-documentation/links>` for an example.
 
 .. todo::
-  Add a link to the related section in :doc:`Links to files on GitHub <../writing-documentation/link>`.
+  Add a link to the related section in :doc:`Links to files on GitHub <../writing-documentation/links>`.
 
 :project_file:`Latex Builder <src/esp_docs/esp_extensions/latex_builder.py>`
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -186,10 +186,10 @@ Other IDF-specific extensions subscribe to this event and use it to set up some 
 
 This extension subscribes to ``project-build-info`` event and uses confgen to generate ``kconfig.inc`` from the components included in the default project build. This file is then included into ``/api-reference/kconfig``.
 
-See :doc:`Link to Kconfig Reference <../writing-documentation/link>` for an example.
+See :doc:`Link to Kconfig Reference <../writing-documentation/links>` for an example.
 
 .. todo::
-  Add a link to the related section in :doc:`Link to Kconfig Reference <../writing-documentation/link>`.
+  Add a link to the related section in :doc:`Link to Kconfig Reference <../writing-documentation/links>`.
 
 :project_file:`Error to Name <src/esp_docs/idf_extensions/esp_err_definitions.py>`
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

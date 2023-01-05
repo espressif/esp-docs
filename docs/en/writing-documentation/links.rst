@@ -1,5 +1,5 @@
-Link
-====
+Links
+=====
 
 This document introduces how to link to different elements of documentation when you write documents with ESP-Docs.
 

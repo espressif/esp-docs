@@ -55,7 +55,7 @@ In Markdown, generating API documentation is not that easy. You need to either w
 Tables
 ^^^^^^
 
-Thanks to the various :doc:`table formats <../writing-documentation/table>` supported by reStructuredText, you can create more complex tables with merged cells, bullet lists, and specified column width, etc.
+Thanks to the various :doc:`table formats <../writing-documentation/tables>` supported by reStructuredText, you can create more complex tables with merged cells, bullet lists, and specified column width, etc.
 
 .. list-table::
    :widths: 30 70
@@ -78,7 +78,7 @@ In Markdown, you can only adjust table alignment.
 Links
 ^^^^^
 
-In reStructuredText, there are many ways to avoid using raw URL links (see :doc:`../writing-documentation/link`) when you:
+In reStructuredText, there are many ways to avoid using raw URL links (see :doc:`../writing-documentation/links`) when you:
 
 - Link to a specific place of other documents in the same project
 - Link to other documents in the same project without specifying document name

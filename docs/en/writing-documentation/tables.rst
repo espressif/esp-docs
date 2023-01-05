@@ -1,5 +1,5 @@
-Table
-=====
+Tables
+======
 
 Tables can present complex information in an understandable way. With reStructuredText syntax, you can create tables in the following formats:
 
@@ -36,7 +36,7 @@ Simple tables supports:
       Writing Documentation [1]_           Building Documentation [#]_
       Covers ESP-Docs supported syntax     介绍如何预览、构建文档
       ==================================   ============================
-    
+
     .. |write-doc| image:: ../../_static/writing-documentation.png
                 :height: 100px
                 :width: 100px
@@ -150,13 +150,13 @@ List tables support:
         :header-rows: 1
         :widths: 40 60
         :align: center
-    
+
         * - Field
           - Value (Byte)
         * - Type (Least Significant Bit)
           - 1
         * - Frame Control (Frag)
-          - 
+          -
         * - 序列号
           - 1
         * - 数据长度
@@ -175,13 +175,13 @@ The above table would be rendered as:
    :header-rows: 1
    :widths: 40 60
    :align: center
-    
+
    * - Field
      - Value (Byte)
    * - Type (Least Significant Bit)
      - 1
    * - Frame Control (Frag)
-     - 
+     -
    * - 序列号
      - 1
    * - 数据长度
@@ -249,7 +249,7 @@ As for formatting, CSV tables only support adjustable column width.
 
     .. csv-table:: Months
       :url: https://cdn.wsform.com/wp-content/uploads/2021/04/month.csv
-      :widths: 40, 20, 20, 20 
+      :widths: 40, 20, 20, 20
       :align: center
       :header-rows: 1
 
@@ -275,7 +275,7 @@ To summarize:
    :header-rows: 1
    :widths: 40 15 15 15 15
 
-   * - 
+   * -
      - Simple Table
      - Grid Table
      - List Table
@@ -306,7 +306,7 @@ To summarize:
      - ✅
      - ✅
    * - Row span
-     - 
+     -
      - ✅
      -
      -
