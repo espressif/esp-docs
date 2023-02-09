@@ -29,7 +29,6 @@ The guide consists of the following major sections:
 .. _Configuring ESP-Docs Projects: configuring-esp-docs-projects/index.html
 
 
-
 .. toctree::
    :hidden:
 

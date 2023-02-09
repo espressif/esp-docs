@@ -5,6 +5,7 @@ stages:
   - build
   - test_deploy
   - deploy
+  - post_deploy
 
 variables:
   # Versioned esp-idf-doc env image to use for all document building jobs
@@ -259,3 +260,26 @@ deploy_package:
   script:
    - pip install .
    - python $ESP_DOCS_PATH/ci/deploy_package.py
+
+check_doc_links:
+  extends:
+    - .build_template
+  only:
+    - master
+  stage: post_deploy
+  tags:
+    - build
+  artifacts:
+    when: always
+    paths:
+      - docs/_build/*/*/*.txt
+      - docs/_build/*/*/linkcheck/*.txt
+    expire_in: 1 week
+  # Link check might fail due circumstances outside of our control, e.g. a website being temporarily down or network outage. We use allow_failure so as not to mark a pipeline as failed just because the link-check failed.
+  allow_failure: true
+  script:
+    - cd docs
+    - build-docs -l $DOCLANG linkcheck
+  parallel:
+    matrix:
+      - DOCLANG: ["en"]
