@@ -80,8 +80,6 @@ To address this error, navigate to ``docs`` directory:
 
     cd docs
 
-.. _troubleshooting-add-extension:
-
 Extension error: Could not import extension
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -173,15 +171,7 @@ ERROR: Unknown directive type
 
 This error occurs when you use directives of an extension not covered by your project or by the esp-docs package.
 
-To address this error, you should:
-
-#. Add the extension for this directive to ``docs/conf_common.py`` (or ``docs/conf.py``) of your project, for example:
-
-    .. code-block::
-
-        extensions = ['sphinx-design']
-
-#. Add the extension and its version to ``docs/requirements.txt`` of your project, or to :project_file:`setup.cfg` of the ESP-Docs project. See details in Section :ref:`troubleshooting-add-extension`.
+To address this error, add the extension following :doc:`../configuring-esp-docs-projects/adding-extensions`.
 
 WARNING: the underline is too short
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

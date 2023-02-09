@@ -48,6 +48,7 @@ Besides Sphinx, several other third-party applications (extensions) help to prov
 - `recommonmark <https://github.com/readthedocs/recommonmark>`__: a flavor of Markdown. With this package, Sphinx can build documents written in Markdown to target formats.
 - `sphinx_selective_exclude <https://pypi.org/project/sphinx-selective-exclude/>`__: Sphinx extension to make the "only::" directive provided by Sphinx work in an expected and intuitive manner.
 
+.. _esp-docs-self-developed-extensions:
 
 Extensions Developed by Espressif
 ---------------------------------
