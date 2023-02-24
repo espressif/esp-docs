@@ -30,16 +30,16 @@ The guide consists of the following major sections:
 
 
 .. toctree::
-   :hidden:
+    :hidden:
 
-    Introduction <introduction/index>
-    Writing Documentation <writing-documentation/index>
-    Building Documentation <building-documentation/index>
-    Configuring ESP-Docs Projects <configuring-esp-docs-projects/index>
-    Troubleshooting <troubleshooting/index>
-    Contributing Guide <contributing-guide>
-    Related Resources <related-resources>
-    Glossary <glossary>
+    introduction/index
+    writing-documentation/index
+    building-documentation/index
+    configuring-esp-docs-projects/index
+    troubleshooting/index
+    contributing-guide
+    related-resources
+    glossary
 
 .. note::
 
