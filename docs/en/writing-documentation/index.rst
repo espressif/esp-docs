@@ -2,17 +2,17 @@ Writing Documentation
 =====================
 
 .. toctree::
-    :maxdepth: 1
+   :maxdepth: 1
 
-     Basic Syntax <basic-syntax>
-     Figures <figures>
-     Table <table>
-     Link <link>
-     Glossary <glossary>
-     Writing for Multiple Targets <writing-for-multiple-targets>
-     Redirecting Documents <redirecting-documents>
-     API documentation <api-documentation>
-     Formatting Documents for Translation <formatting-documents-for-translation>
+   basic-syntax
+   figures
+   table
+   link
+   glossary
+   writing-for-multiple-targets
+   redirecting-documents
+   api-documentation
+   formatting-documents-for-translation
 
 The purpose of this description is to provide a summary on how to write documentation using ``esp-docs``.
 
