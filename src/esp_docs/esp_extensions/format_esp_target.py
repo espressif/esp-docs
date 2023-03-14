@@ -1,5 +1,6 @@
 import os
 import os.path
+import pprint
 import re
 
 from docutils import io, nodes, statemachine, utils
@@ -10,11 +11,14 @@ from sphinx.util import logging
 
 
 def setup(app):
-    sub = StringSubstituter()
 
     # Config values not available when setup is called
     app.connect('config-inited', lambda _, config: sub.init_sub_strings(config))
     app.connect('source-read', sub.substitute_source_read_cb)
+
+    # Signal to inject any additional substitution
+    app.add_event('format-esp-target-add-sub')
+    app.connect('format-esp-target-add-sub', sub.add_sub)
 
     # Override the default include directive to include formatting with idf_target
     # This is needed since there are no source-read events for includes
@@ -27,7 +31,7 @@ def check_content(content, docname):
     # Log warnings for any {IDF_TARGET} expressions that haven't been replaced
     logger = logging.getLogger(__name__)
 
-    errors = re.findall(r'{IDF_TARGET.*?}', content)
+    errors = re.findall(r'{IDF_TARGET_.*?}', content)
 
     for err in errors:
         logger.warning('Badly formated string substitution: {}'.format(err), location=docname)
@@ -51,6 +55,8 @@ class StringSubstituter:
         {IDF_TARGET_TX_PIN:default="IO3",esp32="IO4",esp32s2="IO5"}
 
         This will define a replacement of the tag {IDF_TARGET_TX_PIN} in the current rst-file, see e.g. uart.rst for example
+
+        Provides, and listens to the `format-esp-target-add-sub`-event, which can be used to add custom substitutions
 
     """
     TARGET_NAMES = {'esp8266': 'ESP8266', 'esp32': 'ESP32', 'esp32s2': 'ESP32-S2',
@@ -109,12 +115,18 @@ class StringSubstituter:
 
     RE_PATTERN = re.compile(r'^\s*{IDF_TARGET_(\w+?):(.+?)}', re.MULTILINE)
 
+    SUB_LOG_FILE = "IDF_TARGET-substitutions.txt"
+
     def __init__(self):
         self.substitute_strings = {}
-        self.local_sub_strings = {}
 
     def add_pair(self, tag, replace_value):
         self.substitute_strings[tag] = replace_value
+
+    def log_subs_to_file(self, config):
+        with open(os.path.join(config.build_dir, self.SUB_LOG_FILE), 'w') as f:
+            pprint.pprint(self.substitute_strings, f)
+            print('Saved substitution list to %s' % f.name)
 
     def init_sub_strings(self, config):
 
@@ -132,7 +144,10 @@ class StringSubstituter:
         self.add_pair('{IDF_TARGET_DATASHEET_EN_URL}', self.DATASHEET_EN_URL[config.idf_target])
         self.add_pair('{IDF_TARGET_DATASHEET_CN_URL}', self.DATASHEET_CN_URL[config.idf_target])
 
+        self.log_subs_to_file(config)
+
     def add_local_subs(self, matches):
+        local_sub_strings = {}
 
         for sub_def in matches:
             if len(sub_def) != 2:
@@ -153,22 +168,24 @@ class StringSubstituter:
             else:
                 sub_value = match_target.groups()[2]
 
-            self.local_sub_strings[tag] = sub_value
+            local_sub_strings[tag] = sub_value
+
+        return local_sub_strings
 
     def substitute(self, content):
         # Add any new local tags that matches the reg.ex.
         sub_defs = re.findall(self.RE_PATTERN, content)
 
+        local_sub_strings = {}
+
         if len(sub_defs) != 0:
-            self.add_local_subs(sub_defs)
+            local_sub_strings.update(self.add_local_subs(sub_defs))
 
         # Remove the tag defines
         content = re.sub(self.RE_PATTERN, '', content)
 
-        for key in self.local_sub_strings:
-            content = content.replace(key, self.local_sub_strings[key])
-
-        self.local_sub_strings = {}
+        for key in local_sub_strings:
+            content = content.replace(key, local_sub_strings[key])
 
         for key in self.substitute_strings:
             content = content.replace(key, self.substitute_strings[key])
@@ -179,6 +196,30 @@ class StringSubstituter:
         source[0] = self.substitute(source[0])
 
         check_content(source[0], docname)
+
+    def add_sub(self, app, subs):
+        for name, value in subs.items():
+            try:
+                sub_name = f'{{IDF_TARGET_{name}}}'
+
+                # We dont do do any complex interpretation of the value,
+                # but try to fix the most common formatting "issues"
+                sub_val = value.strip('()')
+                if sub_val.endswith('UL'):
+                    sub_val = sub_val[:-2]
+                if sub_val.endswith('U'):
+                    sub_val = sub_val[:-1]
+
+                self.add_pair(sub_name, sub_val)
+            except Exception:
+                # Dont fail build just because we got a value we cannot parse, silently drop it instead
+                continue
+
+        self.log_subs_to_file(app.config)
+
+
+# Shared between read source callbacks and .. include:: directive, but read only
+sub = StringSubstituter()
 
 
 class FormatedInclude(BaseInclude):
@@ -247,9 +288,6 @@ class FormatedInclude(BaseInclude):
                               (self.name, ErrorString(error)))
 
         # Format input
-        sub = StringSubstituter()
-        config = self.state.document.settings.env.config
-        sub.init_sub_strings(config)
         rawtext = sub.substitute(rawtext)
 
         # start-after/end-before: no restrictions on newlines in match-text,
