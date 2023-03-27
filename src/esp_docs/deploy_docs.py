@@ -41,11 +41,8 @@ def env(variable, default=None):
 def main():
     # if you get KeyErrors on the following lines, it's probably because you're not running in Gitlab CI
     git_ver = env('GIT_VER')  # output of git describe --always
-    ci_ver = env('CI_COMMIT_REF_NAME', git_ver)  # branch or tag we're building for (used for 'release' & URL)
-
-    version = sanitize_version(ci_ver)
+    version = sanitize_version(git_ver) # branch or tag we're building for (used for 'release' & URL)
     print('Git version: {}'.format(git_ver))
-    print('CI Version: {}'.format(ci_ver))
     print('Deployment version: {}'.format(version))
 
     if not version:
