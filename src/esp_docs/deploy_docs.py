@@ -20,20 +20,22 @@
 import glob
 import os
 import os.path
+import packaging.version
 import re
 import stat
 import subprocess
+import sys
 import tarfile
 
-import packaging.version
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(SCRIPT_DIR))
+from sanitize_version import sanitize_version  # noqa
 
 
 def env(variable, default=None):
     """ Shortcut to return the expanded version of an environment variable """
     return os.path.expandvars(os.environ.get(variable, default) if default else os.environ[variable])
-
-
-from .sanitize_version import sanitize_version  # noqa
 
 
 def main():
