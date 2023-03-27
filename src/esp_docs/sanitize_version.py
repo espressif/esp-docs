@@ -23,16 +23,16 @@ def sanitize_version(original_version):
     a URL-safe sanitized version. (this is used as 'release' config variable when building
     the docs.)
 
-    Will override the original version with the Gitlab CI CI_COMMIT_REF_NAME environment variable if
-    this is present.
+    Will override the original version with Gitlab or GitHub CI predefined variables
 
     Also follows the RTD-ism that master branch is named 'latest'
 
     """
 
-    try:
-        version = os.environ['CI_COMMIT_REF_NAME']
-    except KeyError:
+    version = os.environ.get('CI_COMMIT_REF_NAME')
+    if version is None:
+        version = os.environ.get('GITHUB_REF_NAME')
+    if version is None:
         version = original_version
 
     latest_branch_name = os.environ.get('ESP_DOCS_LATEST_BRANCH_NAME', 'master')
