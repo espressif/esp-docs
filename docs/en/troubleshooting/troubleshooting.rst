@@ -63,7 +63,7 @@ To address this error, there are the following options:
     .. code-block::
 
         ./install.sh
-        ./export.sh
+        . ./export.sh
 
 .. todo::
 
