@@ -11,7 +11,7 @@ This document provides guidelines on addressing build errors and warnings with t
 Message Format
 --------------
 
-Messages can help you locate errors and warnings and get a hint of why they occur. 
+Messages can help you locate errors and warnings and get a hint of why they occur.
 
 For projects using the esp-docs package, a message usually includes the following parameters in sequence:
 
@@ -209,7 +209,7 @@ This warning occurs when Sphinx cannot find the document at specified path.
 To fix this warning:
 
 #. Check if the document path is correct.
-#. Check if you have used correct syntax for :doc:`role <../writing-documentation/basic-syntax>`. For instance, ``.rst`` in the following example should be removed (see :doc:`../writing-documentation/link`):
+#. Check if you have used correct syntax for :doc:`role <../writing-documentation/basic-syntax>`. For instance, ``.rst`` in the following example should be removed (see :doc:`../writing-documentation/links`):
 
 .. code-block::
 
