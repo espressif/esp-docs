@@ -82,7 +82,7 @@ class StringSubstituter:
                   'esp32s2': 'https://www.espressif.com/sites/default/files/documentation/esp32-s2_technical_reference_manual_en.pdf',
                   'esp32c3': 'https://www.espressif.com/sites/default/files/documentation/esp32-c3_technical_reference_manual_en.pdf',
                   'esp32s3': 'https://www.espressif.com/sites/default/files/documentation/esp32-s3_technical_reference_manual_en.pdf',
-                  'esp32h2': '#',
+                  'esp32h2': 'https://www.espressif.com/sites/default/files/documentation/esp32-h2_technical_reference_manual_en.pdf',
                   'esp32c2': 'https://www.espressif.com/sites/default/files/documentation/esp8684_technical_reference_manual_en.pdf',
                   'esp32c6': 'https://www.espressif.com/sites/default/files/documentation/esp32-c6_technical_reference_manual_en.pdf'}
 
@@ -91,7 +91,7 @@ class StringSubstituter:
                   'esp32s2': 'https://www.espressif.com/sites/default/files/documentation/esp32-s2_technical_reference_manual_cn.pdf',
                   'esp32c3': 'https://www.espressif.com/sites/default/files/documentation/esp32-c3_technical_reference_manual_cn.pdf',
                   'esp32s3': 'https://www.espressif.com/sites/default/files/documentation/esp32-s3_technical_reference_manual_cn.pdf',
-                  'esp32h2': '#',
+                  'esp32h2': 'https://www.espressif.com/sites/default/files/documentation/esp32-h2_technical_reference_manual_cn.pdf',
                   'esp32c2': 'https://www.espressif.com/sites/default/files/documentation/esp8684_technical_reference_manual_cn.pdf',
                   'esp32c6': 'https://www.espressif.com/sites/default/files/documentation/esp32-c6_technical_reference_manual_cn.pdf'}
 
@@ -100,7 +100,7 @@ class StringSubstituter:
                         'esp32s2': 'https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_en.pdf',
                         'esp32c3': 'https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf',
                         'esp32s3': 'https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf',
-                        'esp32h2': '#',
+                        'esp32h2': 'https://www.espressif.com/sites/default/files/documentation/esp32-h2_datasheet_en.pdf',
                         'esp32c2': 'https://www.espressif.com/sites/default/files/documentation/esp8684_datasheet_en.pdf',
                         'esp32c6': 'https://www.espressif.com/sites/default/files/documentation/esp32-c6_datasheet_en.pdf'}
 
@@ -109,7 +109,7 @@ class StringSubstituter:
                         'esp32s2': 'https://www.espressif.com/sites/default/files/documentation/esp32-s2_datasheet_cn.pdf',
                         'esp32c3': 'https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_cn.pdf',
                         'esp32s3': 'https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_cn.pdf',
-                        'esp32h2': '#',
+                        'esp32h2': 'https://www.espressif.com/sites/default/files/documentation/esp32-h2_datasheet_cn.pdf',
                         'esp32c2': 'https://www.espressif.com/sites/default/files/documentation/esp8684_datasheet_cn.pdf',
                         'esp32c6': 'https://www.espressif.com/sites/default/files/documentation/esp32-c6_datasheet_cn.pdf'}
 
