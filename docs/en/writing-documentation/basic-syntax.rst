@@ -81,6 +81,47 @@ Normally, there are no heading levels assigned to certain characters as the stru
 - ``"``, for paragraphs
 
 
+Section Numbering
+-----------------
+
+Section numbering is generally **not recommended**, particularly when done manually. However, if no alternative exists, it is advisable to use automatic methods.
+
+To automatically number sections and subsections **across documents**, see :ref:`index-files` > ``numbered`` option.
+
+.. figure:: ../../_static/numbering-across-documents.png
+    :align: center
+    :scale: 45%
+    :alt: Rendered Result - Numbering Across Documents
+
+    Rendered Result - Numbering Across Documents (Click to Enlarge)
+
+To automatically number sections and subsections **in one document**, use
+
+Syntax:
+
+.. code-block:: rst
+
+  .. sectnum::
+    :depth: 3
+    :prefix: 3.2.
+    :start: 1
+
+.. figure:: ../../_static/numbering-in-one-document.png
+    :align: center
+    :scale: 45%
+    :alt: Rendered Result - Numbering in One Document
+
+    Rendered Result - Numbering in One Document (Click to Enlarge)
+
+You may give the following options to the directive:
+
+- ``:depth:``: The number of section levels that are numbered by this directive. The default depth is unlimited.
+- ``:prefix:``: An arbitrary string that is prefixed to the automatically generated section numbers. It may be something like "3.2.", which will produce "3.2.1", "3.2.2", and so on. The default is no prefix.
+- ``:start:``: The value that will be used for the first section number. Combined with ``prefix``, this may be used to force the right numbering for a document split over several source files. The default is 1.
+
+However, the ``sectnum`` directive also needlessly numbers the title of the document itself. See `invalid section numbering <https://github.com/sphinx-doc/sphinx/issues/4628#issuecomment-366418186>`_ for reasons.
+
+
 Lists
 -----
 
@@ -299,6 +340,8 @@ Syntax:
     :depth: 1
 
 
+.. _index-files:
+
 Index Files
 -----------
 
@@ -328,6 +371,7 @@ You may give the following options to the directive:
 
 - ``:maxdepth:``: The maximum depth of the TOC.
 - ``:hidden:``: The toctree is hidden in which case they will be used to build the left navigation column but not appear in the main page text.
+- ``:numbered:`` (**not recommended**): Numbering starts from the heading of the top level. Sub-toctrees are also automatically numbered. In the example above, numbering will begin from the heading level of ``introduction``.
 
 For more information, see Sphinx `TOC tree <https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#directive-toctree>`__ documentation.
 
