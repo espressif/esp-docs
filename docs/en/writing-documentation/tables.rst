@@ -121,7 +121,7 @@ The above table would be rendered as:
   |          | RISC-V-based MCU with 400 KB of SRAM,  |             |            |
   |          | which is capable of running at 160 MHz.|             |            |
   +----------+----------------------------------------+-------------+------------+
-  | ESP32-S3 | ESP32-S3 is a dual-core XTensa LX7 MCU,| -40         | 105        |
+  | ESP32-S3 | ESP32-S3 is a dual-core Xtensa LX7 MCU,| -40         | 105        |
   |          | capable of running at 240 MHz.         |             |            |
   +----------+----------------------------------------+-------------+------------+
 
@@ -201,7 +201,6 @@ CSV (comma-separated values) tables might be the choice if you want to include C
 
 - placed in a separate CSV file
 - an integral part of the document
-- referred to via a URL link
 
 As for formatting, CSV tables only support adjustable column width.
 
@@ -242,24 +241,6 @@ As for formatting, CSV tables only support adjustable column width.
   .. note::
 
     Text with spaces in between should be enclosed by quotation marks, such as ``"4 MB"``.
-
-- Example of referring to CSV data via a URL link:
-
-  .. code-block::
-
-    .. csv-table:: Months
-      :url: https://cdn.wsform.com/wp-content/uploads/2021/04/month.csv
-      :widths: 40, 20, 20, 20
-      :align: center
-      :header-rows: 1
-
-  The above table would be rendered as:
-
-  .. csv-table:: Months
-    :url: https://cdn.wsform.com/wp-content/uploads/2021/04/month.csv
-    :widths: 40, 20, 20, 20
-    :align: center
-    :header-rows: 1
 
 Comparison
 ----------
