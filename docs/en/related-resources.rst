@@ -9,7 +9,10 @@ Related Resources
     - `ESP-IDF Programming Guide <https://docs.espressif.com/projects/esp-idf/en/latest/esp32/>`__
     - `ESP-AT User Guide <https://docs.espressif.com/projects/esp-at/en/latest/esp32/>`__
     - `esptool.py Documentation <https://docs.espressif.com/projects/esptool/en/latest/esp32/>`__
-    - `ESP-Protocols <https://espressif.github.io/esp-protocols/mdns/en/index.html>`__
+    - `mDNS Service <https://docs.espressif.com/projects/esp-protocols/mdns/docs/latest/en/index.html>`__
+    - `ESP WebSocket Client <https://docs.espressif.com/projects/esp-protocols/esp_websocket_client/docs/latest/index.html>`__
+    - `ASIO port <https://docs.espressif.com/projects/esp-protocols/asio/docs/latest/index.html>`__
+    - `ESP MQTT C++ client <https://docs.espressif.com/projects/esp-protocols/esp_mqtt_cxx/docs/latest/index.html>`__
 
 - To learn more about how documentation builds, go to
 
