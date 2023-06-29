@@ -47,9 +47,9 @@ class StringSubstituter:
         {IDF_TARGET_PATH_NAME}, replaced with the path name, e.g. esp32s2
         {IDF_TARGET_CFG_PREFIX}, replaced with the prefix used for config parameters, e.g. ESP32S2
         {IDF_TARGET_TRM_EN_URL}, replaced with the url to the English technical reference manual
-        {IDF_TARGET_TRM_CH_URL}, replaced with the url to the Chinese technical reference manual
+        {IDF_TARGET_TRM_CN_URL}, replaced with the url to the Chinese technical reference manual
         {IDF_TARGET_DATASHEET_EN_URL}, replaced with the url to the English datasheet
-        {IDF_TARGET_DATASHEET_CH_URL}, replaced with the url to the Chinese datasheet
+        {IDF_TARGET_DATASHEET_CN_URL}, replaced with the url to the Chinese datasheet
 
         Also supports defines of local (single rst file) with the format:
         {IDF_TARGET_TX_PIN:default="IO3",esp32="IO4",esp32s2="IO5"}
