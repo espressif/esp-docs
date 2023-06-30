@@ -285,7 +285,7 @@ Welcome to `Espressif <https://www.espressif.com/>`__!
 Linking to ESP TRMs and Datasheets
 ----------------------------------
 
-If you need to link to Espressif's TRMs and datasheets of different targets, you can also use the external links introduced above. However, ESP-Docs offers a simple way by defining the macros {IDF_TARGET_TRM_EN_URL}, {IDF_TARGET_TRM_CH_URL}, {IDF_TARGET_DATASHEET_EN_URL} and {IDF_TARGET_DATASHEET_CH_URL}. You can directly use them to link to related TRMs and datasheets. For details, please refer to :project_file:`format_esp_target.py <src/esp_docs/esp_extensions/format_esp_target.py>`.
+If you need to link to Espressif's TRMs and datasheets of different targets, you can also use the external links introduced above. However, ESP-Docs offers a simple way by defining the macros {IDF_TARGET_TRM_EN_URL}, {IDF_TARGET_TRM_CN_URL}, {IDF_TARGET_DATASHEET_EN_URL} and {IDF_TARGET_DATASHEET_CN_URL}. You can directly use them to link to related TRMs and datasheets. For details, please refer to :project_file:`format_esp_target.py <src/esp_docs/esp_extensions/format_esp_target.py>`.
 
 Linking to a Whole TRM or Datasheet File
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
