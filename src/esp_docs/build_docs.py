@@ -100,32 +100,33 @@ def main():
 
     parser = argparse.ArgumentParser(description='build_docs.py: Build espressif docs', prog='build_docs.py')
 
-    parser.add_argument('--language', '-l', choices=LANGUAGES, required=False)
-    parser.add_argument('--target', '-t', choices=TARGETS, nargs='+', required=False)
-    parser.add_argument('--project-path', '-pp', type=str, default='../',
+    common_args = argparse.ArgumentParser(add_help=False)
+    common_args.add_argument('--language', '-l', choices=LANGUAGES, required=False)
+    common_args.add_argument('--target', '-t', choices=TARGETS, nargs='+', required=True)
+    common_args.add_argument('--project-path', '-pp', type=str, default='../',
                         help='Path to project we are building docs for')
-    parser.add_argument('--build-dir', '-b', type=str, default='_build')
-    parser.add_argument('--source-dir', '-s', type=str, default='')
-    parser.add_argument('--doxyfile_dir', '-d', type=str, default='.')
-    parser.add_argument('--builders', '-bs', nargs='+', type=str, default=['html'],
+    common_args.add_argument('--build-dir', '-b', type=str, default='_build')
+    common_args.add_argument('--source-dir', '-s', type=str, default='')
+    common_args.add_argument('--doxyfile_dir', '-d', type=str, default='.')
+    common_args.add_argument('--builders', '-bs', nargs='+', type=str, default=['html'],
                         help='List of builders for Sphinx, e.g. html or latex, for latex a PDF is also generated')
-    parser.add_argument('--sphinx-parallel-builds', '-p', choices=['auto'] + [str(x) for x in range(8)],
+    common_args.add_argument('--sphinx-parallel-builds', '-p', choices=['auto'] + [str(x) for x in range(8)],
                         help='Parallel Sphinx builds - number of independent Sphinx builds to run', default='auto')
-    parser.add_argument('--sphinx-parallel-jobs', '-j', choices=['auto'] + [str(x) for x in range(8)],
+    common_args.add_argument('--sphinx-parallel-jobs', '-j', choices=['auto'] + [str(x) for x in range(8)],
                         help='Sphinx parallel jobs argument - number of threads for each Sphinx build to use', default='1')
-    parser.add_argument('--input-docs', '-i', nargs='+', default=[''],
+    common_args.add_argument('--input-docs', '-i', nargs='+', default=[''],
                         help='List of documents to build relative to the doc base folder, i.e. the language folder. Defaults to all documents')
-    parser.add_argument('--fast-build', '-f', action='store_true', help='Skips including doxygen generated APIs into the Sphinx build')
-    parser.add_argument('--skip-reqs-check', action='store_true', help='Skips checking python requirements.txt found in the current directory')
+    common_args.add_argument('--fast-build', '-f', action='store_true', help='Skips including doxygen generated APIs into the Sphinx build')
+    common_args.add_argument('--skip-reqs-check', action='store_true', help='Skips checking python requirements.txt found in the current directory')
 
     action_parsers = parser.add_subparsers(dest='action')
 
-    build_parser = action_parsers.add_parser('build', help='Build documentation')
+    build_parser = action_parsers.add_parser('build', parents=[common_args], help='Build documentation')
     build_parser.add_argument('--check-warnings-only', '-w', action='store_true')
 
-    action_parsers.add_parser('linkcheck', help='Check links (a current IDF revision should be uploaded to GitHub)')
+    action_parsers.add_parser('linkcheck', parents=[common_args], help='Check links (a current IDF revision should be uploaded to GitHub)')
 
-    action_parsers.add_parser('gh-linkcheck', help='Checking for hardcoded GitHub links')
+    action_parsers.add_parser('gh-linkcheck', parents=[common_args], help='Checking for hardcoded GitHub links')
 
     args = parser.parse_args()
 
