@@ -20,6 +20,7 @@ variables:
 
 .before_script_prepare_build:
   before_script:
+    - pip install --upgrade pip
     # Use CI Tools
     - curl -sSL ${CIT_LOADER_URL} | sh
     - source citools/import_functions
@@ -136,7 +137,7 @@ build_idf_docs_html:
     - .build_template
   variables:
     DOCS_DIR: $CI_PROJECT_DIR/esp-idf/docs
-    IDF_COMMIT_ID: 7d680980894fbcc1532f6934c1e3a2f0f8181d64
+    IDF_COMMIT_ID: v5.1
   artifacts:
     when: always
     paths:
@@ -161,7 +162,7 @@ build_idf_docs_pdf:
     - .build_template
   variables:
     DOCS_DIR: $CI_PROJECT_DIR/esp-idf/docs
-    IDF_COMMIT_ID: 7d680980894fbcc1532f6934c1e3a2f0f8181d64
+    IDF_COMMIT_ID: v5.1
   artifacts:
     when: always
     paths:
