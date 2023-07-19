@@ -5,8 +5,6 @@ This document describes how to integrate :doc:`ESP-Docs <../introduction/what-is
 
 While performing the steps in this document, you can always refer to the documentation that has already been deployed to Espressif's server as examples, such as `ESP-IDF Programming Guide <https://docs.espressif.com/projects/esp-idf/en/latest/esp32/>`__, `ESP-AT User Guide <https://docs.espressif.com/projects/esp-at/en/latest/esp32/>`__, `esptool.py Documentation <https://docs.espressif.com/projects/esptool/en/latest/esp32/>`__, and `ESP-Docs User Guide <https://docs.espressif.com/projects/esp-docs/en/latest/index.html>`__.
 
-Documentation built by ESP-Docs can also be deployed to other servers. For example, `ESP-Protocols documentation <https://espressif.github.io/esp-protocols/mdns/en/index.html>`__ is deployed to `GitHub Pages <https://pages.github.com/>`__. For how to publish documentation built by ESP-Docs to GitHub Pages, please refer to `Configuring a publishing source for your GitHub Pages site <https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site>`__.
-
 The process to integrate ESP-Docs can be broken down into the following steps:
 
 .. contents::
