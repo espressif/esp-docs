@@ -136,9 +136,6 @@ def build_doc_tarball(version, git_ver, build_dir):
     pdfs = glob.glob('{}/**/latex/build/*.pdf'.format(build_dir), recursive=True)
     print('Found %d PDFs in latex directories' % len(pdfs))
 
-    # add symlink for stable and latest and adds them to PDF blob
-    symlinks = create_and_add_symlinks(version, git_ver, pdfs)
-
     def not_sources_dir(ti):
         """ Filter the _sources directories out of the tarballs """
         if ti.name.endswith('/_sources'):
@@ -188,28 +185,7 @@ def build_doc_tarball(version, git_ver, build_dir):
             print("Archiving '{}' as '{}'...".format(pdf_path, archive_path))
             tarball.add(pdf_path, archive_path)
 
-    for symlink in symlinks:
-        os.unlink(symlink)
-
     return (os.path.abspath(tarball_path), version_paths)
-
-
-def create_and_add_symlinks(version, git_ver, pdfs):
-    """ Create symbolic links for PDFs for 'latest' and 'stable' releases """
-
-    symlinks = []
-    if 'stable' in version or 'latest' in version:
-        for pdf_path in pdfs:
-            # Sub the version info, file name is {language}-{version}-{target}.pdf
-            symlink_path = re.sub(r'(en-|zh_CN-)(.*?)(-esp[\w\d]*?\.pdf)', r'\1' + version + r'\3', pdf_path)
-
-            os.symlink(pdf_path, symlink_path)
-            symlinks.append(symlink_path)
-
-        pdfs.extend(symlinks)
-        print('Found %d PDFs in latex directories after adding symlink' % len(pdfs))
-
-    return symlinks
 
 
 def is_stable_version(version):
