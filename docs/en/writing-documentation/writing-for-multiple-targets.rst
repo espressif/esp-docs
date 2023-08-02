@@ -10,7 +10,7 @@ To facilitate the writing of documents that can be reused for multiple different
 Target-Specific Inline Text
 ---------------------------
 
-When the content is reusable for all ESP chips, but you need to refer to the specific chip name, toolchain name, path, hardware/software specification, or other inline text that varies among different targets in the paragraph, consider using the substitution macros supplied by the extension `Format ESP Target <../../../src/esp_docs/esp_extensions/format_esp_target.py>`__. Substitution macros allow you to generate target-specific inline text from the same source file with the target passed to the Sphinx command line.
+When the content is reusable for all ESP chips, but you need to refer to the specific chip name, toolchain name, path, hardware/software specification, or other inline text that varies among different targets in the paragraph, consider using the substitution macros supplied by the extension :project_file:`Format ESP Target <src/esp_docs/esp_extensions/format_esp_target.py>`. Substitution macros allow you to generate target-specific inline text from the same source file with the target passed to the Sphinx command line.
 
 For example, in the following reStructuredText content, the substitution macros (referred to as tag hereinafter)  ``IDF_TARGET_NAME``, ``IDF_TARGET_PATH_NAME``, ``IDF_TARGET_TOOLCHAIN_PREFIX``, and ``IDF_TARGET_TOOLCHAIN_PREFIX`` defined in ``esp_extensions/format_esp_target.py`` are used::
 
