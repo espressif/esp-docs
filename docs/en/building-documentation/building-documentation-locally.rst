@@ -14,7 +14,7 @@ ESP-Docs allows you to build your rst documentation into HTML pages on you local
 * Catch and fix any potential build errors (due to markup syntax, incorrect links, labels, missing images, etc.) early, instead of waiting on CI errors.
 * Of course, have a peek of your final documentation early.
 
-If you just want to roughly preview your rst files while your write and don't care too much about styles and broken links at this moment, then go to Section :doc:`Previewing Documentation inside Your Text Editor <../building-documentation/previewing-documentation-inside-your-text-editor>`
+If you just want to roughly preview your rst files while your write and don't care too much about styles and broken links at this moment, then go to Section :doc:`Previewing Documentation inside Your Text Editor <../building-documentation/previewing-documentation-inside-your-text-editor>`.
 
 Installing Dependencies
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -41,6 +41,23 @@ All applications needed are `Python <https://www.python.org/>`__ packages, and y
 
 This will pull in all the necessary dependencies such as Sphinx, Breathe, etc.
 
+.. note::
+   The installed esp-docs may not be added to your PATH environment variable yet at this moment. To make this tool usable from the command line, add the bin folder where it is installed to your PATH variable by running ``export PATH=path_to_bin_folder:$PATH`` in your terminal.
+
+   To get this ``path_to_bin_folder``, try entering ``pip uninstall esp-docs``, you will see something like:
+   ::
+
+      Found existing installation: esp-docs 1.3.0
+      Uninstalling esp-docs-1.3.0:
+      Would remove:
+      /Users/dummy/Library/Python/3.10/bin/build-docs
+      /Users/dummy/Library/Python/3.10/bin/deploy-docs
+      /Users/dummy/Library/Python/3.10/lib/python/site-packages/esp_docs-1.3.0.dist-info/*
+      /Users/dummy/Library/Python/3.10/lib/python/site-packages/esp_docs/*
+
+   The path before ``build-docs`` is your bin path. However, this configuration is only effective in the current terminal session. You need to add PATH again once you reopen your terminal.
+
+   Therefore, if you plan to use esp-docs frequently, consider adding ``export PATH="path_to_bin_folder:$PATH"`` to your shell profile files, such as ``.zprofile``, then refresh the configuration by restarting your terminal or by running ``source [path_to_profile_file]``, for example ``source ~/.zprofile``. Afterwards, you can use esp-docs in any terminal session anytime.
 
 CairoSVG
 """"""""
@@ -81,6 +98,9 @@ After completing the above-mentioned preparation, you can navigate to your docs 
 
 .. note::
    If ``$PROJECT_PATH`` is not the parent to the ``docs`` folder, then please specify the project path with ``--project-path`` option. This is only required when you want to build API documentation.
+
+.. note::
+   Sometimes, after running ``build-docs`` commands, you would see some messages like ``The following Python requirements from the current directory's requirements.txt are not satisfied:``. In this case, just go to the directory where the requirements.txt file is located, and run ``pip install -U -r requirements.txt``.
 
 * Build HTML pages for "generic" documentation that doesn't contain a target
    ::
