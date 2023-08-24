@@ -39,35 +39,15 @@ Among these parameters, **file path** and **line number** are optional. They wil
 Package-Related Errors and Warnings
 -----------------------------------
 
-command not found: build-docs
+Command not found: build-docs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This error occurs when you have not installed the esp-docs package or the dependencies to run esp-docs.
+This error occurs when you have not:
 
-To address this error, there are the following options:
+* installed the esp-docs package properly;
+* or correctly set the environment variable PATH.
 
-- Option 1: install esp-docs by running the following command:
-
-    .. code-block::
-
-        pip install esp-docs
-
-- Option 2: install all dependencies listed in ``requirements.txt`` by running the following command in ``docs`` directory:
-
-    .. code-block::
-
-        pip install -r requirements.txt
-
-    For some projects the dependencies might be placed in elsewhere. For example, for ESP-IDF, you should run the following commands in the root directory ``esp-idf``:
-
-    .. code-block::
-
-        ./install.sh
-        . ./export.sh
-
-.. todo::
-
-    Thie error might still occur when you have already installed esp-docs. The current workaround is to run install.sh and export.sh in esp-idf. The possible reason is that the path has not been set. Will add the solution later.
+To address this error, please go to Section :doc:`Building Documentation locally on Your OS <../building-documentation/building-documentation-locally>`, and make sure you have completed all the steps required.
 
 Application error: Cannot find source directory
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
