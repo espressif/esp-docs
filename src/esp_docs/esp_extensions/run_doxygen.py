@@ -362,8 +362,11 @@ def get_directives(tree, kind):
         for elem in tree.iterfind(
                 'compounddef/sectiondef/memberdef[@kind="%s"]' % kind):
             name = elem.find('name')
-            rst_output += '.. doxygen%s:: ' % kind
-            rst_output += name.text + '\n'
+
+            if name.text:
+                rst_output += '.. doxygen%s:: ' % kind
+                rst_output += name.text + '\n'
+
     if rst_output:
         all_kinds_dict = dict(ALL_KINDS)
         rst_output = get_rst_header(all_kinds_dict[kind]) + rst_output + '\n'
