@@ -129,7 +129,7 @@ In the ``.gitlab-ci.yml`` of your project, do the steps given below. For example
 
 5. Configure the required environment variables depending on your project:
 
-  a: ``ESP_DOCS_LATEST_BRANCH_NAME``: decides which git branch will be build and deployed as ``latest``. Defaults to ``master`` and should therefor be changed to e.g. ``main`` if that is the naming scheme of your master-branch in your git repo.
+  a: ``ESP_DOCS_LATEST_BRANCH_NAME``: decides which git branch will be built and deployed as ``latest``. Defaults to ``master`` and should therefore be changed to e.g. ``main`` if that is the naming scheme of your master branch in your git repo.
 
 6. Configure the variables mentioned in the jobs that deploy documentation:
 
