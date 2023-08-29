@@ -53,7 +53,7 @@ Besides Sphinx, several other third-party applications (extensions) help to prov
 Extensions Developed by Espressif
 ---------------------------------
 
-Espressif has created a couple of custom add-ons and extensions to help integrate documentation with underlining Espressif repositories and further improve navigation as well as maintenance of documentation.
+Espressif has created a couple of custom add-ons and extensions to help integrate documentation with underlying Espressif repositories and further improve navigation as well as maintenance of documentation.
 
 The section provides a quick reference to these add-ons and extensions.
 

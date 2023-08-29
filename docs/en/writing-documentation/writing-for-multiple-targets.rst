@@ -132,7 +132,7 @@ The ``:TAG:`` role provided by ``ESP-Docs`` comes in handy when you need to defi
     .. list::
 
         :esp32: - ESP32-specific content
-        :esp32c2 and esp32c3: - Content specific to ESP32-C2 and ESP32-C3
+        :esp32c2 or esp32c3: - Content specific to ESP32-C2 and ESP32-C3
         :SOC_BT_SUPPORTED: - Bluetooth-specific content
         - Common bullet point 1
         - Common bullet point 2
