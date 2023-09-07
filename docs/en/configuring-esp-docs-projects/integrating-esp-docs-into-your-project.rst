@@ -127,7 +127,11 @@ In the ``.gitlab-ci.yml`` of your project, do the steps given below. For example
   a. Copy and paste the ``.deploy_docs_template`` and ``deploy_docs_esp_docs`` jobs from :project_file:`.gitlab-ci.yml` to your ``.gitlab-ci.yml``.
   b. Write the job for deploying your documentation based on the ``deploy_docs_esp_docs`` job.
 
-5. Configure the variables mentioned in the jobs that deploy documentation:
+5. Configure the required environment variables depending on your project:
+
+  a: ``ESP_DOCS_LATEST_BRANCH_NAME``: decides which git branch will be built and deployed as ``latest``. Defaults to ``master`` and should therefore be changed to e.g. ``main`` if that is the naming scheme of your master branch in your git repo.
+
+6. Configure the variables mentioned in the jobs that deploy documentation:
 
   a. Find out who the server's admin is. To know who this person is and more information about the variables, please go to Documentation Team Site > Section ESP-Docs User Guide > Deploying documentation to docs.espressif.com.
   b. Ask the admin to create an SSH key for you and a directory for your documentation on the server.
