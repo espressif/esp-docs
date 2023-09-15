@@ -33,6 +33,8 @@ class ApiPath:
 
 
 def setup(app):
+    app.add_config_value('run_doxygen_header_edit_callback', None, '')
+
     # The idf_build_system extension will emit this event once it has generated documentation macro definitions
     app.connect('defines-generated', generate_doxygen)
     return {'parallel_read_safe': True, 'parallel_write_safe': True, 'version': '0.2'}
@@ -159,7 +161,7 @@ def convert_api_xml_to_inc(app, doxyfiles):
 
     print("Generating 'api_name.inc' files with Doxygen directives")
     for api_path in api_paths:
-        rst_output = generate_directives(api_path.header_path, api_path.xml_file_path)
+        rst_output = generate_directives(app, api_path.header_path, api_path.xml_file_path)
 
         # Create subfolders if needed
         dir_name = os.path.dirname(api_path.inc_file_path)
@@ -257,7 +259,7 @@ def header_to_xml_path(header_file, xml_directory_path):
     return xml_file_path
 
 
-def generate_directives(header_file_path, xml_file_path):
+def generate_directives(app, header_file_path, xml_file_path):
     """Generate API reference with Doxygen directives for a header file.
 
     Args:
@@ -274,6 +276,9 @@ def generate_directives(header_file_path, xml_file_path):
     rst_output += get_rst_header('Header File')
     rst_output += '* :project_file:`' + header_file_path + '`\n'
     rst_output += '\n'
+
+    if (app.config.run_doxygen_header_edit_callback):
+        rst_output = app.config.run_doxygen_header_edit_callback(rst_output, header_file_path)
 
     try:
         import xml.etree.cElementTree as ET
