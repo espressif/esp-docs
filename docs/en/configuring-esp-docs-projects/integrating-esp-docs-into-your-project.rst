@@ -127,6 +127,10 @@ In the ``.gitlab-ci.yml`` of your project, do the steps given below. For example
   a. Copy and paste the ``.deploy_docs_template`` and ``deploy_docs_esp_docs`` jobs from :project_file:`.gitlab-ci.yml` to your ``.gitlab-ci.yml``.
   b. Write the job for deploying your documentation based on the ``deploy_docs_esp_docs`` job.
 
+.. note::
+  
+  If your project is hosted on GitLab and the updates made in GitLab later are synchronized to GitHub, in such case, please only run ``deploy_docs`` job after the job that synchronizes your repository to GitHub. This is crucial because if synchronization to GitHub fails, the links within your documentation that refer to the GitHub project may not function correctly.
+
 5. Configure the required environment variables depending on your project:
 
   a: ``ESP_DOCS_LATEST_BRANCH_NAME``: decides which git branch will be built and deployed as ``latest``. Defaults to ``master`` and should therefore be changed to e.g. ``main`` if that is the naming scheme of your master branch in your git repo.
