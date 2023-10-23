@@ -102,7 +102,7 @@ After completing the above-mentioned preparation, you can navigate to your docs 
 .. note::
    Sometimes, after running ``build-docs`` commands, you would see some messages like ``The following Python requirements from the current directory's requirements.txt are not satisfied:``. In this case, just go to the directory where the requirements.txt file is located, and run ``pip install -U -r requirements.txt``.
 
-* Build HTML pages for "generic" documentation that doesn't contain a target
+* Build HTML pages in projects that do not support targets
    ::
 
       build-docs build
