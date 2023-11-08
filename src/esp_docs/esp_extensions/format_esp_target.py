@@ -166,7 +166,7 @@ class StringSubstituter:
                 # There should always be a default value
                 raise ValueError('No default value in IDF_TARGET_X substitution define, val={}'.format(sub_def))
 
-            match_target = re.match(r'^.*{}(\s*)=(\s*)\"(.*?)\"'.format(self.target_name), sub_def[1])
+            match_target = re.match(r'^.*{}\b(.*?)=(\s*)\"(.*?)\"'.format(self.target_name), sub_def[1])
 
             if match_target is None:
                 sub_value = match_default.groups()[2]
