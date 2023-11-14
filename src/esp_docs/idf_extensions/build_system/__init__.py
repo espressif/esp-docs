@@ -36,7 +36,6 @@ class IdfBuilder():
                 self.component_info_ignore_headers.append(line.strip())
 
     def generate_idf_info(self, app, config):
-        print(config.__dict__)
         if 'doxygen_component_info' in config.idf_build_system and config.idf_build_system['doxygen_component_info']:
             config.run_doxygen_header_edit_callback = self.append_component_info
         if 'component_info_ignore_file' in config.idf_build_system and config.idf_build_system['component_info_ignore_file']:
