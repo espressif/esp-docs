@@ -29,3 +29,6 @@ pdf_file_prefix = u'esp-docs'
 
 linkcheck_exclude_documents = ['index',  # several false positives due to the way we link to different sections
                                ]
+# Measurement ID for Google Analytics
+
+google_analytics_id = 'G-F3R0PHFSWL'
