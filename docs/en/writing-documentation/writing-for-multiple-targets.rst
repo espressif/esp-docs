@@ -30,6 +30,13 @@ For example::
 
 The above line will define a substitution for the tag ``IDF_TARGET_TX_PIN``, which would be replaced by the text "IO5" if Sphinx is called with the target esp32s2 and "IO3" if called with esp32s3. You may also use the text "Not updated" for the default value.
 
+In the case when multiple targets have the same value (may not be the default value) to be substituted, you can even group such targets together to avoid re-writing the same values multiple times.
+
+For example::
+    {IDF_TARGET_SBV2_KEY:default="RSA-3072", esp32c6, esp32h2="RSA-3072 or ECDSA-256 or ECDSA-192"}
+
+The above line will define a substitution for the tag ``IDF_TARGET_SBV2_KEY``, which would be replaced by the text "RSA-3072 or ECDSA-256 or ECDSA-192" if Sphinx is called with the target esp32c6 or esp32h2 and "RSA-3072" if called with any other target.
+
 .. note::
 
     * These single-file definitions can be placed anywhere in the reStructuredText file on their own line, but the name of the directive must start with ``IDF_TARGET_``.

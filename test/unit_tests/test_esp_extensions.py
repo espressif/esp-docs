@@ -60,6 +60,15 @@ class TestFormatIdfTarget(unittest.TestCase):
 
         self.assertRaises(ValueError, self.str_sub.substitute, content)
 
+    def test_local_sub_group_targets(self):
+        content = (
+            '{IDF_TARGET_SBV2_KEY:default="ECDSA", esp32, esp32s2, esp32s3="RSA-3072"}'
+            'A digest of the {IDF_TARGET_SBV2_KEY} public key is stored in the eFuse.'
+        )
+
+        expected = 'A digest of the RSA-3072 public key is stored in the eFuse.'
+        self.assertEqual(self.str_sub.substitute(content), expected)
+
 
 class TestExclude(unittest.TestCase):
 
