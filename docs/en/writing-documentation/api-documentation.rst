@@ -1,14 +1,18 @@
-API Documentation
-=================
+Formatting and Generating API Descriptions
+==========================================
 
-API documentation is a guide that explains the functions and use cases of an API with examples. An informative and understandable API would help readers quickly get started with your API.
+When you are documenting an API, there are some guidelines to follow, as demonstrated in :doc:`Writing API Descriptions <./writing-api-documentation>`. Preparing such documentation could be tedious.
 
-The :project_file:`run_doxygen.py <src/esp_docs/esp_extensions/run_doxygen.py>` extension of ESP-Docs can help you generate API documentation from header files when building documentation. In this way, the API documentation can be prepared more easily, and automatically updated when code changes.
+To simplify this process, ESP-Docs provides the :project_file:`run_doxygen.py <src/esp_docs/esp_extensions/run_doxygen.py>` extension, which generates API descriptions from header files during documentation build. This extension allows for automatic updates whenever code changes occur.
 
-This document covers:
+This document will cover the following topics:
 
-- `Syntax to document API members in header files <Document API in Header Files>`_
-- `How to generate the API documentation and include it in rst files <Generate and Include API Documentation>`_
+- `Syntax and formatting rules to document API in header files <Document API in Header Files>`_
+    - `Comment Blocks`_
+    - `In-Body Comments`_
+    - `Target-Specific Information`_
+    - `Style`_
+- `How to generate the API descriptions and include them in rst files <Generate and Include API Descriptions>`_
 
 Document API in Header Files
 ----------------------------
@@ -32,14 +36,10 @@ Comment blocks are used when documenting ``functions``. Such comment blocks star
     * @param [parameter_2's_name] [meaning]
     *
     * @return
-    *     - [response_1] meaning
-    *     - [response_2] meaning
+    *     - [response_1]: meaning
+    *     - [response_2]: meaning
     */
     [function_type] [function_name](parameter_1_type parameter_1, parameter_2_type parameter_2);
-
-``@brief``, ``@param``, and ``@return`` form the basic structure for API member descriptions. ``@param`` and ``@return`` can be skipped if a function does not have parameters or return any response.
-
-If the function might return different responses, use a bullet list to document the responses under ``@return``.
 
 .. figure:: ../../_static/api-comment-blocks.png
     :align: center
@@ -48,9 +48,13 @@ If the function might return different responses, use a bullet list to document 
 
     Rendered Result - Comment Blocks (Click to enlarge)
 
-Comment blocks have some addtional features, which can make the formatting of API documentation fancier:
+``@brief``, ``@param``, and ``@return`` form the basic structure for API descriptions. ``@param`` and ``@return`` can be skipped if a function does not have parameters or return any response.
 
-- Use [in], [out], [in,out] to document the direction of parameters:
+If the function might return different responses, use a **bullet list** to document the responses under ``@return``.
+
+Comment blocks have some addtional features, which can make the formatting of API descriptions fancier:
+
+- Use [in], [out], [in, out] to document the direction of parameters:
 
     .. code-block::
 
@@ -96,12 +100,11 @@ Comment blocks have some addtional features, which can make the formatting of AP
         * @brief      Set int8_t value for given key
         *
         *
-        * @param[in]  value   The value to set.
+        * @param[in]  value   The value to set
         *
         * @return
-        *             - ESP_OK if value was set successfully
-        *             - ESP_FAIL if there is an internal error; most likely due to corrupted
-        *               NVS partition (only if NVS assertion checks are disabled)
+        *             - ESP_OK
+        *             - ESP_FAIL
         */
         esp_err_t nvs_set_i8 (int8_t value);
 
@@ -126,14 +129,14 @@ Comment blocks have some addtional features, which can make the formatting of AP
 In-Body Comments
 ^^^^^^^^^^^^^^^^
 
-In-body comments are used when documenting a ``define``, and members of a ``struct``, ``enum``, etc. Such in-body comments start with ``/*!<``, and end with ``*/``.
+In-body comments are used when documenting a ``macro``, a ``typedef``, and members of a ``struct``, ``enum``, etc. Such in-body comments start with ``/*!<``, and end with ``*/``.
 
 .. code-block::
 
     typedef struct {
-        type member_1; /*!< Explanation for structure member_1. */
-        type member_2; /*!< Explanation for structure member_2. */
-        type member_3; /*!< Explanation for structure member_3. */
+        type member_1; /*!< Explanation for structure member_1 */
+        type member_2; /*!< Explanation for structure member_2 */
+        type member_3; /*!< Explanation for structure member_3 */
     } structure_name
 
 Optionally, comment blocks can be used together with in-body comments when you provide overall descriptions for a ``struct``, ``enum``, etc.
@@ -142,12 +145,12 @@ Optionally, comment blocks can be used together with in-body comments when you p
     :emphasize-lines: 1,2,3
 
     /**
-    * @brief A brief explanation for this structure.
+    * @brief A brief explanation for this structure
     */
     typedef struct {
-        type member_1; /*!< Explanation for structure member_1. */
-        type member_2; /*!< Explanation for structure member_2. */
-        type member_3; /*!< Explanation for structure member_3. */
+        type member_1; /*!< Explanation for structure member_1 */
+        type member_2; /*!< Explanation for structure member_2 */
+        type member_3; /*!< Explanation for structure member_3 */
     } structure_name
 
 .. figure:: ../../_static/api-in-body-comments.png
@@ -157,7 +160,7 @@ Optionally, comment blocks can be used together with in-body comments when you p
 
     Rendered Result - In-Body Comments with Comment Blocks (Click to enlarge)
 
-You may skip repetitive defines, enumerations, or other code by enclosing them within ``/** @cond */`` and ``/** @endcond */``, so that they will not show in the generated API documentation:
+You may skip repetitive macros, enumerations, or other code by enclosing them within ``/** @cond */`` and ``/** @endcond */``, so that they will not show in the generated API descriptions:
 
 .. code-block::
 
@@ -168,7 +171,7 @@ You may skip repetitive defines, enumerations, or other code by enclosing them w
 Target-Specific Information
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-ESP-Docs introduces several functionalities to deal with target-specific contents (see :doc:`writing-for-multiple-targets`), but such functionalities are not supported for API documentation generated from header files.
+ESP-Docs introduces several functionalities to deal with target-specific contents (see :doc:`writing-for-multiple-targets`), but such functionalities are not supported for API descriptions generated from header files.
 
 For target-specific information, it is preferable to use ``@note`` to clarify the applicable targets.
 
@@ -178,10 +181,10 @@ Use ``@note`` for a target-specific function:
     :emphasize-lines: 3
 
     /**
-    * @brief Enable RX PDM mode.
+    * @brief Enable RX PDM mode
     * @note  ESP32-C3: Not applicable, because it doesn't support RX PDM mode.
     *
-    * @param hw Peripheral I2S hardware instance address.
+    * @param hw Peripheral I2S hardware instance address
     * @param pdm_enable Set true to RX enable PDM mode (ignored)
     */
     static inline void i2s_ll_rx_enable_pdm(i2s_dev_t *hw, bool pdm_enable)
@@ -199,16 +202,16 @@ Use ``@note`` for a target-specific ``struct``:
     typedef struct {
         union {
             struct {
-                uint16_t data:     12;  /*!<ADC real output data info. Resolution: 12 bit. */
-                uint16_t channel:   4;  /*!<ADC channel index info. */
+                uint16_t data:     12;  /*!<ADC real output data info. Resolution: 12 bit */
+                uint16_t channel:   4;  /*!<ADC channel index info */
             } type1;                    /*!<ADC type1 */
             struct {
-                uint16_t data:     11;  /*!<ADC real output data info. Resolution: 11 bit. */
+                uint16_t data:     11;  /*!<ADC real output data info Resolution: 11 bit. */
                 uint16_t channel:   4;  /*!<ADC channel index info. For ESP32-S2:
                                             If (channel < ADC_CHANNEL_MAX), The data is valid.
                                             If (channel > ADC_CHANNEL_MAX), The data is invalid. */
                 uint16_t unit:      1;  /*!<ADC unit index info. 0: ADC1; 1: ADC2.  */
-            } type2;                    /*!<When the configured output format is 11bit.*/
+            } type2;                    /*!<When the configured output format is 11 bit.*/
             uint16_t val;               /*!<Raw data value */
         };
     } adc_digi_output_data_t;
@@ -233,11 +236,11 @@ Use an if statement to mark a target-specific function:
     * @param i2c_num I2C port number
     * @param data Bytes to write into internal buffer
     * @param size Size, in bytes, of `data` buffer
-    * @param ticks_to_wait Maximum ticks to wait.
+    * @param ticks_to_wait Maximum ticks to wait
     *
     * @return
-    *     - ESP_FAIL (-1) Parameter error
-    *     - Other (>=0) The number of data bytes pushed to the I2C slave buffer.
+    *     - ESP_FAIL (-1): Parameter error
+    *     - Other (>=0): The number of data bytes pushed to the I2C slave buffer
     */
     int i2c_slave_write_buffer(i2c_port_t i2c_num, const uint8_t *data, int size, TickType_t ticks_to_wait);
     #endif // SOC_I2C_SUPPORT_SLAVE
@@ -248,7 +251,7 @@ Use an if statement to mark a target-specific ``enum``:
     :emphasize-lines: 6,7,8
 
     /**
-    * @brief I2C port number, can be I2C_NUM_0 ~ (I2C_NUM_MAX-1).
+    * @brief I2C port number, can be I2C_NUM_0 ~ (I2C_NUM_MAX-1)
     */
     typedef enum {
         I2C_NUM_0 = 0, /*!< I2C port 0 */
@@ -258,14 +261,74 @@ Use an if statement to mark a target-specific ``enum``:
         I2C_NUM_MAX, /*!< I2C port max */
     } i2c_port_t;
 
-Generate and Include API Documentation
---------------------------------------
+Style
+^^^^^
+
+When preparing the API descriptions, follow the style below for consistency:
+
+- The maximum line length is 120 characters for better code readability, as described in `Espressif IoT Development Framework Style Guide <https://docs.espressif.com/projects/esp-idf/en/v5.0.2/esp32/contribute/style-guide.html#vertical-space>`_
+- If descriptions in combination with code are more than 120 characters, manually break lines, or consider if the descriptions better fit in the main text (namely the ``.rst`` files)
+- Capitalize the first word of every sentence segment or sentence
+- End all **complete sentences** with periods ``.``
+- If a sentence fragment is at the end of a line, or the line contains only one sentence fragment, then **omit** the ending periods ``.``
+
+    An ending period ``.`` will be added automatically to each ``@brief`` (see line 3 in the updated example and the its rendered result).
+- Use **bullet points** if there are 2 or more returned values
+- Use ``:`` between a returned value and its meaning
+- Between parameters and parameter meanings, do not add any punctuation marks such as ``-`` and ``:``
+
+The example below shows how to follow above style after ``>>>``:
+
+.. code-block::
+  :linenos:
+
+    /**
+    *
+    * @brief           This function is called to send wifi connection report         >>> Should add a ending period "." for complete sentences 
+    * @param opmode :  wifi opmode                                                    >>> Should delete the colon ":" between parameter's name and perameters' meaning
+    * @param sta_conn_state   : station is already in connection or not               >>> Should be capitalized
+    * @param softap_conn_num  : softap connection number
+    * @param extra_info       : extra information, such as sta_ssid, softap_ssid and etc.
+    *
+    * @return          ESP_OK - success, other - failed                               >>> Values should be listed using bullet points, and "-" should be changed to ":"
+    *
+    */
+    esp_err_t esp_blufi_send_wifi_conn_report(wifi_mode_t opmode, esp_blufi_sta_conn_state_t sta_conn_state, uint8_t softap_conn_num, esp_blufi_extra_info_t *extra_info);
+
+Above examples can be updated as follows in line with the rules (note that the returned error codes and their descriptions in line 10 can be more specific):
+
+.. code-block::
+  :linenos:
+  :emphasize-lines: 3,10
+
+    /**
+    *
+    * @brief Send Wi-Fi connection report
+    * @param opmode Wi-Fi operation mode
+    * @param sta_conn_state Whether station is connected or not
+    * @param softap_conn_num SoftAP connection number
+    * @param extra_info Extra information, such as sta_ssid, softap_ssid and etc.
+    *
+    * @return
+    *      - ESP_OK: Done
+    *      - Other error code: Failed
+    *
+    */
+    esp_err_t esp_blufi_send_wifi_conn_report(wifi_mode_t opmode, esp_blufi_sta_conn_state_t sta_conn_state, uint8_t softap_conn_num, esp_blufi_extra_info_t *extra_info);
+
+.. figure:: ../../_static/api-punctuation-mark.png
+    :align: center
+    :scale: 90%
+    :alt: Rendered Result - Style
+
+Generate and Include API Descriptions
+-------------------------------------
 
 ``Doxyfile`` is the must-have Doxygen configuration file for automatic API generation. All header files used to generate API should be included in ``Doxyfile``. For example, please refer to the Doxyfile of `ESP-IDF <https://github.com/espressif/esp-idf/tree/master/docs/doxygen>`_.
 
 .. note::
 
-    Target-specific header files may be placed in a separate ``Doxyfile``. For example, `Doxyfile_esp32 <https://github.com/espressif/esp-idf/tree/master/docs/doxygen>`__ is provided to generate ESP32-specific API documentation in ESP-IDF.
+    Target-specific header files may be placed in a separate ``Doxyfile``. For example, `Doxyfile_esp32 <https://github.com/espressif/esp-idf/tree/master/docs/doxygen>`__ is provided to generate ESP32-specific API descriptions in ESP-IDF.
 
 ESP-Docs integrates API generation into the process of building documentation. To be specific, when you run the command to build documentation (see :doc:`../building-documentation/building-documentation-locally`), :project_file:`run_doxygen.py <src/esp_docs/esp_extensions/run_doxygen.py>` generates ``.inc`` files from input header files defined in ``Doxyfile`` according to configuration, and places the ouput files in ``_build/$(language)/$(target)/inc`` directory.
 
@@ -278,16 +341,14 @@ To include the generated ``.inc`` files into ``.rst`` files, use the ``include-b
 
     .. include-build-file:: inc/i2c.inc
 
-Link to API Members
--------------------
+Linking to Functions, Enumerations, etc
+------------------------------------------------
 
-To link to an API member described in API documentation, please refer to :ref:`link-api-member`.
+To link to a function, enumeration, and other structure types described in API descriptions, please refer to :ref:`link-api-member`.
 
 Example
 -------
 
-For reference, you may navigate to :example:`doxygen`, and check the header files stored in the ``src/api`` directory.
+For reference, you may navigate to the :example:`doxygen` folder, and check the header files stored in the ``src/api`` subfolders.
 
-To see the API documentation in HTML, please run ``build_example.sh``.
-
-.. todo: Will add API writing guidelines later
+To see the API descriptions in HTML, please run ``build_example.sh``.

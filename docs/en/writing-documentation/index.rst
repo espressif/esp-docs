@@ -11,5 +11,6 @@ Writing Documentation
    glossary
    writing-for-multiple-targets
    redirecting-documents
+   writing-api-documentation
    api-documentation
    formatting-documents-for-translation
