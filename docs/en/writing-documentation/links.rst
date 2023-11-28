@@ -206,6 +206,7 @@ Syntax:
     - Structure Member - :cpp:member:`struct_name::member_name`
     - Enumeration - :cpp:type:`name`
     - Enumeration Value - :cpp:enumerator:`name`
+    - Defines - :c:macro:`name`
 
 Examples:
 
@@ -217,6 +218,7 @@ Examples:
     - Structure Member - :cpp:member:`eth_esp32_emac_config_t::clock_config`
     - Enumeration - :cpp:type:`esp_partition_type_t`
     - Enumeration Value - :cpp:enumerator:`WIFI_MODE_APSTA`
+    - Defines - :c:macro:`ESP_OK`
 
 Linking to GitHub Files
 -----------------------
