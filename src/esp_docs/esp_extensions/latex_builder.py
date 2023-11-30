@@ -6,12 +6,12 @@ from sphinx.builders.latex import LaTeXBuilder
 # Overrides the default Sphinx latex build
 class IdfLatexBuilder(LaTeXBuilder):
 
-    def __init__(self, app):
+    def __init__(self, app, env):
 
         # Sets up the latex_documents config value, done here instead of conf.py since it depends on the runtime value 'idf_target'
         self.init_latex_documents(app)
 
-        super().__init__(app)
+        super().__init__(app, env)
 
     def init_latex_documents(self, app):
 

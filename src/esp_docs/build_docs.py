@@ -222,7 +222,8 @@ def sphinx_call(build_info, builder):
             '-j', str(build_info['sphinx_parallel_jobs']),
             '-b', builder,
             '-d', os.path.join(build_info['build_dir'], 'doctrees'),
-            '-w', SPHINX_WARN_LOG
+            '-w', SPHINX_WARN_LOG,
+            '-v'
             ]
 
     if build_info['target'] != 'generic':
