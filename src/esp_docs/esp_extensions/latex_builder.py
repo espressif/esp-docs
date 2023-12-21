@@ -35,6 +35,14 @@ class IdfLatexBuilder(LaTeXBuilder):
 
         PACKAGE_NAME = 'espidf.sty'
         latex_package = ''
+        if config.doc_id is None:
+            if config.project_slug == 'esp-idf':
+                doc_id = '4287'
+            # If doc_id is not provided, leave it empty. Then users can select corresponding Document Title from dropdown list.
+            else:
+                doc_id = ''
+        else:
+            doc_id = config.doc_id[config.idf_target]
         with open(os.path.join(package_path, PACKAGE_NAME), 'r') as template:
 
             latex_package = template.read()
@@ -45,6 +53,9 @@ class IdfLatexBuilder(LaTeXBuilder):
         # Release name for the PDF front page, remove '_' as this is used for subscript in Latex
         idf_release_name = 'Release {}'.format(config.version.replace('_', '-'))
         latex_package = latex_package.replace('<idf_release_name>', idf_release_name)
+
+        # Retrieve docid for feedback link
+        latex_package = latex_package.replace('<doc_id>', doc_id)
 
         with open(os.path.join(self.outdir, PACKAGE_NAME), 'w') as package_file:
             package_file.write(latex_package)
