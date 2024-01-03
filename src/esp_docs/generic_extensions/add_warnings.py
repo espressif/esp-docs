@@ -14,6 +14,7 @@
 #  * `add_warnings_pages`: list of the documents which the warning will be added to.
 
 import inspect
+import os
 from string import Template
 
 
@@ -21,7 +22,9 @@ def add_warning(app, docname, source):
     if not app.config.add_warnings_pages:
         return
 
-    if docname not in app.config.add_warnings_pages:
+    add_warning_pages_no_file_ext = [os.path.splitext(page)[0] for page in app.config.add_warnings_pages]
+
+    if docname not in add_warning_pages_no_file_ext:
         return
 
     WARNING_TEMPLATE = Template(
