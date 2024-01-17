@@ -9,7 +9,7 @@ stages:
 
 variables:
   # Versioned esp-idf-doc env image to use for all document building jobs
-  ESP_DOCS_ENV_IMAGE: "$CI_DOCKER_REGISTRY/esp-idf-doc-env-v5.0:2-2"
+  ESP_DOCS_ENV_IMAGE: "$CI_DOCKER_REGISTRY/esp-idf-doc-env-v5.3:1-1"
   ESP_DOCS_PATH: "$CI_PROJECT_DIR"
   IDF_PATH: $CI_PROJECT_DIR/esp-idf
   IDF_REPO: ${GITLAB_SSH_SERVER}/espressif/esp-idf.git
@@ -43,6 +43,7 @@ check_python_style:
   extends:
     - .before_script_minimal
   script:
+    - pip install flake8
     - python -m flake8 --config=$ESP_DOCS_PATH/.flake8 $ESP_DOCS_PATH
 
 test_uts:
@@ -137,7 +138,7 @@ build_idf_docs_html:
     - .build_template
   variables:
     DOCS_DIR: $CI_PROJECT_DIR/esp-idf/docs
-    IDF_COMMIT_ID: v5.1
+    IDF_COMMIT_ID: v5.3-dev
   artifacts:
     when: always
     paths:
@@ -162,7 +163,7 @@ build_idf_docs_pdf:
     - .build_template
   variables:
     DOCS_DIR: $CI_PROJECT_DIR/esp-idf/docs
-    IDF_COMMIT_ID: v5.1
+    IDF_COMMIT_ID: v5.3-dev
   artifacts:
     when: always
     paths:
