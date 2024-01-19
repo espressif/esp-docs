@@ -261,6 +261,7 @@ deploy_package:
     - build_package
   script:
    - pip install .
+   - pip install twine
    - python $ESP_DOCS_PATH/ci/deploy_package.py
 
 check_doc_links:
