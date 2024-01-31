@@ -19,7 +19,7 @@ from sphinx.util import logging
 project_path = os.path.abspath(os.path.dirname(__file__))
 
 # Targets which needs --preview to build
-PREVIEW_TARGETS = ['esp32p4']
+PREVIEW_TARGETS = ['esp32p4', 'esp32c5']
 
 
 class IdfBuilder():

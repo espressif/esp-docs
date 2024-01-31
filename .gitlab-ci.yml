@@ -77,12 +77,6 @@ build_example_basic:
     - .build_template
   variables:
     DOCS_DIR: $CI_PROJECT_DIR/examples/basic
-  artifacts:
-    when: always
-    paths:
-      - $DOCS_DIR/_build/*/*/html/*
-      - $DOCS_DIR/_build/*/*/*.txt
-    expire_in: 4 days
   script:
     - cd "$DOCS_DIR"
     - ./build_example.sh
