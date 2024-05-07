@@ -58,7 +58,11 @@ def pypi_dist_is_outdated():
 
 def deploy_dist():
     print("Deploying to PyPI...")
-    subprocess.run(["twine", "upload", "dist/*"], stdout=subprocess.PIPE, check=True)
+    try:
+        subprocess.run(["twine", "upload", "dist/*"], stdout=subprocess.PIPE, check=True)
+    except subprocess.CalledProcessError as e:
+        print(e.output)
+        raise
 
 
 def main():
