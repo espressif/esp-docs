@@ -18,6 +18,18 @@ Wavedrom Example
 
 .. wavedrom:: /../_static/periph_timing.json
 
+Blockdiag Example
+-----------------
+
+.. blockdiag::
+    :scale: 100%
+    :caption: Blockdiagram
+    :align: center
+
+    blockdiag esp-docs-block-diag {
+        Start -> Middle
+        Middle -> End
+    }
 
 For documentation about esp-docs please see https://github.com/espressif/esp-docs/tree/master/docs
 
