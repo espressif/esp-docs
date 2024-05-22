@@ -34,6 +34,7 @@ import os.path
 import re
 import subprocess
 import sys
+from pathlib import Path
 from .check_docs import check_docs
 
 
@@ -114,6 +115,11 @@ def main():
 
     if args.fast_build:
         os.environ['DOCS_FAST_BUILD'] = 'y'
+
+    # Add esp-docs blockdiag path to the start of pythonpath
+    # to override the externally installed blockdiag package
+    blockdiag_path = Path(__file__).parents[0] / 'vendor'
+    os.environ['PYTHONPATH'] = str(blockdiag_path) + os.pathsep + os.getenv("PATH")
 
     if args.action == 'build' or args.action is None:
         if args.action is None:
