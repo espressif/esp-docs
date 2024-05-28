@@ -8,6 +8,7 @@ from docutils.parsers.rst import directives
 from docutils.utils.error_reporting import ErrorString, SafeString
 from sphinx.directives.other import Include as BaseInclude
 from sphinx.util import logging
+from esp_docs.constants import TARGET_NAMES, TOOLCHAIN_PREFIX
 
 
 def setup(app):
@@ -59,27 +60,6 @@ class StringSubstituter:
         Provides, and listens to the `format-esp-target-add-sub`-event, which can be used to add custom substitutions
 
     """
-    TARGET_NAMES = {'esp8266': 'ESP8266', 'esp32': 'ESP32', 'esp32s2': 'ESP32-S2',
-                    'esp32s3': 'ESP32-S3', 'esp32c3': 'ESP32-C3', 'esp32c2': 'ESP32-C2',
-                    'esp32h2': 'ESP32-H2', 'esp32c5': 'ESP32-C5', 'esp32c6': 'ESP32-C6',
-                    'esp32p4': 'ESP32-P4'}
-
-    TOOLCHAIN_PREFIX = {'esp8266': 'xtensa-lx106-elf',
-                        'esp32': 'xtensa-esp32-elf',
-                        'esp32s2': 'xtensa-esp32s2-elf',
-                        'esp32s3': 'xtensa-esp32s3-elf',
-                        'esp32c3': 'riscv32-esp-elf',
-                        'esp32h2': 'riscv32-esp-elf',
-                        'esp32c2': 'riscv32-esp-elf',
-                        'esp32c5': 'riscv32-esp-elf',
-                        'esp32c6': 'riscv32-esp-elf',
-                        'esp32p4': 'riscv32-esp-elf'
-                        }
-
-    CONFIG_PREFIX = {'esp8266': 'esp8266', 'esp32': 'ESP32', 'esp32s2': 'ESP32S2',
-                     'esp32s3': 'ESP32S3', 'esp32c3': 'ESP32C3', 'esp32h2': 'ESP32H2',
-                     'esp32c2': 'ESP32C2', 'esp32c5': 'ESP32C5', 'esp32c6': 'ESP32C6',
-                     'esp32p4': 'ESP32P4'}
 
     TRM_EN_URL = {'esp8266': 'https://www.espressif.com/sites/default/files/documentation/esp8266-technical_reference_en.pdf',
                   'esp32': 'https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf',
@@ -90,6 +70,7 @@ class StringSubstituter:
                   'esp32c2': 'https://www.espressif.com/sites/default/files/documentation/esp8684_technical_reference_manual_en.pdf',
                   'esp32c5': 'https://www.espressif.com/sites/default/files/documentation/esp32-c5_technical_reference_manual_en.pdf',
                   'esp32c6': 'https://www.espressif.com/sites/default/files/documentation/esp32-c6_technical_reference_manual_en.pdf',
+                  'esp32c61': 'https://www.espressif.com/sites/default/files/documentation/esp32-c61_technical_reference_manual_en.pdf',
                   'esp32p4': 'https://www.espressif.com/sites/default/files/documentation/esp32-p4_technical_reference_manual_en.pdf'}
 
     TRM_CN_URL = {'esp8266': 'https://www.espressif.com/sites/default/files/documentation/esp8266-technical_reference_cn.pdf',
@@ -101,6 +82,7 @@ class StringSubstituter:
                   'esp32c2': 'https://www.espressif.com/sites/default/files/documentation/esp8684_technical_reference_manual_cn.pdf',
                   'esp32c5': 'https://www.espressif.com/sites/default/files/documentation/esp32-c5_technical_reference_manual_cn.pdf',
                   'esp32c6': 'https://www.espressif.com/sites/default/files/documentation/esp32-c6_technical_reference_manual_cn.pdf',
+                  'esp32c61': 'https://www.espressif.com/sites/default/files/documentation/esp32-c61_technical_reference_manual_cn.pdf',
                   'esp32p4': 'https://www.espressif.com/sites/default/files/documentation/esp32-p4_technical_reference_manual_cn.pdf'}
 
     DATASHEET_EN_URL = {'esp8266': 'https://www.espressif.com/sites/default/files/documentation/0a-esp8266ex_datasheet_en.pdf',
@@ -112,6 +94,7 @@ class StringSubstituter:
                         'esp32c2': 'https://www.espressif.com/sites/default/files/documentation/esp8684_datasheet_en.pdf',
                         'esp32c5': 'https://www.espressif.com/sites/default/files/documentation/esp32-c5_datasheet_en.pdf',
                         'esp32c6': 'https://www.espressif.com/sites/default/files/documentation/esp32-c6_datasheet_en.pdf',
+                        'esp32c61': 'https://www.espressif.com/sites/default/files/documentation/esp32-c61_datasheet_en.pdf',
                         'esp32p4': 'https://www.espressif.com/sites/default/files/documentation/esp32-p4_datasheet_en.pdf'}
 
     DATASHEET_CN_URL = {'esp8266': 'https://www.espressif.com/sites/default/files/documentation/0a-esp8266ex_datasheet_cn.pdf',
@@ -123,6 +106,7 @@ class StringSubstituter:
                         'esp32c2': 'https://www.espressif.com/sites/default/files/documentation/esp8684_datasheet_cn.pdf',
                         'esp32c5': 'https://www.espressif.com/sites/default/files/documentation/esp32-c5_datasheet_cn.pdf',
                         'esp32c6': 'https://www.espressif.com/sites/default/files/documentation/esp32-c6_datasheet_cn.pdf',
+                        'esp32c61': 'https://www.espressif.com/sites/default/files/documentation/esp32-c61_datasheet_cn.pdf',
                         'esp32p4': 'https://www.espressif.com/sites/default/files/documentation/esp32-p4_datasheet_cn.pdf'}
 
     RE_PATTERN = re.compile(r'^\s*{IDF_TARGET_(\w+?):(.+?)}', re.MULTILINE)
@@ -146,11 +130,10 @@ class StringSubstituter:
             return
 
         self.target_name = config.idf_target
-
-        self.add_pair('{IDF_TARGET_NAME}', self.TARGET_NAMES[config.idf_target])
+        self.add_pair('{IDF_TARGET_NAME}', TARGET_NAMES[config.idf_target])
         self.add_pair('{IDF_TARGET_PATH_NAME}', config.idf_target)
-        self.add_pair('{IDF_TARGET_TOOLCHAIN_PREFIX}', self.TOOLCHAIN_PREFIX[config.idf_target])
-        self.add_pair('{IDF_TARGET_CFG_PREFIX}', self.CONFIG_PREFIX[config.idf_target])
+        self.add_pair('{IDF_TARGET_TOOLCHAIN_PREFIX}', TOOLCHAIN_PREFIX[config.idf_target])
+        self.add_pair('{IDF_TARGET_CFG_PREFIX}', TARGET_NAMES[config.idf_target].replace('-', ''))
         self.add_pair('{IDF_TARGET_TRM_EN_URL}', self.TRM_EN_URL[config.idf_target])
         self.add_pair('{IDF_TARGET_TRM_CN_URL}', self.TRM_CN_URL[config.idf_target])
         self.add_pair('{IDF_TARGET_DATASHEET_EN_URL}', self.DATASHEET_EN_URL[config.idf_target])

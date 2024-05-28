@@ -18,9 +18,6 @@ from sphinx.util import logging
 # this directory also contains the dummy IDF project
 project_path = os.path.abspath(os.path.dirname(__file__))
 
-# Targets which needs --preview to build
-PREVIEW_TARGETS = ['esp32p4', 'esp32c5']
-
 
 class IdfBuilder():
     def __init__(self) -> None:
@@ -71,10 +68,8 @@ class IdfBuilder():
         shutil.rmtree(cmake_build_dir, ignore_errors=True)
         print('Starting new dummy IDF project... ')
 
-        if (app.config.idf_target in PREVIEW_TARGETS):
-            subprocess.check_call(idf_py + ['--preview', 'set-target', app.config.idf_target])
-        else:
-            subprocess.check_call(idf_py + ['set-target', app.config.idf_target])
+        # Always append preview in-case we are building a preview only target
+        subprocess.check_call(idf_py + ['--preview', 'set-target', app.config.idf_target])
 
         print('Running CMake on dummy project...')
         subprocess.check_call(idf_py + ['reconfigure'])
