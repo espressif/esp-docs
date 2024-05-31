@@ -23,6 +23,7 @@ import sys
 
 from .get_github_rev import get_github_rev
 from .sanitize_version import sanitize_version
+from .constants import TARGET_NAMES
 
 esp_docs_dir = os.path.abspath(os.path.dirname(__file__))
 
@@ -343,20 +344,7 @@ def setup(app):
 
 def setup_config_values(app, config):
     # Sets up global config values needed by other extensions
-    idf_target_title_dict = {
-        'esp8266': 'ESP8266',
-        'esp32': 'ESP32',
-        'esp32s2': 'ESP32-S2',
-        'esp32s3': 'ESP32-S3',
-        'esp32c3': 'ESP32-C3',
-        'esp32h2': 'ESP32-H2',
-        'esp32c2': 'ESP32-C2',
-        'esp32c5': 'ESP32-C5',
-        'esp32c6': 'ESP32-C6',
-        'esp32p4': 'ESP32-P4',
-    }
-
-    app.add_config_value('idf_target_title_dict', idf_target_title_dict, 'env')
+    app.add_config_value('idf_target_title_dict', TARGET_NAMES, 'env')
 
 
 def setup_html_context(app, config):
