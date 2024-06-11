@@ -327,6 +327,8 @@ def build_pdf(language, target, latex_dir):
         'latexmk',
         '-r',
         rcfile,
+        '-e',
+        '\'$max_repeat=10\'',
         '-pdf',
         # When ``-f`` is used, latexmk will continue building if it
         # encounters errors. We still receive a failure exit code in this
