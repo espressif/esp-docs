@@ -30,8 +30,11 @@ def generate_defines(app, project_description):
                                          'include', 'soc', '*_caps.h'))
     assert len(soc_headers) > 0
 
-    for soc_header in soc_headers:
-        defines.update(get_defines(soc_header, sdk_config_path, compiler))
+    rom_path = [p for p in project_description['build_component_paths'] if p.endswith('/esp_rom')][0]
+    rom_headers = [os.path.join(rom_path, project_description['target'], 'esp_rom_caps.h')]
+
+    for header in (soc_headers + rom_headers):
+        defines.update(get_defines(header, sdk_config_path, compiler))
 
     # write a list of definitions to make debugging easier
     with open(os.path.join(app.config.build_dir, 'macro-definitions.txt'), 'w') as f:
