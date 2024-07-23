@@ -43,6 +43,10 @@ class IdfLatexBuilder(LaTeXBuilder):
                 doc_id = ''
         else:
             doc_id = config.doc_id[config.idf_target]
+        if config.version_num is None:
+            version_num = ''
+        else:
+            version_num = config.version_num[config.idf_target]
         with open(os.path.join(package_path, PACKAGE_NAME), 'r') as template:
 
             latex_package = template.read()
