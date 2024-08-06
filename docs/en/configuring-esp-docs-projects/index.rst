@@ -6,4 +6,5 @@ Configuring ESP-Docs Projects
 
     integrating-esp-docs-into-your-project
     adding-extensions
+    adding-link-check
     collecting-user-analytics
