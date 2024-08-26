@@ -24,6 +24,8 @@ In order to build documentation locally on your PC, you need to install the foll
 2. CairoSVG - https://cairosvg.org/documentation/
 3. Doxygen (only needed when generating API documentation from header files)- http://doxygen.nl
 
+For building the ESP-IDF documentation, see its own `Building Documentation <https://docs.espressif.com/projects/esp-idf/en/stable/contribute/documenting-code.html#building-documentation>`_ section instead.
+
 .. note::
    Docs building now supports Python 3 only. Python 2 installations will not work.
 
