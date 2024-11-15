@@ -71,7 +71,8 @@ class StringSubstituter:
                   'esp32c5': 'https://www.espressif.com/sites/default/files/documentation/esp32-c5_technical_reference_manual_en.pdf',
                   'esp32c6': 'https://www.espressif.com/sites/default/files/documentation/esp32-c6_technical_reference_manual_en.pdf',
                   'esp32c61': 'https://www.espressif.com/sites/default/files/documentation/esp32-c61_technical_reference_manual_en.pdf',
-                  'esp32p4': 'https://www.espressif.com/sites/default/files/documentation/esp32-p4_technical_reference_manual_en.pdf'}
+                  'esp32p4': 'https://www.espressif.com/sites/default/files/documentation/esp32-p4_technical_reference_manual_en.pdf',
+                  'other': 'N/A'}
 
     TRM_CN_URL = {'esp8266': 'https://www.espressif.com/sites/default/files/documentation/esp8266-technical_reference_cn.pdf',
                   'esp32': 'https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_cn.pdf',
@@ -83,7 +84,8 @@ class StringSubstituter:
                   'esp32c5': 'https://www.espressif.com/sites/default/files/documentation/esp32-c5_technical_reference_manual_cn.pdf',
                   'esp32c6': 'https://www.espressif.com/sites/default/files/documentation/esp32-c6_technical_reference_manual_cn.pdf',
                   'esp32c61': 'https://www.espressif.com/sites/default/files/documentation/esp32-c61_technical_reference_manual_cn.pdf',
-                  'esp32p4': 'https://www.espressif.com/sites/default/files/documentation/esp32-p4_technical_reference_manual_cn.pdf'}
+                  'esp32p4': 'https://www.espressif.com/sites/default/files/documentation/esp32-p4_technical_reference_manual_cn.pdf',
+                  'other': 'N/A'}
 
     DATASHEET_EN_URL = {'esp8266': 'https://www.espressif.com/sites/default/files/documentation/0a-esp8266ex_datasheet_en.pdf',
                         'esp32': 'https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf',
@@ -95,7 +97,8 @@ class StringSubstituter:
                         'esp32c5': 'https://www.espressif.com/sites/default/files/documentation/esp32-c5_datasheet_en.pdf',
                         'esp32c6': 'https://www.espressif.com/sites/default/files/documentation/esp32-c6_datasheet_en.pdf',
                         'esp32c61': 'https://www.espressif.com/sites/default/files/documentation/esp32-c61_datasheet_en.pdf',
-                        'esp32p4': 'https://www.espressif.com/sites/default/files/documentation/esp32-p4_datasheet_en.pdf'}
+                        'esp32p4': 'https://www.espressif.com/sites/default/files/documentation/esp32-p4_datasheet_en.pdf',
+                        'other': 'N/A'}
 
     DATASHEET_CN_URL = {'esp8266': 'https://www.espressif.com/sites/default/files/documentation/0a-esp8266ex_datasheet_cn.pdf',
                         'esp32': 'https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_cn.pdf',
@@ -107,7 +110,8 @@ class StringSubstituter:
                         'esp32c5': 'https://www.espressif.com/sites/default/files/documentation/esp32-c5_datasheet_cn.pdf',
                         'esp32c6': 'https://www.espressif.com/sites/default/files/documentation/esp32-c6_datasheet_cn.pdf',
                         'esp32c61': 'https://www.espressif.com/sites/default/files/documentation/esp32-c61_datasheet_cn.pdf',
-                        'esp32p4': 'https://www.espressif.com/sites/default/files/documentation/esp32-p4_datasheet_cn.pdf'}
+                        'esp32p4': 'https://www.espressif.com/sites/default/files/documentation/esp32-p4_datasheet_cn.pdf',
+                        'other': 'N/A'}
 
     RE_PATTERN = re.compile(r'^\s*{IDF_TARGET_(\w+?):(.+?)}', re.MULTILINE)
 

@@ -11,7 +11,8 @@ TARGET_NAMES = {'esp8266': 'ESP8266',
                 'esp32c5': 'ESP32-C5',
                 'esp32c6': 'ESP32-C6',
                 'esp32c61': 'ESP32-C61',
-                'esp32p4': 'ESP32-P4'
+                'esp32p4': 'ESP32-P4',
+                'other': 'Other'
                 }
 
 TARGETS = list(TARGET_NAMES.keys())
