@@ -75,7 +75,7 @@ class IdfLatexBuilder(LaTeXBuilder):
 def config_init_callback(app, config):
     # Keep backwards compatibilty with IDF,
     # which previously didnt specify these configs
-    if config.project_slug == 'esp-idf':
+    if config.project_slug == 'esp-idf' and not config.html_zip:
         if not config.pdf_file_prefix:
             config.pdf_file_prefix = 'esp-idf'
         if not config.pdf_title:
