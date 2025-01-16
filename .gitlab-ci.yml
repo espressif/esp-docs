@@ -152,31 +152,6 @@ build_idf_docs_html:
       - DOCLANG: ["en", "zh_CN"]
         DOCTGT: ["esp32", "esp32s2", "esp32s3", "esp32c3"]
 
-build_idf_docs_pdf:
-  extends:
-    - .build_template
-  variables:
-    DOCS_DIR: $CI_PROJECT_DIR/esp-idf/docs
-    IDF_COMMIT_ID: v5.3-dev
-  artifacts:
-    when: always
-    paths:
-      - $DOCS_DIR/_build/*/*/latex/*
-      - $DOCS_DIR/_build/*/*/*.txt
-    expire_in: 4 days
-  script:
-      # add gitlab ssh key
-    - cit_add_ssh_key "${GITLAB_KEY_PEM}"
-    - $ESP_DOCS_PATH/ci/setup_idf.sh ${IDF_REPO} $IDF_COMMIT_ID $IDF_PATH $DOCTGT
-    - eval "$($IDF_PATH/tools/idf_tools.py --non-interactive export)"
-    - pip install $ESP_DOCS_PATH
-    - cd $DOCS_DIR
-    - build-docs --skip-reqs-check -l $DOCLANG -t $DOCTGT -bs latex
-  parallel:
-    matrix:
-      - DOCLANG: ["en", "zh_CN"]
-        DOCTGT: ["esp32", "esp32s2", "esp32s3", "esp32c3"]
-
 build_package:
   stage: build
   image: $ESP_DOCS_ENV_IMAGE
@@ -239,7 +214,6 @@ deploy_docs_idf:
      DOCS_DEPLOY_URL_BASE: "https://$DOCS_PREVIEW_SERVER_URL/docs/esp-idf"
    needs:
      - build_idf_docs_html
-     - build_idf_docs_pdf
 
 deploy_package:
   stage: deploy
