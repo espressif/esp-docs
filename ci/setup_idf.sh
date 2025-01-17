@@ -23,7 +23,3 @@ git checkout FETCH_HEAD
 
 git submodule init
 git submodule update --depth 1
-
-# Setup IDF env
-tools/idf_tools.py --non-interactive install --targets $4
-tools/idf_tools.py install-python-env

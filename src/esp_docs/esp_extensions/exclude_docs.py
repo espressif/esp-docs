@@ -1,5 +1,4 @@
-from sphinx.util import get_matching_files
-from sphinx.util.matching import compile_matchers
+from sphinx.util.matching import get_matching_files
 
 
 # Updates the excluded documents according to the conditional_include_dict {tag:documents}
@@ -26,13 +25,11 @@ def build_subset(app, config):
     docs_to_build = config.docs_to_build.split(',')
 
     # Exclude all documents which were not set as docs_to_build when build_docs were called
-    exclude_docs = [filename for filename in get_matching_files(app.srcdir, compile_matchers(docs_to_build))]
-    docs = [filename for filename in get_matching_files(app.srcdir, compile_matchers(exclude_docs))]
+    exclude_docs = [filename for filename in get_matching_files(app.srcdir, exclude_patterns=docs_to_build)]
 
     app.config.exclude_patterns.extend(exclude_docs)
-
+    docs = [filename for filename in get_matching_files(app.srcdir, exclude_patterns=exclude_docs)]
     # Get all docs that will be built
-    docs = [filename for filename in get_matching_files(app.srcdir, compile_matchers(exclude_docs))]
     if not docs:
         raise ValueError('No documents to build')
     print('Building a subset of the documents: {}'.format(docs))
