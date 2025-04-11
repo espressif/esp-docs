@@ -8,3 +8,4 @@ Configuring ESP-Docs Projects
     adding-extensions
     adding-link-check
     collecting-user-analytics
+    collecting-document-feedback
