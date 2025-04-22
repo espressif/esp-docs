@@ -143,6 +143,8 @@ build_idf_docs_html:
       # add gitlab ssh key
     - cit_add_ssh_key "${GITLAB_KEY_PEM}"
     - $ESP_DOCS_PATH/ci/setup_idf.sh ${IDF_REPO} $IDF_COMMIT_ID $IDF_PATH $DOCTGT
+    - cd $IDF_PATH
+    - ./install.sh
     - eval "$($IDF_PATH/tools/idf_tools.py --non-interactive export)"
     - pip install $ESP_DOCS_PATH
     - cd $DOCS_DIR
