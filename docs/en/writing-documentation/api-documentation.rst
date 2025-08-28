@@ -30,20 +30,20 @@ Comment blocks are used when documenting ``functions``. Such comment blocks star
     * @brief A brief explanation for this function. It is mandatory.
     *        If the explanation cannot fit into one line, start the second line with indentation and a * at the beginning.
     *
-    *        To break a line, break it twice (add an empty line inbetween), just like how you do in rst files.
+    *        To break a line, break it twice (add an empty line in between), just like how you do in rst files.
     *
-    * @param [parameter_1's_name] [meaning]
-    * @param [parameter_2's_name] [meaning]
+    * @param [parameter_1's_name] [meaning.]
+    * @param [parameter_2's_name] [meaning.]
     *
     * @return
-    *     - [response_1]: meaning
-    *     - [response_2]: meaning
+    *     - [response_1]: meaning.
+    *     - [response_2]: meaning.
     */
     [function_type] [function_name](parameter_1_type parameter_1, parameter_2_type parameter_2);
 
 .. figure:: ../../_static/api-comment-blocks.png
     :align: center
-    :scale: 90%
+    :scale: 75%
     :alt: Rendered Result - Comment Blocks
 
     Rendered Result - Comment Blocks (Click to enlarge)
@@ -52,15 +52,15 @@ Comment blocks are used when documenting ``functions``. Such comment blocks star
 
 If the function might return different responses, use a **bullet list** to document the responses under ``@return``.
 
-Comment blocks have some addtional features, which can make the formatting of API descriptions fancier:
+Comment blocks have some additional features, which can make the formatting of API descriptions fancier:
 
 - Use [in], [out], [in, out] to document the direction of parameters:
 
     .. code-block::
 
         *
-        * @param[in] [parameter_1's_name] [meaning]
-        * @param[out] [parameter_2's_name] [meaning]
+        * @param[in] [parameter_1's_name] [meaning.]
+        * @param[out] [parameter_2's_name] [meaning.]
         *
 
 - Add notes, warnings, or attentions after ``@note``, ``@warning``, or ``@attention`` respectively:
@@ -97,19 +97,19 @@ Comment blocks have some addtional features, which can make the formatting of AP
 
         /**@{*/
         /**
-        * @brief      Set int8_t value for given key
+        * @brief      Set int8_t value for given key.
         *
         *
-        * @param[in]  value   The value to set
+        * @param[in]  value   The value to set.
         *
         * @return
-        *             - ESP_OK
-        *             - ESP_FAIL
+        *             - ESP_OK.
+        *             - ESP_FAIL.
         */
         esp_err_t nvs_set_i8 (int8_t value);
 
         /**
-        * @brief      Set uint16_t value for given key
+        * @brief      Set uint16_t value for given key.
         *
         * This function is the same as \c nvs_set_i8 except for the data type.
         */
@@ -121,9 +121,9 @@ Comment blocks have some addtional features, which can make the formatting of AP
     .. code-block::
 
         *
-        * @brief   Returns a random number inside a range
+        * @brief   Returns a random number inside a range.
         *          
-        *          See [ESP32 Technical Reference Manual](https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf)
+        *          See [ESP32 Technical Reference Manual](https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf).
         *
 
 In-Body Comments
@@ -134,9 +134,9 @@ In-body comments are used when documenting a ``macro``, a ``typedef``, and membe
 .. code-block::
 
     typedef struct {
-        type member_1; /*!< Explanation for structure member_1 */
-        type member_2; /*!< Explanation for structure member_2 */
-        type member_3; /*!< Explanation for structure member_3 */
+        type member_1; /*!< Explanation for structure member_1. */
+        type member_2; /*!< Explanation for structure member_2. */
+        type member_3; /*!< Explanation for structure member_3. */
     } structure_name
 
 Optionally, comment blocks can be used together with in-body comments when you provide overall descriptions for a ``struct``, ``enum``, etc.
@@ -145,17 +145,17 @@ Optionally, comment blocks can be used together with in-body comments when you p
     :emphasize-lines: 1,2,3
 
     /**
-    * @brief A brief explanation for this structure
+    * @brief A brief explanation for this structure.
     */
     typedef struct {
-        type member_1; /*!< Explanation for structure member_1 */
-        type member_2; /*!< Explanation for structure member_2 */
-        type member_3; /*!< Explanation for structure member_3 */
+        type member_1; /*!< Explanation for structure member_1. */
+        type member_2; /*!< Explanation for structure member_2. */
+        type member_3; /*!< Explanation for structure member_3. */
     } structure_name
 
 .. figure:: ../../_static/api-in-body-comments.png
     :align: center
-    :scale: 70%
+    :scale: 75%
     :alt: Rendered Result - In-Body Comments with Comment Blocks
 
     Rendered Result - In-Body Comments with Comment Blocks (Click to enlarge)
@@ -181,11 +181,11 @@ Use ``@note`` for a target-specific function:
     :emphasize-lines: 3
 
     /**
-    * @brief Enable RX PDM mode
+    * @brief Enable RX PDM mode.
     * @note  ESP32-C3: Not applicable, because it doesn't support RX PDM mode.
     *
-    * @param hw Peripheral I2S hardware instance address
-    * @param pdm_enable Set true to RX enable PDM mode (ignored)
+    * @param hw Peripheral I2S hardware instance address.
+    * @param pdm_enable Set true to RX enable PDM mode (ignored).
     */
     static inline void i2s_ll_rx_enable_pdm(i2s_dev_t *hw, bool pdm_enable)
 
@@ -202,17 +202,17 @@ Use ``@note`` for a target-specific ``struct``:
     typedef struct {
         union {
             struct {
-                uint16_t data:     12;  /*!<ADC real output data info. Resolution: 12 bit */
-                uint16_t channel:   4;  /*!<ADC channel index info */
-            } type1;                    /*!<ADC type1 */
+                uint16_t data:     12;  /*!<ADC real output data info. Resolution: 12 bit. */
+                uint16_t channel:   4;  /*!<ADC channel index info. */
+            } type1;                    /*!<ADC type1. */
             struct {
                 uint16_t data:     11;  /*!<ADC real output data info Resolution: 11 bit. */
                 uint16_t channel:   4;  /*!<ADC channel index info. For ESP32-S2:
-                                            If (channel < ADC_CHANNEL_MAX), The data is valid.
-                                            If (channel > ADC_CHANNEL_MAX), The data is invalid. */
+                                            If (channel < `ADC_CHANNEL_MAX`), The data is valid.
+                                            If (channel > `ADC_CHANNEL_MAX`), The data is invalid. */
                 uint16_t unit:      1;  /*!<ADC unit index info. 0: ADC1; 1: ADC2.  */
             } type2;                    /*!<When the configured output format is 11 bit.*/
-            uint16_t val;               /*!<Raw data value */
+            uint16_t val;               /*!<Raw data value. */
         };
     } adc_digi_output_data_t;
 
@@ -220,7 +220,7 @@ Alternatively, you can use if statements (``#if`` and ``#endif`` directives in C
 
 .. note::
 
-    Please note that some developers tend to read header files directly instead of API documentattion. If statements would make header files hard to read, so they are less recommended.
+    Please note that some developers tend to read header files directly instead of API documentation. If statements would make header files hard to read, so they are less recommended.
 
 Use an if statement to mark a target-specific function:
 
@@ -233,14 +233,14 @@ Use an if statement to mark a target-specific function:
     *        fill the hardware FIFO with the internal ringbuffer's data.
     *        @note This function shall only be called in I2C slave mode.
     *
-    * @param i2c_num I2C port number
-    * @param data Bytes to write into internal buffer
-    * @param size Size, in bytes, of `data` buffer
-    * @param ticks_to_wait Maximum ticks to wait
+    * @param i2c_num I2C port number.
+    * @param data Bytes to write into internal buffer.
+    * @param size Size, in bytes, of `data` buffer.
+    * @param ticks_to_wait Maximum ticks to wait.
     *
     * @return
-    *     - ESP_FAIL (-1): Parameter error
-    *     - Other (>=0): The number of data bytes pushed to the I2C slave buffer
+    *     - ESP_FAIL (-1): Parameter error.
+    *     - Other (>=0): The number of data bytes pushed to the I2C slave buffer.
     */
     int i2c_slave_write_buffer(i2c_port_t i2c_num, const uint8_t *data, int size, TickType_t ticks_to_wait);
     #endif // SOC_I2C_SUPPORT_SLAVE
@@ -251,14 +251,14 @@ Use an if statement to mark a target-specific ``enum``:
     :emphasize-lines: 6,7,8
 
     /**
-    * @brief I2C port number, can be I2C_NUM_0 ~ (I2C_NUM_MAX-1)
+    * @brief I2C port number, can be `I2C_NUM_0` ~ (`I2C_NUM_MAX` - 1).
     */
     typedef enum {
-        I2C_NUM_0 = 0, /*!< I2C port 0 */
+        I2C_NUM_0 = 0, /*!< I2C port 0. */
     #if SOC_I2C_NUM >= 2
-        I2C_NUM_1, /*!< I2C port 1 */
+        I2C_NUM_1, /*!< I2C port 1. */
     #endif
-        I2C_NUM_MAX, /*!< I2C port max */
+        I2C_NUM_MAX, /*!< Maximum I2C ports. */
     } i2c_port_t;
 
 Style
@@ -269,10 +269,10 @@ When preparing the API descriptions, follow the style below for consistency:
 - The maximum line length is 120 characters for better code readability, as described in `Espressif IoT Development Framework Style Guide <https://docs.espressif.com/projects/esp-idf/en/v5.0.2/esp32/contribute/style-guide.html#vertical-space>`_
 - If descriptions in combination with code are more than 120 characters, manually break lines, or consider if the descriptions better fit in the main text (namely the ``.rst`` files)
 - Capitalize the first word of every sentence segment or sentence
-- End all **complete sentences** with periods ``.``
-- If a sentence fragment is at the end of a line, or the line contains only one sentence fragment, then **omit** the ending periods ``.``
-
-    An ending period ``.`` will be added automatically to each ``@brief`` (see line 3 in the updated example and the its rendered result).
+- Use a period ``.`` at the end of:
+    * Complete sentences
+    * Sentence fragments
+    * Bulleted or numbered list items
 - Use **bullet points** if there are 2 or more returned values
 - Use ``:`` between a returned value and its meaning
 - Between parameters and parameter meanings, do not add any punctuation marks such as ``-`` and ``:``
@@ -285,12 +285,12 @@ The example below shows how to follow above style after ``>>>``:
     /**
     *
     * @brief           This function is called to send wifi connection report         >>> Should add a ending period "." for complete sentences 
-    * @param opmode :  wifi opmode                                                    >>> Should delete the colon ":" between parameter's name and perameters' meaning
-    * @param sta_conn_state   : station is already in connection or not               >>> Should be capitalized
-    * @param softap_conn_num  : softap connection number
-    * @param extra_info       : extra information, such as sta_ssid, softap_ssid and etc.
+    * @param opmode :  Wi-Fi opmode.                                                  >>> Should delete the colon ":" between parameter's name and perameters' meaning
+    * @param sta_conn_state     station is already in connection or not.              >>> Should be capitalized
+    * @param softap_conn_num    Softap connection number.
+    * @param extra_info         Extra information, such as sta_ssid, softap_ssid and etc.
     *
-    * @return          ESP_OK - success, other - failed                               >>> Values should be listed using bullet points, and "-" should be changed to ":"
+    * @return          ESP_OK - Success, other - Failed                               >>> Values should be listed using bullet points, and "-" should be changed to ":"
     *
     */
     esp_err_t esp_blufi_send_wifi_conn_report(wifi_mode_t opmode, esp_blufi_sta_conn_state_t sta_conn_state, uint8_t softap_conn_num, esp_blufi_extra_info_t *extra_info);
@@ -303,15 +303,15 @@ Above examples can be updated as follows in line with the rules (note that the r
 
     /**
     *
-    * @brief Send Wi-Fi connection report
-    * @param opmode Wi-Fi operation mode
-    * @param sta_conn_state Whether station is connected or not
-    * @param softap_conn_num SoftAP connection number
+    * @brief Send Wi-Fi connection report.
+    * @param opmode Wi-Fi operation mode.
+    * @param sta_conn_state Whether station is connected or not.
+    * @param softap_conn_num SoftAP connection number.
     * @param extra_info Extra information, such as sta_ssid, softap_ssid and etc.
     *
     * @return
-    *      - ESP_OK: Done
-    *      - Other error code: Failed
+    *      - ESP_OK: Done.
+    *      - Other error code: Failed.
     *
     */
     esp_err_t esp_blufi_send_wifi_conn_report(wifi_mode_t opmode, esp_blufi_sta_conn_state_t sta_conn_state, uint8_t softap_conn_num, esp_blufi_extra_info_t *extra_info);
@@ -330,7 +330,7 @@ Generate and Include API Descriptions
 
     Target-specific header files may be placed in a separate ``Doxyfile``. For example, `Doxyfile_esp32 <https://github.com/espressif/esp-idf/tree/master/docs/doxygen>`__ is provided to generate ESP32-specific API descriptions in ESP-IDF.
 
-ESP-Docs integrates API generation into the process of building documentation. To be specific, when you run the command to build documentation (see :doc:`../building-documentation/building-documentation-locally`), :project_file:`run_doxygen.py <src/esp_docs/esp_extensions/run_doxygen.py>` generates ``.inc`` files from input header files defined in ``Doxyfile`` according to configuration, and places the ouput files in ``_build/$(language)/$(target)/inc`` directory.
+ESP-Docs integrates API generation into the process of building documentation. To be specific, when you run the command to build documentation (see :doc:`../building-documentation/building-documentation-locally`), :project_file:`run_doxygen.py <src/esp_docs/esp_extensions/run_doxygen.py>` generates ``.inc`` files from input header files defined in ``Doxyfile`` according to configuration, and places the output files in ``_build/$(language)/$(target)/inc`` directory.
 
 To include the generated ``.inc`` files into ``.rst`` files, use the ``include-build-file::`` directive defined in :project_file:`include_build_file.py <src/esp_docs/esp_extensions/include_build_file.py>`.
 
@@ -349,6 +349,6 @@ To link to a function, enumeration, and other structure types described in API d
 Example
 -------
 
-For reference, you may navigate to the :example:`doxygen` folder, and check the header files stored in the ``src/api`` subfolders.
+For reference, you may navigate to the :example:`doxygen` folder, and check the header files stored in the ``src/api`` subfolder.
 
 To see the API descriptions in HTML, please run ``build_example.sh``.
