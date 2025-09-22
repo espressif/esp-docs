@@ -1,1 +1,1 @@
-# Dummy project for showing doxygen intergration
+# Dummy project for showing doxygen integration

@@ -35,7 +35,7 @@ def check_content(content, docname):
     errors = re.findall(r'{IDF_TARGET_.*?}', content)
 
     for err in errors:
-        logger.warning('Badly formated string substitution: {}'.format(err), location=docname)
+        logger.warning('Badly formatted string substitution: {}'.format(err), location=docname)
 
 
 class StringSubstituter:

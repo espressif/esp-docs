@@ -39,7 +39,7 @@ Make the line numbers of English and Chinese documents consistent. For example, 
 
         Keep the line number for English and Chinese documents consistent (click to enlarge)
 
-This approach could be benificial in the following ways:
+This approach could be beneficial in the following ways:
 
 - For non-bilingual writers, they only need to update the same line in the corresponding Chinese or English document when updating documents.
 

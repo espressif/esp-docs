@@ -253,7 +253,7 @@ class ImageDrawExBase(base.ImageDraw):
             self.draw.rectangle(box, fill=fill)
 
         x1, y1, x2, y2 = box
-        lines = (((x1, y1), (x2, y1)), ((x1, y2), (x2, y2)),  # horizonal
+        lines = (((x1, y1), (x2, y1)), ((x1, y2), (x2, y2)),  # horizontal
                  ((x1, y1 - d), (x1, y2 + d)),  # vettical (left)
                  ((x2, y1 - d), (x2, y2 + d)))  # vertical (right)
 
