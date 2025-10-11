@@ -7,6 +7,7 @@ LogMessage = namedtuple('LogMessage', 'original_text sanitized_text')
 SANITIZE_FILENAME_REGEX = re.compile('[^:]*/([^/:]*)(:.*)')
 SANITIZE_LINENUM_REGEX = re.compile('([^:]*)(:[0-9]+:)(.*)')
 SANITIZE_DUPLICATE_LINENUM_REGEX = re.compile(r'([^:]*)(:[0-9]+\.)(.*)')
+SANITIZE_TERMINAL_CONTROL_REGEX = re.compile(r'\x1B\[[0-9;]*[a-zA-Z]|\[[0-9;]+m')
 
 
 def sanitize_line(line):
@@ -17,8 +18,10 @@ def sanitize_line(line):
         - only filename, no path at the beginning
         - no line numbers after the filename
         - no line numbers from duplicate definitions
+        - terminal control characters (like color codes [39;49;00m)
     """
 
+    line = re.sub(SANITIZE_TERMINAL_CONTROL_REGEX, '', line)  # Remove terminal control characters first
     line = re.sub(SANITIZE_FILENAME_REGEX, r'\1\2', line)
     line = re.sub(SANITIZE_LINENUM_REGEX, r'\1:line:\3', line)
     line = re.sub(SANITIZE_DUPLICATE_LINENUM_REGEX, r'\1:line.\3', line)
