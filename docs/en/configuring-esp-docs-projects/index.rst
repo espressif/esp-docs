@@ -9,3 +9,4 @@ Configuring ESP-Docs Projects
     adding-link-check
     collecting-user-analytics
     collecting-document-feedback
+    adding-codespell

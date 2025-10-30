@@ -21,8 +21,8 @@ except ImportError:
 
 def isurl(url):
     o = urlparse.urlparse(url)
-    accpetable = ["http", "https"]
-    if o[0] in accpetable:
+    acceptable = ["http", "https"]
+    if o[0] in acceptable:
         return True
     else:
         return False

@@ -154,7 +154,7 @@ class LineJumpDrawFilter(LazyReceiver):
             self.get_lazy_method("line")((st, ed), **kwargs)
 
             if 'jump' in kwargs and kwargs['jump'] is True:
-                if st.y == ed.y:    # horizonal
+                if st.y == ed.y:    # horizontal
                     insort(self.ytree, (st.y, 0, (st, ed)))
                 elif st.x == ed.x:  # vertical
                     insort(self.ytree, (max(st.y, ed.y), -1, (st, ed)))

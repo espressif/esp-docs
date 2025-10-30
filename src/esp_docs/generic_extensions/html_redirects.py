@@ -21,7 +21,7 @@
 #
 # Redirections can be internal or absolute (i.e., external).
 #   - Internal redirects are supplied without quotation marks and must be relative to the document root
-#   - External redirects are wrapped in doulbe quotation marks and are used verbatim
+#   - External redirects are wrapped in double quotation marks and are used verbatim
 #
 # Adapted from ideas in https://tech.signavio.com/2017/managing-sphinx-redirects
 import os.path
@@ -63,7 +63,7 @@ def create_redirect_pages(app):
         out_file = app.builder.get_outfilename(old_url)
 
         if new_url.startswith('\"') and new_url.endswith('\"'):
-            # This is an absolute redirect. Slice away the surrouding quotation marks and copy the url verbatim
+            # This is an absolute redirect. Slice away the surrounding quotation marks and copy the url verbatim
             new_url = new_url[1:-1]
         else:
             # This is an internal redirect. Find the relative url to the target document

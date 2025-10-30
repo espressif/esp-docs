@@ -177,7 +177,7 @@ def convert_api_xml_to_inc(app, doxyfiles):
             with open(api_path.inc_file_path, 'w', encoding='utf-8') as inc_file:
                 inc_file.write(rst_output)
 
-        # For fast builds we wipe the doxygen api documention.
+        # For fast builds we wipe the doxygen api documentation.
         # Parsing this output during the sphinx build process is
         # what takes 95% of the build time
         if fast_build:

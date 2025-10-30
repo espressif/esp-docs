@@ -108,12 +108,12 @@ In reStructuredText, you can use the ``toctree`` directive to generate a Table o
 
 Moreover, with the help of ``toctree``, you can generate a sidebar that contains the table of contents for easy navigation. For example, see the sidebar of `ESP-Docs User Guide <https://docs.espressif.com/projects/esp-docs/en/latest/index.html>`_.
 
-In Markdown, inserting a table of contents with the same effect is also possible, but you need to manually insert each file's path and name, and specify folder stucture when including more than one folder levels.
+In Markdown, inserting a table of contents with the same effect is also possible, but you need to manually insert each file's path and name, and specify folder structure when including more than one folder levels.
 
 .. code-block::
 
     - [Migration from 4.4 to 5.0](./release-5.x/5.0/index)
-        - [Bluetooth](./release-5.x/5.0/blutooth)
+        - [Bluetooth](./release-5.x/5.0/bluetooth)
         - [Wi-Fi](./release-5.x/5.0/wifi)
         - [Peripherals](./release-5.x/5.0/peripherals)
     - [Migration from 5.0 to 5.1](./release-5.x/5.1/index)

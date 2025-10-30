@@ -17,7 +17,7 @@ def setup(app):
 
 
 def generate_build_info(app, config):
-    # Run any project specfic build commands here
+    # Run any project specific build commands here
 
     # Emit signal with project specific data, can be used as a trigger
     # for various project specific extensions

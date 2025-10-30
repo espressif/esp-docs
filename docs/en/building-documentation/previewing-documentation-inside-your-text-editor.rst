@@ -23,4 +23,4 @@ Sublime Text
 2. After step 1, go to ``Tools`` again, and click on ``Command Palette...``.
 3. In the top search bar, type "Install" and select ``Package Control: Install Package``.
 4. In the top search bar, type in keywords such as "preview" or "rst preview".
-5. Install the previewer plugin (for exampple, `OmniMarkupPreviewer <http://timonwong.github.io/OmniMarkupPreviewer/>`__) of your choice, and follow the instruction inside the plugin to enable a live preview.
+5. Install the previewer plugin (for example, `OmniMarkupPreviewer <http://timonwong.github.io/OmniMarkupPreviewer/>`__) of your choice, and follow the instruction inside the plugin to enable a live preview.

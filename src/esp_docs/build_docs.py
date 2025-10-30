@@ -245,7 +245,7 @@ def sphinx_call(build_info, builder):
     try:
         # Note: we can't call sphinx.cmd.build.main() here as multiprocessing doesn't est >1 layer deep
         # and sphinx.cmd.build() also does a lot of work in the calling thread, especially for j ==1,
-        # so using a Pyhthon thread for this part is  a poor option (GIL)
+        # so using a Python thread for this part is  a poor option (GIL)
         p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=environ)
         for c in iter(lambda: p.stdout.readline(), b''):
             sys.stdout.write(prefix)

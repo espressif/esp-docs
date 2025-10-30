@@ -1,4 +1,3 @@
-
 stages:
   - check
   - test
@@ -14,9 +13,14 @@ variables:
   IDF_PATH: $CI_PROJECT_DIR/esp-idf
   IDF_REPO: ${GITLAB_SSH_SERVER}/espressif/esp-idf.git
 
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - when: always
+
 .before_script_minimal:
   before_script:
-    - source ci/utils.sh
+    - source .gitlab/ci/utils.sh
 
 .before_script_prepare_build:
   before_script:
@@ -24,27 +28,10 @@ variables:
     # Use CI Tools
     - curl -sSL ${CIT_LOADER_URL} | sh
     - source citools/import_functions
-    - source ci/utils.sh
+    - source .gitlab/ci/utils.sh
     # Purge any old esp-docs versions
     - pip uninstall -y esp-docs
     - pip install .
-
-check_setup:
-  stage: check
-  image: $ESP_DOCS_ENV_IMAGE
-  extends:
-    - .before_script_minimal
-  script:
-    - pip install .
-
-check_python_style:
-  stage: check
-  image: $ESP_DOCS_ENV_IMAGE
-  extends:
-    - .before_script_minimal
-  script:
-    - pip install flake8
-    - python -m flake8 --config=$ESP_DOCS_PATH/.flake8 $ESP_DOCS_PATH
 
 test_uts:
   stage: test
@@ -142,7 +129,7 @@ build_idf_docs_html:
   script:
       # add gitlab ssh key
     - cit_add_ssh_key "${GITLAB_KEY_PEM}"
-    - $ESP_DOCS_PATH/ci/setup_idf.sh ${IDF_REPO} $IDF_COMMIT_ID $IDF_PATH $DOCTGT
+    - $ESP_DOCS_PATH/.gitlab/ci/setup_idf.sh ${IDF_REPO} $IDF_COMMIT_ID $IDF_PATH $DOCTGT
     - cd $IDF_PATH
     - ./install.sh
     - eval "$($IDF_PATH/tools/idf_tools.py --non-interactive export)"
@@ -232,7 +219,7 @@ deploy_package:
   script:
    - pip install .
    - pip install twine
-   - python $ESP_DOCS_PATH/ci/deploy_package.py
+   - python $ESP_DOCS_PATH/.gitlab/ci/deploy_package.py
 
 check_doc_links:
   extends:
@@ -256,3 +243,8 @@ check_doc_links:
   parallel:
     matrix:
       - DOCLANG: ["en"]
+
+
+# Include pre-commit jobs
+include:
+  - '.gitlab/ci/pre_commit.yml'

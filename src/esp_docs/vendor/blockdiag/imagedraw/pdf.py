@@ -43,7 +43,7 @@ class PDFImageDraw(base.ImageDraw):
 
     def set_font(self, font):
         if font.path is None:
-            msg = "Could not detect fonts, use --font opiton\n"
+            msg = "Could not detect fonts, use --font option\n"
             raise RuntimeError(msg)
 
         if font.path not in self.fonts:
