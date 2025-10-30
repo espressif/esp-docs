@@ -148,87 +148,104 @@ How to Run Unified Pre-Commit Jobs in GitLab CI/CD
 
 Running unified pre-commit jobs in GitLab CI/CD is recommended because it allows you to easily add or update hooks in the future with minimal changes. Follow these steps to set it up:
 
-*Step 1*: Include the ``.gitlab/ci/pre_commit.yml`` file in your root ``.gitlab-ci.yml`` configuration.
+Steps
+^^^^^
 
-**Example:**
+1.  Include the ``.gitlab/ci/pre_commit.yml`` file in your root ``.gitlab-ci.yml`` configuration.
 
-.. code-block:: yaml
-
-    include:
-      - '.gitlab/ci/pre_commit.yml'
-
-.. note::
-
-    If your ``.gitlab-ci.yml`` file does not yet define any global workflow rules, please add the following configuration:
+    **Example:**
 
     .. code-block:: yaml
 
-        workflow:
+        include:
+          - '.gitlab/ci/pre_commit.yml'
+
+    .. note::
+
+        If your ``.gitlab-ci.yml`` file does not yet define any global workflow rules, please add the following configuration:
+
+        .. code-block:: yaml
+
+            workflow:
+              rules:
+                - if: $CI_PIPELINE_SOURCE == "merge_request_event" # Run pipelines only for merge requests
+                - when: always # Fallback rule to always run if no other rules match
+
+2.  Create the ``.gitlab/ci/pre_commit.yml`` file to include the following job definition:
+
+    .. code-block:: yaml
+
+        .check_pre_commit_template:
+          stage: check  # or "pre-check", depending on your pipeline structure
+          image: $ESP_DOCS_ENV_IMAGE  # Use the same image as other jobs in your repository
+          extends:
+            - .before_script_minimal  # Optional: reuse an existing minimal setup if available
           rules:
-            - if: $CI_PIPELINE_SOURCE == "merge_request_event" # Run pipelines only for merge requests
-            - when: always # Fallback rule to always run if no other rules match
+            - if: $CI_PIPELINE_SOURCE == "merge_request_event"  # Run this job only for merge request pipelines. 
+          script:
+            - pip install pre-commit
+            - git fetch origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME --depth=1  # Fetch target branch latest commit
+            - git fetch origin $CI_COMMIT_REF_NAME --depth=1  # Fetch source branch latest commit
+            - |
+              echo "Target branch: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
+              echo "Source branch: $CI_COMMIT_REF_NAME"
 
-*Step 2*: Create the ``.gitlab/ci/pre_commit.yml`` file to include the following job definition:
+              MODIFIED_FILES=$(git diff --name-only origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME..origin/$CI_COMMIT_REF_NAME)
+              echo "Modified files to check:"
+              echo "$MODIFIED_FILES"
 
-.. code-block:: yaml
+              if [ -n "$MODIFIED_FILES" ]; then
+                  CI=true pre-commit run --files $MODIFIED_FILES
+              else
+                  echo "No modified files to check."
+              fi
 
-    .check_pre_commit_template:
-      stage: check  # or "pre-check", depending on your pipeline structure
-      image: $ESP_DOCS_ENV_IMAGE  # Use the same image as other jobs in your repository
-      extends:
-        - .before_script_minimal  # Optional: reuse an existing minimal setup if available
-      rules:
-        - if: $CI_PIPELINE_SOURCE == "merge_request_event"  # Run this job only for merge request pipelines. 
-      script:
-        - pip install pre-commit
-        - git fetch origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME --depth=1  # Fetch target branch latest commit
-        - git fetch origin $CI_COMMIT_REF_NAME --depth=1  # Fetch source branch latest commit
-        - |
-          echo "Target branch: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
-          echo "Source branch: $CI_COMMIT_REF_NAME"
+        check_pre_commit:
+          extends:
+            - .check_pre_commit_template  # All configured pre-commit hooks will run under this job
 
-          MODIFIED_FILES=$(git diff --name-only origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME..origin/$CI_COMMIT_REF_NAME)
-          echo "Modified files to check:"
-          echo "$MODIFIED_FILES"
+    .. note::
 
-          if [ -n "$MODIFIED_FILES" ]; then
-              CI=true pre-commit run --files $MODIFIED_FILES
-          else
-              echo "No modified files to check."
-          fi
+        If your repository includes **submodules**, make sure to fetch them in the pre-commit job to ensure all files are available for scanning. 
 
-    check_pre_commit:
-      extends:
-        - .check_pre_commit_template  # All configured pre-commit hooks will run under this job
+        In this case, add the following configuration under ``.check_pre_commit_template``:
 
-.. note::
+        .. code-block:: yaml
 
-    If your repository includes **submodules**, make sure to fetch them in the pre-commit job to ensure all files are available for scanning. 
+            variables:
+              GIT_STRATEGY: fetch
+              SUBMODULES_TO_FETCH: "all"
+            script:
+              - fetch_submodules  # Usually defined in ``utils.sh`` to fetch submodules
+              # If 'fetch_submodules' is not available, you can alternatively use:
+              # 'git submodule update --init --recursive'
 
-    In this case, add the following configuration under ``.check_pre_commit_template``:
+3.  Modify the ``.pre-commit-config.yaml`` file to add the expected hook.
+
+    **Example:**
 
     .. code-block:: yaml
 
-        variables:
-            GIT_STRATEGY: fetch
-            SUBMODULES_TO_FETCH: "all"
-        script:
-            - fetch_submodules  # Usually defined in ``utils.sh`` to fetch submodules
-            # If 'fetch_submodules' is not available, you can alternatively use:
-            # - git submodule update --init --recursive
+        repos:
+          - repo: https://github.com/codespell-project/codespell
+            rev: v2.4.1
+            hooks:
+              - id: codespell
+                args: [--config=.codespellrc]
 
-*Step 3*: Modify the ``.pre-commit-config.yaml`` file to add the expected hook.
+4.  (Optional) Move any other custom jobs under the "check" or "pre_check" stages from ``gitlab-ci.yml`` to ``.gitlab/ci/pre_commit.yml`` if they cannot be defined in the "repos" format in ``.pre-commit-config.yaml``.
 
-**Example:**
+    **Example:**
 
-.. code-block:: yaml
+    .. code-block:: yaml
 
-    repos:
-      - repo: https://github.com/codespell-project/codespell
-        rev: v2.4.1
-        hooks:
-          - id: codespell
-            args: [--config=.codespellrc]
+        check_setup:
+          stage: check
+          image: $ESP_DOCS_ENV_IMAGE
+          extends:
+            - .before_script_minimal
+          script:
+            - pip install .
 
 After completing these steps, your CI pipeline will automatically run all pre-commit hooks on the files modified in each Merge Request.
 
