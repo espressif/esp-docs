@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import unittest
 import tempfile
 import tarfile
@@ -19,7 +20,11 @@ class TestBuildTarball(unittest.TestCase):
     def setUp(self):
         self.temp_dir = tempfile.TemporaryDirectory()
 
-        copy_tree(self.BUILD_DIR_TEMPLATE_PATH, self.temp_dir.name)
+        # Get the absolute path to the _build_deploy directory relative to this test file
+        test_dir = os.path.dirname(os.path.realpath(__file__))
+        build_dir_path = os.path.join(test_dir, self.BUILD_DIR_TEMPLATE_PATH)
+
+        copy_tree(build_dir_path, self.temp_dir.name)
 
     def tearDown(self):
         self.temp_dir.cleanup()
