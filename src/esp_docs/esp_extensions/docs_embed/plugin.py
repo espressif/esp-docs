@@ -107,7 +107,7 @@ def _add_wokwi_modules(app: Sphinx, pagename: str, templatename: str, context: d
         <script type="importmap">
         {{
           "imports": {{
-            "wokwi-client-js": "https://esp.kubaandrysek.cz/esp-docs/wokwi-client-js.browser.js"
+            "wokwi-client-js": "https://cdn.jsdelivr.net/npm/@wokwi/client@0.19.0/dist/wokwi-client.browser.js"
           }}
         }}
         </script>
