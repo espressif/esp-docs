@@ -1,5 +1,6 @@
-Configuring ESP-Docs Projects
-=============================
+###############################
+ Configuring ESP-Docs Projects
+###############################
 
 .. toctree::
     :maxdepth: 1
@@ -10,3 +11,4 @@ Configuring ESP-Docs Projects
     collecting-user-analytics
     collecting-document-feedback
     adding-codespell
+    deploy-to-s3

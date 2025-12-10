@@ -18,15 +18,22 @@ from __future__ import unicode_literals
 
 import os
 import shutil
+import subprocess
+
 import sys
 from io import open
+import re
+
+import packaging.version
 
 try:
     import urllib.request
+
     _urlretrieve = urllib.request.urlretrieve
 except ImportError:
     # Python 2 fallback
     import urllib
+
     _urlretrieve = urllib.urlretrieve
 
 
@@ -79,3 +86,43 @@ def call_with_python(cmd):
     # using sys.executable ensures that the scripts are called with the same Python interpreter
     if os.system('{} {}'.format(sys.executable, cmd)) != 0:
         raise RuntimeError('{} failed'.format(cmd))
+
+
+def is_stable_version(version):
+    """Heuristic for whether this is the latest stable release"""
+    if not version.startswith('v'):
+        return False  # branch name
+    if '-' in version:
+        return False  # prerelease tag
+
+    git_out = subprocess.check_output(['git', 'tag', '-l']).decode('utf-8')
+
+    versions = [v.strip() for v in git_out.split('\n')]
+    versions = [
+        v for v in versions if re.match(r'^v[\d\.]+$', v)
+    ]  # include vX.Y.Z only
+
+    versions = [packaging.version.parse(v) for v in versions]
+
+    max_version = max(versions)
+
+    if max_version.public != version[1:]:
+        print(
+            'Stable version is v{}. This version is {}.'.format(
+                max_version.public, version
+            )
+        )
+        return False
+    else:
+        print('This version {} is the stable version'.format(version))
+        return True
+
+
+def env(variable, default=None):
+    """Shortcut to return the expanded version of an environment variable"""
+    res = os.path.expandvars(
+        os.environ.get(variable, default) if default else os.environ[variable]
+    )
+    if not res:
+        raise RuntimeError(f'Valid {variable} is needed to deploy')
+    return res
