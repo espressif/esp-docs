@@ -12,7 +12,7 @@ from ..get_github_rev import get_github_rev
 from sphinx.transforms.post_transforms import SphinxPostTransform
 
 
-# Creates a dict of all submodules with the format {submodule_path : (url relative to git root), commit)}
+# Creates a dict of all submodules with the format {submodule_path : (url absolute or relative to git root), commit)}
 def get_submodules():
     git_root = subprocess.check_output(['git', 'rev-parse', '--show-toplevel']).strip().decode('utf-8')
     gitmodules_file = os.path.join(git_root, '.gitmodules')
@@ -83,7 +83,15 @@ def github_link(link_type, idf_rev, submods, root_path, app_config):
         repo, repo_rev, rel_path = redirect_submodule(rel_path, submods, idf_rev)
 
         line_no = None
-        url = url_join(BASE_URL, repo, link_type, repo_rev, rel_path)
+        # Check if repo URL is already absolute (starts with http:// or https://)
+        # If so, use it directly; otherwise join with BASE_URL
+        if repo.startswith('http://') or repo.startswith('https://'):
+            # Absolute URL: construct the full URL directly
+            repo_base = repo.rstrip('/')
+            url = url_join(repo_base, link_type, repo_rev, rel_path)
+        else:
+            # Relative URL: join with BASE_URL as before
+            url = url_join(BASE_URL, repo, link_type, repo_rev, rel_path)
 
         if '#L' in abs_path:
             # drop any URL line number from the file, line numbers take the form #Lnnn or #Lnnn-Lnnn for a range
