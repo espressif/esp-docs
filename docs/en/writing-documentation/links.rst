@@ -99,14 +99,14 @@ If you want to link to other documents in the same folder, which is the ``docs``
 
   .. code-block:: text
 
-      :doc:`CustomizedLinkText <relative path to the root folder>`
+      :doc:`CustomizedLinkText <path from the documentation root, starting with />`
       :doc:`CustomizedLinkText <relative path to the document you want to link to>`
 
   Example:
 
   .. code-block:: text
 
-      :doc:`Another Introduction </introduction/index>`
+      :doc:`Another Introduction </introduction/index>` (the documentation root here is esp-docs/docs/en)
       :doc:`Another Introduction <../introduction/index>`
 
   Rendering result:
