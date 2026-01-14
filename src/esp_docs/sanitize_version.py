@@ -16,6 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
+import re
 
 
 def sanitize_version(original_version):
@@ -40,6 +41,7 @@ def sanitize_version(original_version):
     if version == latest_branch_name:
         return 'latest'
 
-    version = version.replace('/', '-')
+    # Replace any characters except "a-zA-Z0-9._-" with hyphens
+    version = re.sub(r'[^a-zA-Z0-9._-]', '-', version)
 
     return version
