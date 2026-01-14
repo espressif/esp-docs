@@ -43,6 +43,7 @@ test_uts:
     - python test_docs.py
     - python test_esp_extensions.py
     - python test_deploy.py
+    - python test_sanitize_version.py
 
 test_builds:
   stage: test
