@@ -151,6 +151,17 @@ It creates and adds the espidf.sty LaTeX package to the output directory, which 
 
 The ``include-build-file`` directive is like the built-in ``include-file`` directive, but the file path is evaluated relative to ``build_dir``.
 
+:project_file:`Docs Embed <src/esp_docs/esp_extensions/docs_embed/plugin.py>`
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+This is a Sphinx extension to embed Wokwi simulator into the documentation.
+The extension provides two directives: ``.. wokwi::`` and ``.. wokwi-example::``.
+
+- ``.. wokwi::`` directive embeds a Wokwi diagram specified by JSON file and firmware binary file URLs.
+- ``.. wokwi-example::`` directive embeds a Wokwi example from the docs folder. Currently supports only Arduino framework examples.
+
+See :doc:`Wokwi Embed <../writing-documentation/docs-embed>` for more information and examples.
+
 IDF-Specific Extensions
 ^^^^^^^^^^^^^^^^^^^^^^^
 

@@ -1,0 +1,387 @@
+/* Container frames */
+.wokwi-frame,
+.wokwi-tabs {
+  border: 2px solid #e5e7eb;
+  border-radius: .75rem;
+  margin: .75rem 0;
+  background: #f9fafb;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+  padding: .5rem;
+}
+
+/* Header bar */
+.wokwi-tabsbar {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
+  border: 0;
+  margin: 0;
+}
+
+/* Our tablist — avoid sphinx-tabs global CSS */
+.wokwi-tabsbar .wokwi-tablist { border: 0 !important; }
+
+/* Groups container - holds all three bordered groups */
+.wokwi-groups-container {
+  display: flex;
+  gap: .75rem;
+  width: 100%;
+  align-items: stretch;
+}
+
+
+/* Individual group - bordered box */
+.wokwi-group {
+  background: #ffffff;
+  border: 2px solid #e5e7eb;
+  border-radius: .5rem;
+  padding: .65rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+
+/* Code group - flexible */
+.wokwi-group-code {
+  flex: 0 0 auto;
+}
+
+/* Simulator group - takes most space */
+.wokwi-group-simulator {
+  flex: 1 1 auto;
+}
+
+/* Launchpad group - fixed width */
+.wokwi-group-launchpad {
+  flex: 0 0 auto;
+  justify-content: space-between;
+}
+
+/* Group header with icon and actions */
+.wokwi-group-header {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  margin-bottom: .1rem;
+}
+
+/* Wokwi icon */
+.wokwi-icon {
+  height: 20px;
+  width: 20px;
+  display: block;
+  flex-shrink: 0;
+}
+
+/* Group label (CODE, WOKWI SIMULATOR, launchpad) */
+.wokwi-group-label {
+  font-size: .7rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  flex: 1;
+}
+
+/* Header actions (info + fullscreen in simulator header) */
+.wokwi-header-actions {
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+  margin-left: auto;
+}
+
+/* Code tablist styling */
+.wokwi-code-tablist {
+  display: flex;
+  gap: .4rem;
+  flex-wrap: wrap;
+}
+
+/* Wokwi tablist styling */
+.wokwi-wokwi-tablist {
+  display: flex;
+  gap: .4rem;
+  flex-wrap: wrap;
+}
+
+.wokwi-tab {
+  padding: .35rem .65rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+  background: transparent;
+  font-size: .8125rem;
+  font-weight: 500;
+  white-space: nowrap;
+  flex: 0 0 auto;
+  border-radius: 9999px; /* pill shape */
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Code tab styling */
+.wokwi-code-tab {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #475569;
+  box-shadow: 0 1px 2px rgba(0,0,0,.04);
+}
+
+.wokwi-code-tab:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,.12);
+}
+
+/* Wokwi tab styling */
+.wokwi-wokwi-tab {
+  background: #f9fafb;
+  border-color: #d1d5db;
+  color: #374151;
+  box-shadow: 0 1px 2px rgba(0,0,0,.04);
+}
+
+.wokwi-wokwi-tab:hover {
+  background: #ffffff;
+  border-color: #9ca3af;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,.12);
+}
+
+/* Selected tab - vibrant blue */
+.wokwi-tab[aria-selected="true"] {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  border-color: #2563eb;
+  color: #ffffff;
+  font-weight: 600;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+}
+
+.wokwi-tab[aria-selected="true"]:hover {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border-color: #1d4ed8;
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+}
+
+
+/* Info and fullscreen buttons */
+.wokwi-info-btn,
+.wokwi-fullscreen-btn {
+  text-decoration: none;
+  font-weight: 600;
+  line-height: 1;
+  padding: .25rem .35rem;
+  border-radius: .3rem;
+  background: #ffffff;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+  font-size: .75rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wokwi-info-btn:hover,
+.wokwi-fullscreen-btn:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,.08);
+}
+
+/* Launchpad button */
+.wokwi-launchpad-btn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: .4rem;
+  padding: .3rem .4rem;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  border: 2px solid #dc2626;
+  border-radius: .5rem;
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+}
+
+.wokwi-launchpad-btn:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  border-color: #b91c1c;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.35);
+}
+
+.wokwi-launchpad-btn .launchpad-icon {
+  display: block;
+  height: 18px;
+  width: auto;
+  transition: all 0.2s ease;
+  filter: brightness(0) invert(1);
+}
+
+.wokwi-launchpad-btn:hover .launchpad-icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.wokwi-launchpad-btn .launchpad-text {
+  font-size: .8125rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+/* Panels */
+.wokwi-panel {
+  display: none;
+  padding: 0;
+  margin: 0;
+  padding-top: .5rem;
+}
+.wokwi-panel[data-active="true"] { display: block; }
+.wokwi-panel > *:first-child { margin-top: 0 !important; }
+.wokwi-panel > *:last-child { margin-bottom: 0 !important; }
+.wokwi-panel .highlight { margin-bottom: 0 !important; margin-top: 0 !important; }
+
+/* Iframes */
+.wokwi-panel iframe,
+.wokwi-frame iframe {
+  width: 100%;
+  height: 500px; /* overridden by element attribute */
+  border: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .wokwi-tabs {
+    padding: .65rem;
+  }
+
+  .wokwi-groups-container {
+    flex-direction: column;
+    gap: .5rem;
+  }
+
+  .wokwi-group {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .wokwi-group-launchpad {
+    min-width: unset;
+  }
+
+  .wokwi-group-label {
+    font-size: .5rem;
+  }
+
+  .wokwi-icon {
+    height: 18px;
+    width: 18px;
+  }
+
+  .wokwi-panel {
+    padding-top: .65rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .wokwi-tabs {
+    padding: .5rem;
+  }
+
+  .wokwi-groups-container {
+    gap: .5rem;
+  }
+
+  .wokwi-group {
+    padding: .5rem;
+  }
+
+  .wokwi-tab {
+    font-size: .75rem;
+    padding: .3rem .55rem;
+  }
+
+  .wokwi-group-label {
+    font-size: .6rem;
+  }
+
+  .wokwi-icon {
+    height: 16px;
+    width: 16px;
+  }
+
+  .wokwi-panel {
+    padding-top: .5rem;
+  }
+
+  .wokwi-panel iframe {
+    height: 360px !important;
+  }
+
+  .wokwi-info-btn,
+  .wokwi-fullscreen-btn {
+    padding: .2rem .3rem;
+    font-size: .7rem;
+  }
+
+  .wokwi-launchpad-btn {
+    padding: .45rem .7rem;
+  }
+
+  .wokwi-launchpad-btn .launchpad-icon {
+    height: 16px;
+  }
+
+  .wokwi-launchpad-btn .launchpad-text {
+    font-size: .75rem;
+  }
+}
+
+/* Modal overlay for fullscreen */
+.wokwi-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.66);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2147483647;
+}
+.wokwi-modal__inner {
+  background: #0b1020;
+  width: 96vw;
+  height: 92vh;
+  max-width: 1400px;
+  border-radius: .5rem;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0,0,0,.45);
+  overflow: hidden;
+}
+.wokwi-modal__close {
+  position: fixed;
+  top: 10px;
+  right: 12px;
+  background: rgba(255,255,255,.85);
+  color: #111827;
+  border: 0;
+  border-radius: .375rem;
+  padding: .35rem .5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  z-index: 2147483648;
+}
+.wokwi-modal__close:hover { background: rgba(255,255,255,1); }
+.wokwi-modal__frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #0b1020;
+}

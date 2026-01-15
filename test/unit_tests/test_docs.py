@@ -17,9 +17,15 @@ class DocBuilder():
     def __init__(self, src_dir, build_dir, target, language):
         self.language = language
         self.target = target
+        # Make src_dir absolute if it's relative
+        if not os.path.isabs(src_dir):
+            src_dir = os.path.join(CURRENT_DIR, src_dir)
         self.src_dir = src_dir
+        # Make build_dir absolute if it's relative
+        if not os.path.isabs(build_dir):
+            build_dir = os.path.join(CURRENT_DIR, build_dir)
         self.build_dir = build_dir
-        self.html_out_dir = os.path.join(CURRENT_DIR, build_dir, language, target, 'html')
+        self.html_out_dir = os.path.join(self.build_dir, language, target, 'html')
 
     def build(self, opt_args=[]):
         args = ['build-docs', '-b', self.build_dir, '-s', self.src_dir, '-t', self.target, '-l', self.language]
