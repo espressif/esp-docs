@@ -15,3 +15,4 @@ Writing Documentation
    api-documentation
    formatting-documents-for-translation
    using-spellcheckers-in-vscode
+   docs-embed
