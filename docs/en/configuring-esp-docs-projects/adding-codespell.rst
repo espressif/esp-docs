@@ -108,9 +108,8 @@ You can add ``codespell`` to your CI/CD process by either modifying ``.gitlab-ci
 
         codespell_check:
           stage: check
+          tags: [test]
           image: $ESP_DOCS_ENV_IMAGE
-          extends:
-            - .before_script_minimal
           rules:
             - if: $CI_PIPELINE_SOURCE == "merge_request_event"
           before_script:
@@ -129,8 +128,8 @@ You can add ``codespell`` to your CI/CD process by either modifying ``.gitlab-ci
               fi
 
     - ``stage``: Specifies the stage of the pipeline where this job belongs. The stage can be **check** or **pre-check** as defined earlier in the ``yml`` file.
+    - ``tags``: (Optional) Selects specific runners for this job. Most repositories require this field, unless the ``Run untagged jobs`` option is enabled. Use the tag name that matches your repository's runner configuration.
     - ``image``: Specifies the Docker image used for running jobs. This should match the image already configured in your repository.
-    - ``extends``: Inherits configuration from a predefined template, e.g., ``.before_script_minimal``. This reduces repetition and ensures consistent initialization across jobs.
     - ``rules``: Defines conditions for when the job should run. For example, using ``if: $CI_PIPELINE_SOURCE == "merge_request_event"`` ensures the job only runs in pipelines triggered by a Merge Request, and not for regular branch pushes or scheduled pipelines.
     - ``before_script``:
 
@@ -139,6 +138,15 @@ You can add ``codespell`` to your CI/CD process by either modifying ``.gitlab-ci
       - Collects the list of modified files for spell checking.
 
     - ``script``: Runs ``codespell`` on modified files only. If spelling errors are detected, the job fails.
+
+    .. note::
+
+        You can also inherit configuration from a predefined template, e.g., ``.before_script_minimal``. This reduces repetition and ensures consistent initialization across jobs.
+
+        .. code-block:: yaml
+
+            extends:
+              - .before_script_minimal
 
 2.  If your project runs unified pre-commit jobs in the CI pipeline, adding a separate ``codespell_check`` job in ``.gitlab-ci.yml`` is unnecessary. The CI pipeline simply uses the same ``.pre-commit-config.yaml`` file, ensuring that the checks performed in CI are identical to those on local machines.
 
@@ -177,9 +185,8 @@ Steps
 
         .check_pre_commit_template:
           stage: check  # or "pre-check", depending on your pipeline structure
+          tags: [test]  # Optional: specify tags to select appropriate runners
           image: $ESP_DOCS_ENV_IMAGE  # Use the same image as other jobs in your repository
-          extends:
-            - .before_script_minimal  # Optional: reuse an existing minimal setup if available
           rules:
             - if: $CI_PIPELINE_SOURCE == "merge_request_event"  # Run this job only for merge request pipelines. 
           script:
