@@ -25,12 +25,14 @@ import stat
 import subprocess
 import tarfile
 
-import packaging.version
+from .util.util import is_stable_version
 
 
 def env(variable, default=None):
-    """ Shortcut to return the expanded version of an environment variable """
-    return os.path.expandvars(os.environ.get(variable, default) if default else os.environ[variable])
+    """Shortcut to return the expanded version of an environment variable"""
+    return os.path.expandvars(
+        os.environ.get(variable, default) if default else os.environ[variable]
+    )
 
 
 from .sanitize_version import sanitize_version  # noqa
@@ -39,19 +41,25 @@ from .sanitize_version import sanitize_version  # noqa
 def main():
     # if you get KeyErrors on the following lines, it's probably because you're not running in Gitlab CI
     git_ver = env('GIT_VER')  # output of git describe --always
-    version = sanitize_version(git_ver)  # branch or tag we're building for (used for 'release' & URL)
+    version = sanitize_version(
+        git_ver
+    )  # branch or tag we're building for (used for 'release' & URL)
     print('Git version: {}'.format(git_ver))
     print('Deployment version: {}'.format(version))
 
     if not version:
         raise RuntimeError('A version is needed to deploy')
 
-    build_dir = env('DOCS_BUILD_DIR')  # top-level local build dir, where docs have already been built
+    build_dir = env(
+        'DOCS_BUILD_DIR'
+    )  # top-level local build dir, where docs have already been built
 
     if not build_dir:
         raise RuntimeError('Valid DOCS_BUILD_DIR is needed to deploy')
 
-    url_base = env('DOCS_DEPLOY_URL_BASE')  # base for HTTP URLs, used to print the URL to the log after deploying
+    url_base = env(
+        'DOCS_DEPLOY_URL_BASE'
+    )  # base for HTTP URLs, used to print the URL to the log after deploying
 
     docs_server = env('DOCS_DEPLOY_SERVER')  # ssh server to deploy to
     docs_user = env('DOCS_DEPLOY_SERVER_USER')
@@ -86,8 +94,12 @@ def main():
             language, _ = url_paths
             tag = '{}'.format(language)
 
-        url = '{}/{}/index.html'.format(url_base, vurl)  # (index.html needed for the preview server)
-        url = re.sub(r'([^:])//', r'\1/', url)  # get rid of any // that isn't in the https:// part
+        url = '{}/{}/index.html'.format(
+            url_base, vurl
+        )  # (index.html needed for the preview server)
+        url = re.sub(
+            r'([^:])//', r'\1/', url
+        )  # get rid of any // that isn't in the https:// part
         print('[document {}][{}] {}'.format(doc_deploy_type, tag, url))
 
     # note: it would be neater to use symlinks for stable, but because of the directory order
@@ -102,21 +114,36 @@ def main():
 
 def deploy(version, tarball_path, docs_path, docs_server):
     def run_ssh(commands):
-        """ Log into docs_server and run a sequence of commands using ssh """
+        """Log into docs_server and run a sequence of commands using ssh"""
         print('Running ssh: {}'.format(commands))
-        subprocess.run(['ssh', '-o', 'BatchMode=yes', docs_server, '-x', ' && '.join(commands)], check=True)
+        subprocess.run(
+            ['ssh', '-o', 'BatchMode=yes', docs_server, '-x', ' && '.join(commands)],
+            check=True,
+        )
 
     # copy the version tarball to the server
     run_ssh(['mkdir -p {}'.format(docs_path)])
-    print('Running scp {} to {}'.format(tarball_path, '{}:{}'.format(docs_server, docs_path)))
-    subprocess.run(['scp', '-B', tarball_path, '{}:{}'.format(docs_server, docs_path)], check=True)
+    print(
+        'Running scp {} to {}'.format(
+            tarball_path, '{}:{}'.format(docs_server, docs_path)
+        )
+    )
+    subprocess.run(
+        ['scp', '-B', tarball_path, '{}:{}'.format(docs_server, docs_path)], check=True
+    )
 
     tarball_name = os.path.basename(tarball_path)
 
-    run_ssh(['cd {}'.format(docs_path),
-             'rm -rf ./*/{}'.format(version),  # remove any pre-existing docs matching this version
-             'tar -zxvf {}'.format(tarball_name),  # untar the archive with the new docs
-             'rm {}'.format(tarball_name)])
+    run_ssh(
+        [
+            'cd {}'.format(docs_path),
+            'rm -rf ./*/{}'.format(
+                version
+            ),  # remove any pre-existing docs matching this version
+            'tar -zxvf {}'.format(tarball_name),  # untar the archive with the new docs
+            'rm {}'.format(tarball_name),
+        ]
+    )
 
     # Note: deleting and then extracting the archive is a bit awkward for updating stable/latest/etc
     # as the version will be invalid for a window of time. Better to do it atomically, but this is
@@ -124,8 +151,8 @@ def deploy(version, tarball_path, docs_path, docs_server):
 
 
 def build_doc_tarball(version, git_ver, build_dir):
-    """ Make a tar.gz archive of the docs, in the directory structure used to deploy as
-        the given version """
+    """Make a tar.gz archive of the docs, in the directory structure used to deploy as
+    the given version"""
     version_paths = []
     tarball_path = '{}/{}.tar.gz'.format(build_dir, version)
 
@@ -137,7 +164,7 @@ def build_doc_tarball(version, git_ver, build_dir):
     print('Found %d PDFs in latex directories' % len(pdfs))
 
     def not_sources_dir(ti):
-        """ Filter the _sources directories out of the tarballs """
+        """Filter the _sources directories out of the tarballs"""
         if ti.name.endswith('/_sources'):
             return None
 
@@ -186,30 +213,6 @@ def build_doc_tarball(version, git_ver, build_dir):
             tarball.add(pdf_path, archive_path)
 
     return (os.path.abspath(tarball_path), version_paths)
-
-
-def is_stable_version(version):
-    """ Heuristic for whether this is the latest stable release """
-    if not version.startswith('v'):
-        return False  # branch name
-    if '-' in version:
-        return False  # prerelease tag
-
-    git_out = subprocess.check_output(['git', 'tag', '-l']).decode('utf-8')
-
-    versions = [v.strip() for v in git_out.split('\n')]
-    versions = [v for v in versions if re.match(r'^v[\d\.]+$', v)]  # include vX.Y.Z only
-
-    versions = [packaging.version.parse(v) for v in versions]
-
-    max_version = max(versions)
-
-    if max_version.public != version[1:]:
-        print('Stable version is v{}. This version is {}.'.format(max_version.public, version))
-        return False
-    else:
-        print('This version {} is the stable version'.format(version))
-        return True
 
 
 if __name__ == '__main__':
