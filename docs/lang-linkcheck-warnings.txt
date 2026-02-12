@@ -1,0 +1,5 @@
+# Files to ignore in lang-linkcheck
+# One file path per line (relative to docs directory)
+
+en/writing-documentation/links.rst
+en/configuring-esp-docs-projects/adding-lang-linkcheck.rst

@@ -8,6 +8,7 @@
     integrating-esp-docs-into-your-project
     adding-extensions
     adding-link-check
+    adding-lang-linkcheck
     collecting-user-analytics
     collecting-document-feedback
     adding-codespell

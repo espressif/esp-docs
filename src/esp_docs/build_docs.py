@@ -36,6 +36,7 @@ import subprocess
 import sys
 from pathlib import Path
 from .check_docs import check_docs
+from .check_lang_switch import run_lang_linkcheck
 from esp_docs.constants import TARGETS
 
 LANGUAGES = ['en', 'zh_CN']
@@ -97,6 +98,8 @@ def main():
 
     action_parsers.add_parser('gh-linkcheck', help='Checking for hardcoded GitHub links')
 
+    action_parsers.add_parser('lang-linkcheck', help='Check if link_to_translation directives are present in RST files included in toctrees')
+
     args = parser.parse_args()
 
     global languages
@@ -132,6 +135,9 @@ def main():
 
     if args.action == 'gh-linkcheck':
         sys.exit(action_gh_linkcheck(args))
+
+    if args.action == 'lang-linkcheck':
+        sys.exit(action_check_lang_switch(args))
 
 
 def parallel_call(args, callback):
@@ -412,6 +418,27 @@ def action_gh_linkcheck(args):
     else:
         print('No hardcoded links found')
         return 0
+
+
+def action_check_lang_switch(args):
+    print('Checking for missing translation links\n')
+
+    # Use the global languages variable set in main(), same as linkcheck
+    languages_to_check = languages
+    # Use the global targets variable, same as linkcheck
+    # When no target is specified, targets = ['generic'], which means no specific target
+    if targets == ['generic']:
+        target = None
+    elif len(targets) == 1:
+        target = targets[0]
+    else:
+        # Multiple targets - for now, check with first target
+        # This matches linkcheck behavior which processes all targets
+        target = targets[0]
+
+    # run_lang_linkcheck uses current working directory as docs_dir
+    # build-docs should be run from the docs directory
+    return run_lang_linkcheck(languages_to_check, target)
 
 
 if __name__ == '__main__':
