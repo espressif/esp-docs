@@ -120,3 +120,71 @@ In Markdown, inserting a table of contents with the same effect is also possible
         - [Peripherals](./release-5.x/5.0/peripherals)
 
 Besides, in Markdown there is no sidebar to show the documents in this project and to help readers navigate. Take the ESP-DL repository as example. If you are reading `Get Started <https://github.com/espressif/esp-dl/blob/8bc9a5b01350959819f7e1bf8392b3cb26be066b/docs/en/get_started.md>`_, and want to check `how to deploy a model <https://github.com/espressif/esp-dl/tree/8bc9a5b01350959819f7e1bf8392b3cb26be066b/tutorial/quantization_tool_example>`_, there is no way to know where to find this document until you explore almost every folder. Just imagine what a nightmare it would be if the project has 100 files.
+
+
+Building and Deploying Documentation
+------------------------------------
+
+Regardless of which source format you choose, both reStructuredText and Markdown rely on a static site generator (SSG) to convert source files into HTML/CSS/JavaScript. An SSG is a build tool that processes your markup files and generates a static website that can be deployed to various hosting platforms. 
+
+While the core build-and-deploy logic is similar for both formats, the specific packages, features, and processes vary depending on which toolchain you choose. Additionally, **access control (private/public)** is primarily determined by the hosting solution rather than the source format or build toolchain.
+
+Build Packages for reStructuredText
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+For ``.rst`` sources in Espressif projects, the commonly used build packages are:
+
+- **Sphinx**: A general-purpose documentation generator widely used in the Python ecosystem.
+- **ESP-Docs**: A Sphinx-based package tailored for Espressif documentation, offering extensions for multi-target documentation, automated API generation, and more. See :doc:`What is ESP-Docs <what-is-esp-docs>` for details.
+
+Both tools generate static HTML (and optionally PDF) output. The generated static site can be deployed to any hosting platform. In Espressif projects, ``.rst`` documentation is commonly deployed to Espressif's internal server or Read the Docs. See :doc:`ESP-Docs & Espressif Server v.s. Sphinx & Read the Docs <esp-docs-esp-server-vs-sphinx-rtd>` for details on choosing the right combination.
+
+Build Packages for Markdown
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+For ``.md`` sources, several SSG options are available, each offering distinct features and workflows:
+
+- `VitePress <https://vitepress.dev/>`__: A modern SSG built on Vite, commonly used for technical documentation. It provides sidebar navigation, search, versioning, and multi-language support. For example, Espressif's internal **CI Services Wiki** uses VitePress. To access the documentation, navigate to Documentation Team Site > ESP-Docs User Guide > Espressif's internal ci-services-wiki & ci-services-wiki documentation pages.
+- `Starlight <https://starlight.astro.build/>`__: An Astro-based documentation framework used by the IDF team to generate the **Chip Support Wiki** page. To access this site, navigate to Documentation Team Site > ESP-Docs User Guide > Chip Support Wiki page.
+- `mdBook <https://rust-lang.github.io/mdBook/>`__: A command-line tool to create books with Markdown, ideal for creating product or API documentation, tutorials and course materials. For example, it is used to generate the `ESP32-C3 book <https://espressif.github.io/esp32-c3-book-en/>`__.
+- `MkDocs <https://www.mkdocs.org/>`__: A popular Python-based SSG for project documentation, known for its simplicity and ease of configuration. For example, it is used to generate the **esp-api-check** and **Athena Python Client** documentation pages. To access these, navigate to Documentation Team Site > ESP-Docs User Guide > esp-api-check & Athena Python Client documentation pages.
+
+The generated static sites can be deployed to any hosting platform. In Espressif projects, ``.md`` documentation is commonly deployed to GitLab Pages, GitHub Pages, or internal web servers.
+
+Comparison table
+----------------
+
+.. list-table::
+  :header-rows: 1
+  :widths: 18 41 41
+
+  * - Dimension
+    - reStructuredText
+    - Markdown
+  * - Learning curve
+    - Higher; more syntax and concepts
+    - Lower; simpler syntax to start writing
+  * - Extensibility
+    - Built-in extensibility via Sphinx ``roles``/``directives`` and extensions
+    - No standard extension system; different editors use different plugins
+  * - API reference
+    - Mature automation via Sphinx ecosystem (e.g., Doxygen integration)
+    - Possible, but often relies on some third-party API generators
+  * - Tables
+    - Rich table formats (merged cells, lists, specified column widths)
+    - Basic tables
+  * - Links & cross-references
+    - Strong cross-references across docs; can avoid raw URLs
+    - Typically relies on plain links
+  * - TOC & navigation
+    - ``toctree`` can generate TOC and sidebar automatically
+    - Manual TOC configuration; repo rendering lacks navigation
+  * - Build toolchain
+    - Typically ESP-Docs or Sphinx 
+    - Various SSG options (e.g., VitePress, Starlight, mdBook, MkDocs)
+  * - Output & deployment
+    - Static site (HTML; often PDF too); commonly deployed to Espressif Server or Read the Docs
+    - Static site (HTML); commonly deployed to GitLab Pages/GitHub Pages/Espressif Server
+  * - Best for
+    - Large, complex documentation sets that benefit from automation and cross-references
+    - Teams that prefer Markdown and want a modern site with minimal setup via an SSG
