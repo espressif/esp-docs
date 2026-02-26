@@ -50,10 +50,18 @@ Only ``fix`` and ``feat`` commits trigger a version bump. Other types (``docs``,
 A commit with a ``BREAKING CHANGE`` footer or a ``!`` after the type (e.g. ``feat!: remove legacy API``) triggers a major version bump.
 
 
+Ask a Question
+--------------
+
+- If you have questions regarding the documentation or code here, contact the Documentation Team directly, or fill in the `documentation feedback form <https://www.espressif.com/en/company/documents/documentation_feedback?docId=6391&version=latest%2520(v1.3.0-34-g2aaa84f335)>`_.
+
+
 Release Process
 ---------------
 
-Releases are managed with `Commitizen <https://commitizen-tools.github.io/commitizen/>`_. To create a new release:
+Releases are managed with `Commitizen <https://commitizen-tools.github.io/commitizen/>`_ and published to `PyPI <https://pypi.org/project/esp-docs/>`_ via a GitHub Actions workflow.
+
+To create a new release:
 
 .. code-block:: bash
 
@@ -72,8 +80,11 @@ To preview what would happen without making changes:
 
    cz bump --dry-run
 
+Once the version bump is ready:
 
-Ask a Question
---------------
+1. Merge the version bump to the ``master`` branch.
+2. Wait for the repository to sync from GitLab to GitHub.
+3. Create a new `GitHub Release <https://github.com/espressif/esp-docs/releases/new>`_ with a tag matching the version (e.g., ``v2.2.0``).
+4. The ``release_pypi.yml`` workflow will automatically build and publish the package to PyPI.
 
-- If you have questions regarding the documentation or code here, contact the Documentation Team directly, or fill in the `documentation feedback form <https://www.espressif.com/en/company/documents/documentation_feedback?docId=6391&version=latest%2520(v1.3.0-34-g2aaa84f335)>`_.
+The workflow uses `PyPI trusted publishing <https://docs.pypi.org/trusted-publishers/>`_ (OIDC) so no API tokens need to be managed. If the version already exists on PyPI the upload will be skipped.
