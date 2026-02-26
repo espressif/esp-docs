@@ -4,3 +4,13 @@ requires = [
     "wheel"
 ]
 build-backend = "setuptools.build_meta"
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "2.1.4"
+tag_format = "v$version"
+version_files = [
+    "setup.cfg:version",
+]
+update_changelog_on_bump = true
+changelog_start_rev = "v2.1.4"
