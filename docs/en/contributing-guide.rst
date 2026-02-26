@@ -29,6 +29,50 @@ Make Minor Changes
 - The Documentation Team will make bulk changes periodically based on such requests.
 
 
+Commit Messages
+---------------
+
+This project uses `Conventional Commits <https://www.conventionalcommits.org/>`_. A pre-commit hook enforces the format on every commit message. To install the hooks, run:
+
+.. code-block:: bash
+
+   pre-commit install
+
+Each commit message must follow the pattern ``<type>: <description>``, for example:
+
+- ``fix: correct version parsing for tags with prefix``
+- ``feat: add support for ESP32-H4 target``
+- ``docs: update contributing guide``
+- ``ci: add commitizen to pre-commit hooks``
+
+Only ``fix`` and ``feat`` commits trigger a version bump. Other types (``docs``, ``ci``, ``refactor``, ``test``, etc.) are recorded in the changelog but do not change the version.
+
+A commit with a ``BREAKING CHANGE`` footer or a ``!`` after the type (e.g. ``feat!: remove legacy API``) triggers a major version bump.
+
+
+Release Process
+---------------
+
+Releases are managed with `Commitizen <https://commitizen-tools.github.io/commitizen/>`_. To create a new release:
+
+.. code-block:: bash
+
+   cz bump
+
+This command will:
+
+1. Determine the next version based on commits since the last tag.
+2. Update the version in ``setup.cfg`` and ``pyproject.toml``.
+3. Generate/update ``CHANGELOG.md``.
+4. Create a commit and a git tag (e.g. ``v2.1.5``).
+
+To preview what would happen without making changes:
+
+.. code-block:: bash
+
+   cz bump --dry-run
+
+
 Ask a Question
 --------------
 
