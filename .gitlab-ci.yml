@@ -3,7 +3,6 @@ stages:
   - test
   - build
   - test_deploy
-  - deploy
   - post_deploy
 
 variables:
@@ -205,22 +204,6 @@ deploy_docs_idf:
    needs:
      - build_idf_docs_html
 
-deploy_package:
-  stage: deploy
-  image: $ESP_DOCS_ENV_IMAGE
-  extends:
-    - .before_script_minimal
-  tags:
-    - build
-  only:
-    - master
-  when: on_success
-  dependencies:
-    - build_package
-  script:
-   - pip install .
-   - pip install twine
-   - python $ESP_DOCS_PATH/.gitlab/ci/deploy_package.py
 
 check_doc_links:
   extends:
