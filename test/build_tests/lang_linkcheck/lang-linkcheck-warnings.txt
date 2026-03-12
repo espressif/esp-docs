@@ -1,0 +1,3 @@
+# Files to ignore in lang-linkcheck
+# One file path per line (with language prefix and .rst extension, relative to docs directory)
+*/page_ignored_by_warnings.rst
