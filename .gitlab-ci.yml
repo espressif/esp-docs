@@ -150,6 +150,11 @@ build_idf_docs_html:
     - pip install git+https://github.com/Rouslan/breathe.git@f4d8fbcffc7de2e44324c3861d951a9a2d68da7b
     - cd $DOCS_DIR
     - build-docs --skip-reqs-check -l $DOCLANG -t $DOCTGT
+
+    - export DOCS_BUILD_DIR='.'
+    - export GIT_VER=$IDF_COMMIT_ID
+    - upload-docs-s3
+
   parallel:
     matrix:
       - DOCLANG: ["en", "zh_CN"]
