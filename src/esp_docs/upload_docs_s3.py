@@ -57,6 +57,7 @@ import mimetypes
 import os
 import os.path
 import shutil
+from urllib.parse import quote
 
 import boto3
 from botocore.config import Config
@@ -102,7 +103,9 @@ def main():
     docs_path = f'{commit_sha}/{S3Config.docs_path}'
 
     tmp_path = copy_docs_to_tmp_folder(version, build_dir)
-    upload(tmp_path, docs_path)
+    uploaded_url = upload(tmp_path, docs_path)
+    if uploaded_url:
+        print(f'Docs uploaded. Example file: {uploaded_url}')
 
     # note: it would be neater to use symlinks for stable, but because of the directory order
     # (language first) it's kind of a pain to do on a remote server, so we just repeat the
@@ -111,7 +114,9 @@ def main():
     if is_stable_version(version) and do_deploy_stable:
         print('Deploying again as stable version...')
         tmp_path = copy_docs_to_tmp_folder('stable', build_dir)
-        upload(tmp_path, docs_path)
+        uploaded_url = upload(tmp_path, docs_path)
+        if uploaded_url:
+            print(f'Stable docs uploaded. Example file: {uploaded_url}')
 
 
 def _upload_one(local_path, key_name):
@@ -131,12 +136,25 @@ def _upload_one(local_path, key_name):
 
 def upload(source_dir, remote_dir):
     prefix = remote_dir.strip('/')
+    example_key_name = None
+
     for root, _, files in os.walk(source_dir):
         for filename in files:
             local_path = str(os.path.join(root, filename))
             rel_path = os.path.relpath(local_path, source_dir).replace(os.sep, '/')
             key_name = f'{prefix}/{rel_path}'
             _upload_one(local_path, key_name)
+
+            if filename == 'index.html' and example_key_name is None:
+                example_key_name = key_name
+
+    return build_s3_file_url(example_key_name) if example_key_name else None
+
+
+def build_s3_file_url(key_name):
+    key_path = quote(key_name.lstrip('/'), safe='/')
+    endpoint = S3Config.endpoint.removesuffix('/')
+    return f'{endpoint.replace("://", f"://{S3Config.bucket_name}.", 1)}/{key_path}'
 
 
 def copy_docs_to_tmp_folder(version, build_dir):
