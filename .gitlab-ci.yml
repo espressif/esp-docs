@@ -132,6 +132,7 @@ build_idf_docs_html:
     - $ESP_DOCS_PATH/.gitlab/ci/setup_idf.sh ${IDF_REPO} $IDF_COMMIT_ID $IDF_PATH $DOCTGT
     - cd $IDF_PATH
     - ./install.sh
+    - $IDF_PATH/tools/idf_tools.py install cmake
     - eval "$($IDF_PATH/tools/idf_tools.py --non-interactive export)"
     - pip install linuxdoc  # required by IDF v5.5 docs but not installed without --enable-docs
     - pip install $ESP_DOCS_PATH
