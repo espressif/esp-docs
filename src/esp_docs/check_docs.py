@@ -1,4 +1,6 @@
+import os
 import re
+import sys
 
 from collections import namedtuple
 
@@ -8,6 +10,11 @@ SANITIZE_FILENAME_REGEX = re.compile('[^:]*/([^/:]*)(:.*)')
 SANITIZE_LINENUM_REGEX = re.compile('([^:]*)(:[0-9]+:)(.*)')
 SANITIZE_DUPLICATE_LINENUM_REGEX = re.compile(r'([^:]*)(:[0-9]+\.)(.*)')
 SANITIZE_TERMINAL_CONTROL_REGEX = re.compile(r'\x1B\[[0-9;]*[a-zA-Z]|\[[0-9;]+m')
+
+ANSI_RESET = '\033[0m'
+ANSI_BOLD = '\033[1m'
+ANSI_RED = '\033[31m'
+ANSI_YELLOW = '\033[33m'
 
 
 def sanitize_line(line):
@@ -28,6 +35,66 @@ def sanitize_line(line):
     return line
 
 
+def supports_color():
+    if os.environ.get('NO_COLOR'):
+        return False
+
+    if os.environ.get('CI'):
+        return True
+
+    return hasattr(sys.stdout, 'isatty') and sys.stdout.isatty()
+
+
+def style_text(text, color=None, bold=False):
+    if not supports_color():
+        return text
+
+    styles = []
+    if bold:
+        styles.append(ANSI_BOLD)
+    if color == 'red':
+        styles.append(ANSI_RED)
+    elif color == 'yellow':
+        styles.append(ANSI_YELLOW)
+
+    if not styles:
+        return text
+
+    return ''.join(styles) + text + ANSI_RESET
+
+
+def format_path_for_display(path):
+    try:
+        rel_path = os.path.relpath(path)
+        if len(rel_path) < len(path):
+            return rel_path
+    except ValueError:
+        pass
+
+    return path
+
+
+def warning_type_from_log(log_file):
+    basename = os.path.basename(log_file).lower()
+    if 'doxygen' in basename:
+        return 'Doxygen'
+
+    return 'Sphinx'
+
+
+def group_log_messages(messages, text_attr):
+    grouped = []
+
+    for msg in messages:
+        text = getattr(msg, text_attr).rstrip('\n')
+        if grouped and text[:1].isspace():
+            grouped[-1] += '\n' + text
+        else:
+            grouped.append(text)
+
+    return grouped
+
+
 def check_docs(language, target, log_file, known_warnings_file, out_sanitized_log_file):
     """
     Check for Documentation warnings in `log_file`: should only contain (fuzzy) matches to `known_warnings_file`
@@ -46,7 +113,8 @@ def check_docs(language, target, log_file, known_warnings_file, out_sanitized_lo
                 all_messages.append(LogMessage(line, sanitized_line))
                 o.write(sanitized_line)
     except FileNotFoundError:
-        print("{} not generated".format(log_file))
+        print(style_text('=== BUILD FAILED ===', color='red', bold=True))
+        print(style_text('{}: expected warning log was not generated'.format(format_path_for_display(log_file)), color='red', bold=True))
         return 1
 
     known_messages = list()
@@ -77,10 +145,25 @@ def check_docs(language, target, log_file, known_warnings_file, out_sanitized_lo
             new_messages.append(msg)
 
     if new_messages:
-        print('\n%s/%s: Build failed due to new/different warnings (%s):\n' % (language, target, log_file))
-        for msg in new_messages:
-            print('%s/%s: %s' % (language, target, msg.original_text), end='')
-        print('\n%s/%s: (Check files %s and %s for full details.)' % (language, target, known_warnings_file, log_file))
+        build_id = '%s/%s' % (language, target)
+        warning_type = warning_type_from_log(log_file)
+        display_log = format_path_for_display(log_file)
+        display_sanitized_log = format_path_for_display(out_sanitized_log_file)
+        display_known_warnings = format_path_for_display(known_warnings_file)
+        grouped_messages = group_log_messages(new_messages, 'sanitized_text')
+
+        print('\n%s' % style_text('=== BUILD FAILED ===', color='red', bold=True))
+        print(style_text('%s: %s warnings are treated as errors (fatal)' % (build_id, warning_type), color='red', bold=True))
+        print('%s: This job fails on new warnings.' % build_id)
+        print('%s: New %s warning entries: %d' % (build_id, warning_type.lower(), len(grouped_messages)))
+        print('%s: Warning log: %s' % (build_id, display_log))
+        print('%s: Sanitized log: %s' % (build_id, display_sanitized_log))
+        print('%s: Known warnings: %s' % (build_id, display_known_warnings))
+        print('%s: New warning entries:' % build_id)
+
+        for entry in grouped_messages:
+            formatted_entry = entry.replace('\n', '\n    ')
+            print(style_text('%s:   - %s' % (build_id, formatted_entry), color='yellow'))
 
         return 1
 
