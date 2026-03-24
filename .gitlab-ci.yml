@@ -193,20 +193,6 @@ deploy_docs_esp_docs:
     - build_esp_docs_html
     - build_esp_docs_pdf
 
-deploy_docs_idf:
-   extends:
-     - .deploy_docs_template
-   variables:
-     DOCS_BUILD_DIR: "${CI_PROJECT_DIR}/esp-idf/docs/_build/"
-     TYPE: "preview"
-     DOCS_DEPLOY_PRIVATEKEY: "$DOCS_DEPLOY_KEY"
-     DOCS_DEPLOY_SERVER: "$DOCS_SERVER"
-     DOCS_DEPLOY_SERVER_USER: "$DOCS_SERVER_USER"
-     DOCS_DEPLOY_PATH: "$DOCS_PATH"
-     DOCS_DEPLOY_URL_BASE: "https://$DOCS_PREVIEW_SERVER_URL/docs/esp-idf"
-   needs:
-     - build_idf_docs_html
-
 
 check_doc_links:
   extends:
