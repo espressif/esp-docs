@@ -7,7 +7,7 @@ stages:
 
 variables:
   # Versioned esp-idf-doc env image to use for all document building jobs
-  ESP_DOCS_ENV_IMAGE: "$CI_DOCKER_REGISTRY/esp-idf-doc-env-v5.4:1-1"
+  ESP_DOCS_ENV_IMAGE: "$CI_DOCKER_REGISTRY/esp-idf-doc-env-v5.5:2-1"
   ESP_DOCS_PATH: "$CI_PROJECT_DIR"
   IDF_PATH: $CI_PROJECT_DIR/esp-idf
   IDF_REPO: ${GITLAB_SSH_SERVER}/espressif/esp-idf.git
@@ -119,7 +119,7 @@ build_idf_docs_html:
     - .build_template
   variables:
     DOCS_DIR: $CI_PROJECT_DIR/esp-idf/docs
-    IDF_COMMIT_ID: v5.4
+    IDF_COMMIT_ID: v5.5
   artifacts:
     when: always
     paths:
@@ -132,8 +132,11 @@ build_idf_docs_html:
     - $ESP_DOCS_PATH/.gitlab/ci/setup_idf.sh ${IDF_REPO} $IDF_COMMIT_ID $IDF_PATH $DOCTGT
     - cd $IDF_PATH
     - ./install.sh
+    - $IDF_PATH/tools/idf_tools.py install cmake
     - eval "$($IDF_PATH/tools/idf_tools.py --non-interactive export)"
+    - pip install linuxdoc  # required by IDF v5.5 docs but not installed without --enable-docs
     - pip install $ESP_DOCS_PATH
+    - pip install git+https://github.com/Rouslan/breathe.git@f4d8fbcffc7de2e44324c3861d951a9a2d68da7b
     - cd $DOCS_DIR
     - build-docs --skip-reqs-check -l $DOCLANG -t $DOCTGT
   parallel:
@@ -189,20 +192,6 @@ deploy_docs_esp_docs:
   needs:
     - build_esp_docs_html
     - build_esp_docs_pdf
-
-deploy_docs_idf:
-   extends:
-     - .deploy_docs_template
-   variables:
-     DOCS_BUILD_DIR: "${CI_PROJECT_DIR}/esp-idf/docs/_build/"
-     TYPE: "preview"
-     DOCS_DEPLOY_PRIVATEKEY: "$DOCS_DEPLOY_KEY"
-     DOCS_DEPLOY_SERVER: "$DOCS_SERVER"
-     DOCS_DEPLOY_SERVER_USER: "$DOCS_SERVER_USER"
-     DOCS_DEPLOY_PATH: "$DOCS_PATH"
-     DOCS_DEPLOY_URL_BASE: "https://$DOCS_PREVIEW_SERVER_URL/docs/esp-idf"
-   needs:
-     - build_idf_docs_html
 
 
 check_doc_links:

@@ -1,5 +1,7 @@
 [flake8]
-exclude = citools/
+exclude =
+    citools/
+    src/esp_docs/vendor/
 max-line-length = 160
 per-file-ignores =
     # conf.py files use star imports to setup config variables
