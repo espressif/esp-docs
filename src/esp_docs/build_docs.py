@@ -35,7 +35,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
-from .check_docs import check_docs
+from .check_docs import check_docs, format_path_for_display, style_text
 from .check_lang_switch import run_lang_linkcheck
 from esp_docs.constants import TARGETS
 
@@ -50,6 +50,8 @@ SPHINX_KNOWN_WARNINGS = 'sphinx-known-warnings.txt'
 DXG_WARN_LOG = 'doxygen-warning-log.txt'
 DXG_SANITIZED_LOG = 'doxygen-warning-log-sanitized.txt'
 DXG_KNOWN_WARNINGS = 'doxygen-known-warnings.txt'
+
+SPHINX_OUTPUT_LOG_FMT = 'sphinx-build-output-{}.txt'
 
 
 languages = LANGUAGES
@@ -185,14 +187,14 @@ def parallel_call(args, callback):
 
             entries.append(build_info)
 
-    print(entries)
     errcodes = pool.map(callback, entries)
-    print(errcodes)
 
     is_error = False
     for ret in errcodes:
         if ret != 0:
-            print('\nThe following language/target combinations failed to build:')
+            print('\n%s' % style_text('=== BUILD FAILED ===', color='red', bold=True))
+            print(style_text('One or more language/target combinations failed or had fatal warnings.', color='red', bold=True))
+            print('The following language/target combinations failed:')
             is_error = True
             break
     if is_error:
@@ -246,6 +248,7 @@ def sphinx_call(build_info, builder):
     saved_cwd = os.getcwd()
     os.chdir(build_info['build_dir'])  # also run sphinx in the build directory
     print("Running '%s'" % (' '.join(args)))
+    output_log = os.path.join(build_info['build_dir'], SPHINX_OUTPUT_LOG_FMT.format(builder))
 
     ret = 1
     try:
@@ -253,18 +256,51 @@ def sphinx_call(build_info, builder):
         # and sphinx.cmd.build() also does a lot of work in the calling thread, especially for j ==1,
         # so using a Python thread for this part is  a poor option (GIL)
         p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=environ)
-        for c in iter(lambda: p.stdout.readline(), b''):
-            sys.stdout.write(prefix)
-            sys.stdout.write(c.decode('utf-8'))
-        ret = p.wait()
-        assert (ret is not None)
-        sys.stdout.flush()
+        with open(output_log, 'w') as output_file:
+            for c in iter(lambda: p.stdout.readline(), b''):
+                line = c.decode('utf-8', errors='replace')
+                output_file.write(line)
+                sys.stdout.write(prefix)
+                sys.stdout.write(line)
+            ret = p.wait()
+            assert (ret is not None)
+            sys.stdout.flush()
     except KeyboardInterrupt:  # this seems to be the only way to get Ctrl-C to kill everything?
         p.kill()
         os.chdir(saved_cwd)
         return 130  # FIXME It doesn't return this errorcode, why? Just prints stacktrace
     os.chdir(saved_cwd)
+    if ret != 0:
+        print_sphinx_failure_summary(build_info, builder, ret, output_log)
     return ret
+
+
+def read_log_tail(log_path, max_lines=12):
+    try:
+        with open(log_path) as f:
+            lines = [line.rstrip('\n') for line in f if line.strip()]
+    except FileNotFoundError:
+        return []
+
+    return lines[-max_lines:]
+
+
+def print_sphinx_failure_summary(build_info, builder, ret, output_log):
+    build_id = '%s/%s' % (build_info['language'], build_info['target'])
+    output_path = format_path_for_display(output_log)
+
+    print('\n%s' % style_text('=== BUILD FAILED ===', color='red', bold=True), flush=True)
+    print(style_text('%s: Sphinx build error (fatal)' % build_id, color='red', bold=True), flush=True)
+    print('%s: Builder: %s' % (build_id, builder), flush=True)
+    print('%s: Exit code: %d' % (build_id, ret), flush=True)
+    print('%s: Sphinx failed before warning comparison could complete.' % build_id, flush=True)
+    print('%s: Full output: %s' % (build_id, output_path), flush=True)
+
+    tail_lines = read_log_tail(output_log)
+    if tail_lines:
+        print('%s: Last output lines:' % build_id, flush=True)
+        for line in tail_lines:
+            print(style_text('%s:   %s' % (build_id, line), color='yellow'), flush=True)
 
 
 def action_build(args):
@@ -278,6 +314,8 @@ def call_build_docs(build_info):
 
     for buildername in build_info['builders']:
         ret = sphinx_call(build_info, buildername)
+        if ret != 0:
+            return ret
 
         # Warnings are checked after each builder as logs are overwritten
         # check Doxygen warnings only if we actually have a doxyfile:
