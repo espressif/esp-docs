@@ -22,7 +22,8 @@ PROJECT_NAME = "Esp-docs simple example"
 
 INPUT = \
     $(PROJECT_PATH)/api/my_api.h \
-    $(PROJECT_PATH)/api/my_cxx_api.hpp
+    $(PROJECT_PATH)/api/my_cxx_api.hpp \
+    $(PROJECT_PATH)/api/my_buffer_api.h
 
 
 ## Get warnings for functions that have no documentation for their parameters or return value

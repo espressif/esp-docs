@@ -324,27 +324,84 @@ Above examples can be updated as follows in line with the rules (note that the r
 Generate and Include API Descriptions
 -------------------------------------
 
-``Doxyfile`` is the must-have Doxygen configuration file for automatic API generation. All header files used to generate API should be included in ``Doxyfile``. For example, please refer to the Doxyfile of `ESP-IDF <https://github.com/espressif/esp-idf/tree/master/docs/doxygen>`_.
+Enabling the Doxygen Extension
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+API generation is handled by the :project_file:`run_doxygen.py <src/esp_docs/esp_extensions/run_doxygen.py>` extension. To enable it, add it to your project's ``conf_common.py``:
+
+.. code-block::
+
+    extensions = ['esp_docs.esp_extensions.run_doxygen']
+
+Setting up a Doxyfile
+^^^^^^^^^^^^^^^^^^^^^
+
+``Doxyfile`` is the must-have Doxygen configuration file for automatic API generation. It must be placed in your ``docs/`` directory. At minimum it must list the header files to document and enable XML output:
+
+.. code-block::
+
+    INPUT = ../src/api/my_api.h \
+            ../src/api/my_other_api.h
+
+    RECURSIVE = YES
+    GENERATE_XML = YES
+    XML_OUTPUT = xml
+
+.. note::
+
+    ``GENERATE_XML = YES`` is required — ESP-Docs reads Doxygen's XML output, not HTML.
 
 .. note::
 
     Target-specific header files may be placed in a separate ``Doxyfile``. For example, `Doxyfile_esp32 <https://github.com/espressif/esp-idf/tree/master/docs/doxygen>`__ is provided to generate ESP32-specific API descriptions in ESP-IDF.
 
-ESP-Docs integrates API generation into the process of building documentation. To be specific, when you run the command to build documentation (see :doc:`../building-documentation/building-documentation-locally`), :project_file:`run_doxygen.py <src/esp_docs/esp_extensions/run_doxygen.py>` generates ``.inc`` files from input header files defined in ``Doxyfile`` according to configuration, and places the output files in ``_build/$(language)/$(target)/inc`` directory.
+For a more complete reference, see the Doxyfile in the :example:`doxygen` example or the `ESP-IDF Doxyfile <https://github.com/espressif/esp-idf/tree/master/docs/doxygen>`_.
 
-To include the generated ``.inc`` files into ``.rst`` files, use the ``include-build-file::`` directive defined in :project_file:`include_build_file.py <src/esp_docs/esp_extensions/include_build_file.py>`.
+Including Generated API in RST Files
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+When you run the build (see :doc:`../building-documentation/building-documentation-locally`), :project_file:`run_doxygen.py <src/esp_docs/esp_extensions/run_doxygen.py>` generates ``.inc`` files from the header files listed in ``Doxyfile`` and places them in ``_build/<language>/<target>/inc/``. The file name matches the header — ``my_api.h`` produces ``my_api.inc``.
+
+To embed them in an ``.rst`` page, use the ``include-build-file::`` directive:
 
 .. code-block::
 
     API Reference
     -------------
 
-    .. include-build-file:: inc/i2c.inc
+    .. include-build-file:: inc/my_api.inc
 
-Linking to Functions, Enumerations, etc
-------------------------------------------------
+Linking to API Symbols in Prose
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To link to a function, enumeration, and other structure types described in API descriptions, please refer to :ref:`link-api-member`.
+Cross-references to documented functions, types, structs, enumerations, and macros can be inserted anywhere in ``.rst`` files using Breathe's roles. For a full list of roles and examples, see :ref:`link-api-member`.
+
+Common examples:
+
+.. code-block::
+
+    Call :cpp:func:`my_function` to initialise the driver.
+    The :cpp:type:`my_config_t` struct controls its behaviour.
+    Check the return value against :c:macro:`MY_ERR_OK`.
+
+.. note::
+
+    Use ``:cpp:`` roles for C++ symbols and C symbols defined in a C++ project. Use ``:c:macro:`` for preprocessor macros (``#define``), as the C++ domain has no macro role.
+
+Hover Tooltips for API Links
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+ESP-Docs includes an optional extension that shows the full API description as an inline tooltip when a reader hovers over any cross-reference link, without leaving the page.
+
+To enable hover tooltips, add the following to your project's ``conf_common.py``:
+
+.. code-block::
+
+    esp_hover_api_enable = True
+
+No other configuration is needed. The tooltip content is fetched from the linked API page and cached in the browser, so it works across pages as well as within the same page.
+
+Tooltips are also **recursive**: if the tooltip content itself contains cross-reference links, hovering over them opens a second tooltip.
 
 Example
 -------

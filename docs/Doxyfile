@@ -1,0 +1,24 @@
+# Doxygen configuration for esp-docs documentation
+# Uses the doxygen example API to provide live hover examples
+
+PROJECT_NAME = "ESP-Docs"
+
+INPUT = \
+    $(PROJECT_PATH)/examples/doxygen/src/api/my_api.h
+
+WARN_NO_PARAMDOC       = YES
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = YES
+PREDEFINED             = \
+    $(ENV_DOXYGEN_DEFINES)
+
+HAVE_DOT    = NO
+GENERATE_XML    = YES
+XML_OUTPUT      = xml
+GENERATE_HTML   = NO
+GENERATE_LATEX  = NO
+GENERATE_MAN    = YES
+GENERATE_RTF    = NO
+
+QUIET = YES

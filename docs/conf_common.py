@@ -4,7 +4,12 @@ languages = ['en']
 
 extensions += ['sphinx_copybutton',
                'sphinxcontrib.wavedrom',
+               'esp_docs.esp_extensions.dummy_build_system',
+               'esp_docs.esp_extensions.run_doxygen',
+               'esp_docs.generic_extensions.hover_api',
                ]
+
+esp_hover_api_enable = True
 
 # Disable format_esp_target
 extensions.remove('esp_docs.esp_extensions.format_esp_target')

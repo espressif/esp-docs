@@ -76,6 +76,7 @@ extensions = ['breathe',
               'esp_docs.generic_extensions.list_filter',
               'esp_docs.generic_extensions.google_analytics',
               'esp_docs.generic_extensions.add_warnings',
+              'esp_docs.generic_extensions.hover_api',
 
               'esp_docs.esp_extensions.format_esp_target',
               'esp_docs.esp_extensions.include_build_file',

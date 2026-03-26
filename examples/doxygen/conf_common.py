@@ -21,3 +21,5 @@ versions_url = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js'
 
 idf_targets = TARGETS
 languages = ['en', 'zh_CN']
+
+esp_hover_api_enable = True
