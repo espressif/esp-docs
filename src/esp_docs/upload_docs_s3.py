@@ -53,16 +53,37 @@ Optional environment variables
 """
 
 import glob
+import functools
 import mimetypes
 import os
 import os.path
 import shutil
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from urllib.parse import quote
 
 import boto3
 from botocore.config import Config
 
 from .util.util import is_stable_version, env
 from .sanitize_version import sanitize_version  # noqa
+
+
+def print_timing(label, started_at):
+    elapsed = time.perf_counter() - started_at
+    print(f'[timing] {label} took {elapsed:.3f}s', flush=True)
+
+
+def timed(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        started_at = time.perf_counter()
+        try:
+            return func(*args, **kwargs)
+        finally:
+            print_timing(func.__name__, started_at)
+
+    return wrapper
 
 
 class S3Config:
@@ -82,6 +103,7 @@ class S3Config:
     )
 
 
+@timed
 def main():
     # if you get KeyErrors on the following lines, it's probably because you're not running in Gitlab CI
     git_ver = env('GIT_VER')  # output of git describe --always
@@ -102,7 +124,9 @@ def main():
     docs_path = f'{commit_sha}/{S3Config.docs_path}'
 
     tmp_path = copy_docs_to_tmp_folder(version, build_dir)
-    upload(tmp_path, docs_path)
+    uploaded_url = upload(tmp_path, docs_path)
+    if uploaded_url:
+        print(f'Docs uploaded. Example file: {uploaded_url}')
 
     # note: it would be neater to use symlinks for stable, but because of the directory order
     # (language first) it's kind of a pain to do on a remote server, so we just repeat the
@@ -111,34 +135,75 @@ def main():
     if is_stable_version(version) and do_deploy_stable:
         print('Deploying again as stable version...')
         tmp_path = copy_docs_to_tmp_folder('stable', build_dir)
-        upload(tmp_path, docs_path)
+        uploaded_url = upload(tmp_path, docs_path)
+        if uploaded_url:
+            print(f'Stable docs uploaded. Example file: {uploaded_url}')
 
 
 def _upload_one(local_path, key_name):
+    started_at = time.perf_counter()
     content_type, encoding = mimetypes.guess_type(local_path)
 
     extra_args = {}
     if content_type:
         extra_args['ContentType'] = content_type
 
-    S3Config.s3.upload_file(
-        local_path,
-        S3Config.bucket_name,
-        key_name,
-        ExtraArgs=extra_args if extra_args else None,
-    )
+    try:
+        S3Config.s3.upload_file(
+            local_path,
+            S3Config.bucket_name,
+            key_name,
+            ExtraArgs=extra_args if extra_args else None,
+        )
+    finally:
+        print_timing(f'_upload_one: {local_path}', started_at)
 
 
+@timed
 def upload(source_dir, remote_dir):
     prefix = remote_dir.strip('/')
+    example_key_name = None
+    upload_jobs = []
+
     for root, _, files in os.walk(source_dir):
         for filename in files:
             local_path = str(os.path.join(root, filename))
             rel_path = os.path.relpath(local_path, source_dir).replace(os.sep, '/')
             key_name = f'{prefix}/{rel_path}'
-            _upload_one(local_path, key_name)
+            upload_jobs.append((local_path, key_name))
+
+            if filename == 'index.html' and example_key_name is None:
+                example_key_name = key_name
+
+    if not upload_jobs:
+        return build_s3_file_url(example_key_name) if example_key_name else None
+
+    max_workers = max(1, int(os.getenv('DOCS_S3_UPLOAD_WORKERS', 16)))
+    print(f'Uploading {len(upload_jobs)} files with {max_workers} workers...')
+
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = [
+            executor.submit(_upload_one, local_path, key_name)
+            for local_path, key_name in upload_jobs
+        ]
+        try:
+            for future in as_completed(futures):
+                future.result()
+        except Exception:
+            for future in futures:
+                future.cancel()
+            raise
+
+    return build_s3_file_url(example_key_name) if example_key_name else None
 
 
+def build_s3_file_url(key_name):
+    key_path = quote(key_name.lstrip('/'), safe='/')
+    endpoint = S3Config.endpoint.removesuffix('/')
+    return f'{endpoint.replace("://", f"://{S3Config.bucket_name}.", 1)}/{key_path}'
+
+
+@timed
 def copy_docs_to_tmp_folder(version, build_dir):
     """Copy all docs to a tmp folder, maintaining the directory structure used to deploy as
     the given version"""
