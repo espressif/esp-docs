@@ -1,3 +1,10 @@
+## v2.4.0 (2026-04-01)
+
+### Feat
+
+- thread_pool_executor ci: print example file url to console
+- print example file url to console
+
 ## v2.3.0 (2026-03-27)
 
 ### Feat
