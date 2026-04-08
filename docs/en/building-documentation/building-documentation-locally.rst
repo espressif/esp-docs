@@ -132,6 +132,14 @@ After completing the above-mentioned preparation, you can navigate to your docs 
 
       build-docs -f
 
+   To keep API references for specific modified headers during a fast build, pass them via ``--modified-files``:
+   ::
+
+      build-docs -f --modified-files components/driver/include/driver/uart.h
+
+   For now, ``--modified-files`` only affects fast builds and expects paths relative to the project path.
+   It also accepts a single semicolon-delimited string, which is useful in CI variables.
+
    or by setting the environment variable ``DOCS_FAST_BUILD``. To set an environment variable, go to your project's **Settings** > **CI/CD** and expand the **Variables** section. Select **Add variable** and fill in the details for your variables. For more information on how to add a variable to a project, see the `GitLab documentation <https://docs.gitlab.com/ee/ci/variables/#add-a-cicd-variable-to-a-project>`__.
 
    .. note::
