@@ -1,3 +1,9 @@
+## v2.5.0 (2026-04-09)
+
+### Feat
+
+- keep modified API refs in fast builds
+
 ## v2.4.0 (2026-04-01)
 
 ### Feat
