@@ -9,6 +9,7 @@ from io import open
 from collections import defaultdict
 from dataclasses import dataclass
 
+from ..modified_files import get_modified_files, normalize_modified_file_path
 from ..util.util import copy_if_modified
 
 ALL_KINDS = [
@@ -50,6 +51,16 @@ def find_doxygen_dir(doxyfile_dir):
         return os.path.join(doxyfile_dir, 'doxygen')
     else:
         return doxyfile_dir
+
+
+def should_keep_api_reference(header_path, modified_files, fast_build):
+    if not fast_build:
+        return True
+
+    if not modified_files:
+        return False
+
+    return normalize_modified_file_path(header_path) in modified_files
 
 
 def generate_doxygen(app, defines):
@@ -150,6 +161,7 @@ def convert_api_xml_to_inc(app, doxyfiles):
     inc_directory_path = '{}/inc'.format(build_dir)
 
     fast_build = os.environ.get('DOCS_FAST_BUILD', None)
+    modified_files = get_modified_files(app.config)
 
     if not os.path.isdir(xml_directory_path):
         raise RuntimeError('Directory {} does not exist!'.format(xml_directory_path))
@@ -161,28 +173,27 @@ def convert_api_xml_to_inc(app, doxyfiles):
 
     print("Generating 'api_name.inc' files with Doxygen directives")
     for api_path in api_paths:
-        rst_output = generate_directives(app, api_path.header_path, api_path.xml_file_path)
+        final_rst_output = generate_directives(app, api_path.header_path, api_path.xml_file_path)
+
+        # For fast builds we skip unchanged API reference includes, but still keep
+        # the ones generated from modified headers.
+        if not should_keep_api_reference(api_path.header_path, modified_files, fast_build):
+            final_rst_output = ''
 
         # Create subfolders if needed
         dir_name = os.path.dirname(api_path.inc_file_path)
         if dir_name:
             os.makedirs(dir_name, exist_ok=True)
 
+        inc_exists = os.path.isfile(api_path.inc_file_path)
         previous_rst_output = ''
-        if os.path.isfile(api_path.inc_file_path):
+        if inc_exists:
             with open(api_path.inc_file_path, 'r', encoding='utf-8') as inc_file_old:
                 previous_rst_output = inc_file_old.read()
 
-        if previous_rst_output != rst_output:
+        if (not inc_exists) or previous_rst_output != final_rst_output:
             with open(api_path.inc_file_path, 'w', encoding='utf-8') as inc_file:
-                inc_file.write(rst_output)
-
-        # For fast builds we wipe the doxygen api documentation.
-        # Parsing this output during the sphinx build process is
-        # what takes 95% of the build time
-        if fast_build:
-            with open(api_path.inc_file_path, 'w', encoding='utf-8') as inc_file:
-                inc_file.write('')
+                inc_file.write(final_rst_output)
 
 
 def get_doxyfile_input_paths(app, doxyfile_path):
@@ -215,7 +226,7 @@ def get_doxyfile_input_paths(app, doxyfile_path):
             # process only lines that are not comments
             if line.find('#') == -1:
                 # extract header file path inside project folder
-                m = re.search('\(PROJECT_PATH\)/(.*\.hp*)', line)  # noqa: W605 - regular expression
+                m = re.search(r'\(PROJECT_PATH\)/(.*\.hp*)', line)
                 if m is None:
                     raise ValueError("Doxygen input statements should be specified using $(PROJECT_PATH) env variable, instead got {}".format(line))
                 header_file_path = m.group(1)

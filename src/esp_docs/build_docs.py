@@ -26,6 +26,7 @@
 from __future__ import print_function
 
 import argparse
+import json
 import locale
 import math
 import multiprocessing
@@ -36,6 +37,7 @@ import subprocess
 import sys
 from pathlib import Path
 from .check_docs import check_docs, format_path_for_display, style_text
+from .modified_files import parse_modified_files_arg
 from .check_lang_switch import run_lang_linkcheck
 from esp_docs.constants import TARGETS
 
@@ -89,6 +91,8 @@ def main():
     parser.add_argument('--input-docs', '-i', nargs='+', default=[''],
                         help='List of documents to build relative to the doc base folder, i.e. the language folder. Defaults to all documents')
     parser.add_argument('--fast-build', '-f', action='store_true', help='Skips including doxygen generated APIs into the Sphinx build')
+    parser.add_argument('--modified-files', nargs='+', default=[],
+                        help='List of modified files relative to the project path, used by smart build logic')
     parser.add_argument('--skip-reqs-check', action='store_true', help='Skips checking python requirements.txt found in the current directory (deprecated)')
 
     action_parsers = parser.add_subparsers(dest='action')
@@ -103,6 +107,7 @@ def main():
     action_parsers.add_parser('lang-linkcheck', help='Check if link_to_translation directives are present in RST files included in toctrees')
 
     args = parser.parse_args()
+    args.modified_files = parse_modified_files_arg(args.modified_files)
 
     global languages
     if args.language is None:
@@ -183,6 +188,7 @@ def parallel_call(args, callback):
             build_info['builders'] = args.builders
             build_info['input_docs'] = args.input_docs
             build_info['doxyfile_dir'] = args.doxyfile_dir
+            build_info['modified_files'] = args.modified_files
             build_info['project_path'] = args.project_path
 
             entries.append(build_info)
@@ -225,6 +231,7 @@ def sphinx_call(build_info, builder):
     environ = {}
     environ.update(os.environ)
     environ['BUILDDIR'] = build_info['build_dir']
+    environ['DOCS_MODIFIED_FILES'] = json.dumps(build_info['modified_files'])
 
     args = [sys.executable, '-u', '-m', 'sphinx.cmd.build',
             '-j', str(build_info['sphinx_parallel_jobs']),
