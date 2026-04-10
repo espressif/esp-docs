@@ -72,6 +72,31 @@ class IdfLatexBuilder(LaTeXBuilder):
         self.prepare_latex_macros(TEMPLATE_PATH, self.config)
 
 
+def builder_inited_zh_cn_toc(app):
+    """Append LaTeX preamble for zh_CN PDF table-of-contents title (LaTeX builds only)."""
+    if app.builder.name != 'latex':
+        return
+    config = app.config
+    if getattr(config, 'language', None) != 'zh_CN':
+        return
+    if 'preamble' not in config.latex_elements:
+        return
+    # Sphinx maps zh_CN/zh to babel language "english" (see sphinx.builders.latex.util.ExtBabel).
+    # latex_templates/preamble.tex uses \addto\captionsenglish for "Table of contents"; appending
+    # another \addto\captionsenglish runs later in the same hook, so this overrides to 目录.
+    # (Do not use \AddToHook{begindocument/end}{...}: it requires LaTeX 2020-10+, but CI uses TeX Live 2019.)
+    zh_toc = (
+        '\n% esp-docs: zh_CN PDF -- localized table of contents title\n'
+        r'\addto\captionsenglish{\renewcommand*{\contentsname}{\hspace{0pt}目录}}' '\n'
+    )
+    config.latex_elements['preamble'] = config.latex_elements['preamble'] + zh_toc
+    # LaTeXBuilder.init() runs *before* builder-inited and does
+    # self.context.update(self.config.latex_elements). The .tex template uses
+    # builder.context, not config.latex_elements, so sync the preamble back in.
+    if hasattr(app.builder, 'context') and 'preamble' in app.builder.context:
+        app.builder.context['preamble'] = config.latex_elements['preamble']
+
+
 def config_init_callback(app, config):
     # Keep backwards compatibility with IDF,
     # which previously didn't specify these configs
@@ -97,5 +122,6 @@ def setup(app):
 
     # Config values that depends on target which is not available when setup is called
     app.connect('config-inited',  config_init_callback)
+    app.connect('builder-inited', builder_inited_zh_cn_toc)
 
     return {'parallel_read_safe': True, 'parallel_write_safe': True, 'version': '0.1'}
