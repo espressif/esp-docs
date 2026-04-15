@@ -32,11 +32,12 @@ Make Minor Changes
 Commit Messages
 ---------------
 
-This project uses `Conventional Commits <https://www.conventionalcommits.org/>`_. A pre-commit hook enforces the format on every commit message. To install the hooks, run:
+This project uses `Conventional Commits <https://www.conventionalcommits.org/>`_. A pre-commit hook enforces the format on every commit message, and CI validates commit messages for all commits in a merge request. To install the hooks locally, run:
 
 .. code-block:: bash
 
-   pre-commit install
+   pip install pre-commit
+   pre-commit install --install-hooks
 
 Each commit message must follow the pattern ``<type>: <description>``, for example:
 
