@@ -17,6 +17,7 @@
       echo "Source branch: $CI_COMMIT_REF_NAME"
 
       MODIFIED_FILES=$(git diff --name-only origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME..origin/$CI_COMMIT_REF_NAME)
+      COMMITS_TO_CHECK=$(git rev-list --reverse origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME..origin/$CI_COMMIT_REF_NAME)
       echo "Modified files to check:"
       echo "$MODIFIED_FILES"
 
@@ -24,6 +25,30 @@
           CI=true pre-commit run --files $MODIFIED_FILES
       else
           echo "No modified files to check."
+      fi
+
+      if [ -n "$COMMITS_TO_CHECK" ]; then
+          CHECK_STATUS=0
+          echo "Commit messages to check:"
+          echo "$COMMITS_TO_CHECK"
+
+          for COMMIT_SHA in $COMMITS_TO_CHECK; do
+              COMMIT_MSG_FILE=$(mktemp)
+              git log -1 --format=%B "$COMMIT_SHA" > "$COMMIT_MSG_FILE"
+
+              echo "Checking commit message for $COMMIT_SHA"
+              if ! CI=true pre-commit run conventional-precommit-linter --hook-stage commit-msg --commit-msg-filename "$COMMIT_MSG_FILE"; then
+                  CHECK_STATUS=1
+              fi
+
+              rm -f "$COMMIT_MSG_FILE"
+          done
+
+          if [ "$CHECK_STATUS" -ne 0 ]; then
+              exit "$CHECK_STATUS"
+          fi
+      else
+          echo "No commit messages to check."
       fi
 
 

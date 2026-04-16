@@ -14,7 +14,7 @@ def add_zip(app, exception):
 
     zip_output_file = html_dir.parent / app.config.html_zip
 
-    print(f'Creating a zip of the HTML archieve: {html_dir} at {zip_output_file}')
+    print(f'Creating a zip of the HTML archive: {html_dir} at {zip_output_file}')
     archive = shutil.make_archive(zip_output_file, 'zip', html_dir)
     shutil.move(archive, html_dir / Path(archive).name)
 

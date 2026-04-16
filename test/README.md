@@ -14,7 +14,7 @@ Tests can be run from `build_tests/build_all.sh`
 The Sphinx IDF extensions are unit-tested in [test_sphinx_idf_extensions.py](test_sphinx_idf_extensions.py)
 
 ## Integration Tests
-Due to the thight integration with Sphinx some functionality is difficult to test with simple unit tests.
+Due to the tight integration with Sphinx some functionality is difficult to test with simple unit tests.
 
  To check that the output from the Sphinx build process is as expected [test_docs.py](test_docs.py) builds a test subset of the documentation, found in the [en](en/) folder. The HTML output is then checked to see that it contains the expected content.
 
