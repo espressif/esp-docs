@@ -1,3 +1,9 @@
+## v2.5.1 (2026-04-15)
+
+### Fix
+
+- localize PDF table of contents title for zh_CN builds (show “目录” instead of "Table of contents")
+
 ## v2.5.0 (2026-04-09)
 
 ### Feat
