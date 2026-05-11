@@ -118,7 +118,7 @@ If you want to link to other documents in the same folder, which is the ``docs``
 Linking to a Specific Place of Other Documents in a Same Project
 ----------------------------------------------------------------
 
-To link to a specific place of documents in a same project, you need to first add an anchor in the specific place and then refer it in the document.
+To link to a specific place of documents in a same project, you need to first add an anchor in the specific place and then reference it in the document.
 
 - Add an anchor to the specific place where you want to link to with the following syntax.
 
@@ -171,6 +171,24 @@ To link to a specific place of documents in a same project, you need to first ad
     Rendering result:
 
     :ref:`Building Document <building-documentation-1>`
+
+If the anchor is placed directly before a section title, figure, or captioned table, Sphinx automatically uses the heading or caption as the link text.
+
+Anchors that are not placed before a section title can still be referenced, but you must give the link an explicit title, using this syntax:
+
+.. code-block:: text
+
+    :ref:`Link title <anchor-name>`
+
+Otherwise, warnings will be raised:
+
+.. code-block:: text
+
+    WARNING: Failed to create a cross reference. A title or caption not found: anchor-name
+
+.. note::
+
+    Using anchors is advised over standard reStructuredText links to sections mentioned in `Linking to Other Sections Within the Document`_ because anchors work across files, and when section headings are changed, warnings will be raised if incorrect.
 
 Linking to Kconfig References
 -----------------------------
