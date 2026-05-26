@@ -85,69 +85,124 @@ For detailed information about how to use these directives, please refer to Sect
 Using Diagram as Code
 ^^^^^^^^^^^^^^^^^^^^^
 
-For adding graphics using Diagram as Code, several sphinx extensions are provided to generate diagram images from simple text files:
+For adding graphics using Diagram as Code, several Sphinx extensions are provided to generate diagram images from simple text files:
 
-- `sphinxcontrib-blockdiag <https://pypi.org/project/sphinxcontrib-blockdiag/>`__: Sphinx extension to generate block diagrams from plaintext.
-- `sphinxcontrib-seqdiag <https://pypi.org/project/sphinxcontrib-seqdiag/>`__: Sphinx extension to generate sequence diagrams from plaintext.
-- `sphinxcontrib-actdiag <https://pypi.org/project/sphinxcontrib-actdiag/>`__: Sphinx extension to generate activity diagrams from plaintext.
-- `sphinxcontrib-nwdiag <https://pypi.org/project/sphinxcontrib-nwdiag/>`__: Sphinx extension to generate network-related diagrams from plaintext.
-- `sphinxcontrib-wavedrom <https://pypi.org/project/sphinxcontrib-wavedrom/>`__: Sphinx extension to generate wavedrom diagrams from plaintext.
+- `sphinx.ext.graphviz <https://www.sphinx-doc.org/en/master/usage/extensions/graphviz.html>`__: Sphinx extension to generate diagrams from `Graphviz DOT code <https://graphviz.org/doc/info/lang.html>`__, including directed graphs, undirected graphs, and so on.
+- Sphinx extensions in the `blockdiag suite <http://blockdiag.com/en/>`__ that generate diagrams from a common DOT-like `blockdiag` syntax:
+
+  * `sphinxcontrib-blockdiag <https://pypi.org/project/sphinxcontrib-blockdiag/>`__: generates `block diagrams <http://blockdiag.com/en/blockdiag/index.html>`__.
+  * `sphinxcontrib-seqdiag <https://pypi.org/project/sphinxcontrib-seqdiag/>`__: generates `sequence diagrams <http://blockdiag.com/en/seqdiag/index.html>`__.
+  * `sphinxcontrib-actdiag <https://pypi.org/project/sphinxcontrib-actdiag/>`__: generates `activity diagrams <http://blockdiag.com/en/actdiag/index.html>`__.
+  * `sphinxcontrib-nwdiag <https://pypi.org/project/sphinxcontrib-nwdiag/>`__: generates `logical network diagrams, rack-structure diagrams, and packet header diagrams <http://blockdiag.com/en/nwdiag/index.html>`__.
+
+- `sphinxcontrib-wavedrom <https://pypi.org/project/sphinxcontrib-wavedrom/>`__: independent extension to generate `digital timing diagrams <https://wavedrom.com>`__ from WaveJSON code.
+
+With these extensions, diagram images are generated from simple text descriptions. The diagram elements are laid out automatically. The diagram code is then typically rendered as raster images (often PNG) and integrated "behind the scenes" into **Sphinx** documents. Choose the one that best fits your diagram type.
 
 
-The following types of diagrams are supported:
+Using sphinx.ext.graphviz
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  `Block diagram <http://blockdiag.com/en/blockdiag/index.html>`__
--  `Sequence diagram <http://blockdiag.com/en/seqdiag/index.html>`__
--  `Activity diagram <http://blockdiag.com/en/actdiag/index.html>`__
--  `Logical network diagram <http://blockdiag.com/en/nwdiag/index.html>`__
--  Digital timing diagram provided by `WaveDrom <https://wavedrom.com>`__
+`sphinx.ext.graphviz <https://www.sphinx-doc.org/en/master/usage/extensions/graphviz.html>`__ supports various diagram types, including:
 
-.. _blockdiag: http://bitbucket.org/blockdiag/blockdiag/
+- `Directed graphs <https://graphviz.org/Gallery/directed/>`__, such as flowcharts
+- `Undirected graphs <https://graphviz.org/Gallery/undirected/>`__, such as data packet structure diagrams
 
-With this suite of tools, it is possible to generate beautiful diagram images from simple text format (similar to graphviz’s DOT format). The diagram elements are laid out automatically. The diagram code is then converted into “.png” graphics and integrated “behind the scenes” into **Sphinx** documents. Below is an example of Diagram as Code graphics in Espressif software documentation built by ESP-Docs:
+To use this extension, follow the steps below:
 
-.. blockdiag::
-    :caption: Wi-Fi Programming Model
-    :align: center
+1. **Install the Graphviz package.**
 
-    blockdiag wifi-programming-model {
+   Before building documentation with this extension, install the Graphviz binaries on your system. Installers for all major platforms are available at https://graphviz.org/download/.
 
-        # global attributes
-        node_height = 60;
-        node_width = 100;
-        span_width = 100;
-        span_height = 60;
-        default_shape = roundedbox;
-        default_group_color = none;
+2. **Add** ``sphinx.ext.graphviz`` **to the** ``extensions`` **list in** ``conf.py``::
 
-        # node labels
-        TCP_STACK [label="TCP\n stack", fontsize=12];
-        EVNT_TASK [label="Event\n task", fontsize=12];
-        APPL_TASK [label="Application\n task", width = 120, fontsize=12];
-        WIFI_DRV  [label="Wi-Fi\n Driver", width = 120, fontsize=12];
-        KNOT [shape=none];
+      extensions += [
+          'sphinx.ext.graphviz',
+      ]
 
-        # node connections + labels
-        TCP_STACK -> EVNT_TASK [label=event];
-        EVNT_TASK -> APPL_TASK [label="callback\n or event"];
+3. **Create a diagram.**
 
-        # arrange nodes vertically
-        group {
-           label = "default handler";
-           orientation = portrait;
-           EVNT_TASK <- WIFI_DRV [label=event];
-        }
+   Below is an example and its source code:
 
-        # intermediate node
-        group {
-            label = "user handler";
-            orientation = portrait;
-            APPL_TASK -- KNOT;
-        }
-        WIFI_DRV <- KNOT [label="API\n call"];
-    }
+   .. graphviz::
+       :caption: ESP-IDF Development Workflow
+       :align: center
 
-Here is the source code::
+       digraph esp_idf_develop {
+           graph [rankdir=TB fontname="Helvetica" fontsize=13
+                  splines=ortho nodesep=0.5 ranksep=0.6 pad=0.4]
+           node  [fontname="Helvetica" fontsize=11 style="filled"
+                  fillcolor="white" color="#333333" shape=box margin="0.2,0.12"]
+           edge  [fontname="Helvetica" fontsize=10 arrowsize=0.8 color="#333333"]
+
+           start_project   [label="Start a project\nCreate or copy an example" style="filled,dashed"]
+           connect_device  [label="Connect your device"]
+           configure       [label="Configure project"]
+           build           [label="Build project\nCompile firmware"]
+           flash           [label="Flash onto device"]
+           monitor         [label="Monitor output" shape=oval]
+
+           start_project -> connect_device -> configure -> build -> flash -> monitor
+       }
+
+   Source code::
+
+       .. graphviz::
+           :caption: ESP-IDF Development Workflow
+           :align: center
+
+           digraph esp_idf_develop {
+               graph [rankdir=TB fontname="Helvetica" fontsize=13
+                      splines=ortho nodesep=0.5 ranksep=0.6 pad=0.4]
+               node  [fontname="Helvetica" fontsize=11 style="filled"
+                      fillcolor="white" color="#333333" shape=box margin="0.2,0.12"]
+               edge  [fontname="Helvetica" fontsize=10 arrowsize=0.8 color="#333333"]
+
+               start_project   [label="Start a project\nCreate or copy an example" style="filled,dashed"]
+               connect_device  [label="Connect your device"]
+               configure       [label="Configure project"]
+               build           [label="Build project\nCompile firmware"]
+               flash           [label="Flash onto device"]
+               monitor         [label="Monitor output" shape=oval]
+
+               start_project -> connect_device -> configure -> build -> flash -> monitor
+           }
+
+   For diagrams with lengthy DOT source, save the code in a ``.dot`` file and reference it
+   by path::
+
+       .. graphviz:: ../../../_static/diagrams/development_workflow.dot
+           :caption: ESP-IDF Development Workflow
+           :align: center
+
+4. **Preview the diagram.**
+
+   To quickly preview the diagram, you can:
+
+   - Use the `Graphviz Online <https://dreampuf.github.io/GraphvizOnline/>`__ tool.
+   - Use a Graphviz extension in your IDE, such as `Graphviz Preview <https://marketplace.visualstudio.com/items?itemName=EFanZh.graphviz-preview>`__ for VS Code.
+   - :doc:`Build documentation locally <../building-documentation/building-documentation-locally>` and preview the diagram in your browser.
+
+For the full DOT language reference and additional layout options, see the
+`Graphviz documentation <https://graphviz.org/documentation/>`__ and the
+`sphinx.ext.graphviz extension documentation <https://www.sphinx-doc.org/en/master/usage/extensions/graphviz.html>`__.
+
+
+Using the blockdiag suite
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The blockdiag suite supports the following diagram types, each handled by a separate extension:
+
+- `sphinxcontrib-blockdiag <https://pypi.org/project/sphinxcontrib-blockdiag/>`__: block diagrams
+- `sphinxcontrib-seqdiag <https://pypi.org/project/sphinxcontrib-seqdiag/>`__: sequence diagrams
+- `sphinxcontrib-actdiag <https://pypi.org/project/sphinxcontrib-actdiag/>`__: activity diagrams
+- `sphinxcontrib-nwdiag <https://pypi.org/project/sphinxcontrib-nwdiag/>`__: logical network diagrams, rack-structure diagrams, and packet header diagrams
+
+All four extensions are enabled in esp-docs by default. They share the same DOT-like syntax. Using ``sphinxcontrib-blockdiag`` as an example:
+
+1. **Create a diagram.**
+
+   Below is an example and its source code:
 
     .. blockdiag::
         :caption: Wi-Fi Programming Model
@@ -190,28 +245,168 @@ Here is the source code::
             WIFI_DRV <- KNOT [label="API\n call"];
         }
 
-If a blockdiag has lengthy code, it is suggested to save the code in a .diag file and provide the path to the file like in Section `Driver Operation <https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/twai.html?highlight=can%20protocol#driver-operation>`__ in ESP-IDF, which would reach exactly the same effects as well::
+    Source code::
 
-    .. blockdiag:: ../../../_static/diagrams/twai/state_transition.diag
-        :caption: State transition diagram of the TWAI driver (see table below)
+        .. blockdiag::
+            :caption: Wi-Fi Programming Model
+            :align: center
+
+            blockdiag wifi-programming-model {
+
+                # global attributes
+                node_height = 60;
+                node_width = 100;
+                span_width = 100;
+                span_height = 60;
+                default_shape = roundedbox;
+                default_group_color = none;
+
+                # node labels
+                TCP_STACK [label="TCP\n stack", fontsize=12];
+                EVNT_TASK [label="Event\n task", fontsize=12];
+                APPL_TASK [label="Application\n task", width = 120, fontsize=12];
+                WIFI_DRV  [label="Wi-Fi\n Driver", width = 120, fontsize=12];
+                KNOT [shape=none];
+
+                # node connections + labels
+                TCP_STACK -> EVNT_TASK [label=event];
+                EVNT_TASK -> APPL_TASK [label="callback\n or event"];
+
+                # arrange nodes vertically
+                group {
+                label = "default handler";
+                orientation = portrait;
+                EVNT_TASK <- WIFI_DRV [label=event];
+                }
+
+                # intermediate node
+                group {
+                    label = "user handler";
+                    orientation = portrait;
+                    APPL_TASK -- KNOT;
+                }
+                WIFI_DRV <- KNOT [label="API\n call"];
+            }
+
+    For diagrams with lengthy source, save the code in a ``.diag`` file and reference it by path::
+
+       .. blockdiag:: ../../../_static/diagrams/twai/state_transition.diag
+           :caption: State transition diagram of the TWAI driver (see table below)
+           :align: center
+
+2. **Preview the diagram.**
+
+   To quickly preview the diagram, you can:
+
+   - Use the `Kroki online editor <https://kroki.io/>`__.
+   - :doc:`Build documentation locally <../building-documentation/building-documentation-locally>` and preview the diagram in your browser.
+
+The following examples from ESP-IDF are available for reference:
+
+-  Simple **block diagram** / ``blockdiag`` - `Wi-Fi TX buffer allocation <https://docs.espressif.com/projects/esp-idf/en/v6.0.1/esp32/api-guides/wifi-driver/overview.html#id10>`__
+-  Slightly more complicated **block diagram** - `Wi-Fi programming model <https://docs.espressif.com/projects/esp-idf/en/v6.0.1/esp32/api-guides/wifi-driver/overview.html#id9>`__
+-  **Sequence diagram** / ``seqdiag`` - `Foreground scan of all Wi-Fi channels <https://docs.espressif.com/projects/esp-idf/en/v6.0.1/esp32/api-guides/wifi-driver/station-scenarios.html#id2>`__
+-  **Rack-structure diagram** / ``rackdiag`` - `Ethernet Data Frame Format <https://docs.espressif.com/projects/esp-idf/en/v6.0.1/esp32/api-reference/network/esp_eth.html#id41>`__
+-  **Packet diagram** / ``packetdiag`` - `Structure of RMT symbols <https://docs.espressif.com/projects/esp-idf/en/v6.0.1/esp32/api-reference/peripherals/rmt.html#id18>`__
+
+For more details, see the `blockdiag online documentation <http://blockdiag.com/en/blockdiag/sphinxcontrib.html>`__.
+
+
+Using sphinxcontrib-wavedrom
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`sphinxcontrib-wavedrom <https://pypi.org/project/sphinxcontrib-wavedrom/>`__ generates signal waveforms from WaveJSON code.
+
+To use this extension, follow the steps below:
+
+1. **Add the extension to the** ``extensions`` **list in** ``conf.py``::
+
+      extensions += [
+          'sphinxcontrib.wavedrom',
+      ]
+
+2. **Create a diagram.**
+
+   Below is an example and its source code:
+
+    .. wavedrom::
+        :caption: I2C Transmission Waveform
         :align: center
 
-For the diagram preparation, you can use an online `interactive shell <http://interactive.blockdiag.com/?compression=deflate&src=eJxlUMFOwzAMvecrrO3aITYQQirlAIIzEseJQ5q4TUSIq8TVGIh_J2m7jbKc7Ge_5_dSO1Lv2soWvoVYgieNoMh7VGzJR9FJtugZ7lYQ0UcKEbYNOY36rRQHZHUPT68vV5tceGLbWCUzPfeaFFMoBZzecVc56vWwJFnWMmJ59CCZg617xpOFbTSyw0pmvT_HJ7hxtFNGBr6wvuu5SCkchcrZ1vAeXZomznh5YgTqfcpR02cBO6vZVDeXBRjMjKEcFRbLh8f18-Z2UUBDnqP9wmp9ncRmSSfND2ldGo2h_zse407g0Mxc1q7HzJ3-4jzYYTJjtQH3iSV-fgFzx50J>`__ that instantly shows the rendered image.
+        {
+            "head": {
+                "text": "Standard I2C Transaction Timing Diagram"
+            },
+            "signal": [
+            {
+                "node":"A.....B...................C..D.E...............F...G",
+                "period": 0.5},
+            {
+                "name": "SDA",
+                "wave": "1.0...3...3.|.3...4...5...1..0.6...6.|.6...7...10..1", "data": "A6 . A0 R/W ACK D7 . D0 ACK",
+                "period": 0.5},
+            {
+                "name": "SCL",
+                "wave": "1...0..1.0.1|0.1.0.1.0.1.0......1.0.1|0.1.0.1.0..1..",
+                "period": 0.5}
+            ],
+            "config":
+            {
+                "skin": "narrow"
+            },
+            "edge": [
+                "B<->C Write address",
+                "E<->F Write data"
+            ]
+        }
 
-There are also a couple of diagram examples provided in the live editor for your reference:
+    Source code::
 
--  Simple **block diagram** / ``blockdiag`` - `Wi-Fi Buffer Configuration <http://interactive.blockdiag.com/?compression=deflate&src=eJylUk1rwkAQvfsrBntpIUKiRQqSgK0VSj0EtCi0EjbJxCyuuyG7QW3pf-9m06hJeyg0t33zmHkfCZmItjElGwiLJME8IEwjRFHBA3WAj04H9HcFGyZCwoAoldOwUCgNzkWMwZ7GKgUXnKE9gjOcIt2kSuN39sigMiP8jDqX6GmF_Y3GmJCCqUCmJEM9yEXBY4xDcWjOE8GVpO9oztdaGQmRSRAJlMZysjOCKsVj358Fi_H8GV4Nze2Os4zRyvEbB0XktrseQWVktn_ym-wS-UFb0ilt0pa0N6Vn3i_KUEY5zcqrbXWTx_nDaZHjwYvEHGKiSNeC2q_r3FpQZekObAtMTi4XCi2IBBO5e0Rd5L7ppLG574GvO__PUuO7sXTgweTIyY5GcD1XOtToBhYruDf_VvuUad3tD-0_Xq1TLPPSI84xKvNrF9vzLnrTj1M7rYhrXv24cCPVkZUaOK47n1-lOvbk>`__
--  Slightly more complicated **block diagram** - `Wi-Fi programming model <http://interactive.blockdiag.com/?compression=deflate&src=eJyFk09P40AMxe98CqscIVILq72UIFX8kSoQWy0RHABFTuImFtOZaGYKuyC-O840bagaRI7Pfs7Pz0mmTP5cMJbwynNOa2tKi4sF6zJdmIIUvO_tgTz7UCqToQL03nK29OSCrqUpfeXCVxDD6Gg47tSKuKy8yL9b1dWov1E3E4atWtAcl8qnrsKapGDNUhdUZObfdr2UQp3mRhkrXdpoGq-BGwhQmJFaoSZns_Q2mZxdwUNQ44Eojxqcx_x5cAhzo73jN4pHv55WL7m4u0nSZHLbOeiFtBePR9dvmcxm19sWrGvFOXo2utd4CGH5eHQ8bGfcTy-n6fnfO9jMuOfoksV9bvmFbO-Lr27-JPAQ4oqbGJ62c8iN1pQ3EA4O-lOJTncXDvvupCGdu3vmqFQmSQqm3CIYBx0EWou6pADjQJbw3Bj-h3I4onxpsHrCQLnmoD0yVKgLJXuP1x3GsowPmUpfbay3yH5T7khPoi7NnpU-1nisPdkFyY_gV4x9XB3Y0pHdpfoJ60toURQOtqbYuvpJ1B6zDXYym0qmTVpNnh-fpWcbRA>`__
--  **Sequence diagram** / ``seqdiag`` - `Scan for a Specific AP in All Channels <http://interactive.blockdiag.com/seqdiag/?compression=deflate&src=eJyVkU1PwzAMhu_7FdburUgQXMomTaPcKIdOIIRQlDVuG1EloUknPsR_J2s2rRsT2nKJ9drvY8ex-C4kr8AWXLFSt8waLBg38D0Cf3jh5Io7qRVMQGmFSS-jqJA1qCpXe51cXwTZGg-pUVa1W8tXQRVY8q5xzNbcoNdb3SmBYqk_9vOlVs7Kr3UJoQmMwgDGMMftWwK4QuU28ZOM7uQm3q_zYTQd5OGl4UtsJmMSE5jCXKtSVl2LUPgpXPvpb4Hj1-RUCPWQ3O_K-wKpX84WMLAcB9B-igCouVLYADnDTA_N9GRzHMdnNMoOG2Vb8-4b4CY6Zr4MT3zOF-k9Sx_TbMHy-Sxjtw9Z-mfRHjEA7hD0X8TPLxU91AQ>`__
--  **Packet diagram** / ``packetdiag`` - `NVS Page Structure <http://interactive.blockdiag.com/packetdiag/?compression=deflate&src=eJxFkMFOwzAQRO_9ij2mh63idRKaSj1V_ACIE6DIxG4StTgh3oCg6r_j2JTs8c3szNqDqk-GdacasJ-uGlRjKsfjVPM0GriswE_dn786zS3sQRJAYLbXprpRkS-sNV3TcrAGqM1RTWeujr1l1_2Y2U6rIKUod_DIis2LTbJ1YBneeWY-Nj5ts-AtkudPdnJGQ0JppLRFKXZweDhIWrySsPDB95bHb3BzPLx1_K4GSCSt_-4vMizzmykNSuBlgWKuioJYBOHLROnbEBGe_ZfEh-7pNcolIdF_raA8rl5_AaqqWyE%3E>`__
+        .. wavedrom::
+            :caption: I2C Transmission Waveform
+            :align: center
 
-Try them out by modifying the source code and see the diagram instantly rendering below.
+            {
+                "head": {
+                    "text": "Standard I2C Transaction Timing Diagram"
+                },
+                "signal": [
+                    {
+                        "node":"A.....B...................C..D.E...............F...G",
+                        "period": 0.5},
+                    {
+                        "name": "SDA",
+                        "wave": "1.0...3...3.|.3...4...5...1..0.6...6.|.6...7...10..1", "data": "A6 . A0 R/W ACK D7 . D0 ACK",
+                        "period": 0.5},
+                    {
+                        "name": "SCL",
+                        "wave": "1...0..1.0.1|0.1.0.1.0.1.0......1.0.1|0.1.0.1.0..1..",
+                        "period": 0.5}
+                    ],
+                "config":
+                {
+                    "skin": "narrow"
+                },
+                "edge": [
+                    "B<->C Write address",
+                    "E<->F Write data"
+                ]
+            }
 
-There may be slight differences in rendering of font used by the ``interactive shell`` compared to the font used in the esp-docs documentation.
+3. **Preview the diagram.**
 
-For more details, see `online documentation`_ at http://blockdiag.com/.
+   To quickly preview the diagram, you can:
 
-.. _online documentation: http://blockdiag.com/en/blockdiag/sphinxcontrib.html
+   - Use the `WaveDrom online editor <https://wavedrom.com/editor.html>`__.
+   - Use a WaveDrom extension in your IDE, such as `Waveform Render <https://marketplace.visualstudio.com/items?itemName=bmpenuelas.waveform-render>`__ for VS Code.
+   - :doc:`Build documentation locally <../building-documentation/building-documentation-locally>` and preview the diagram in your browser.
 
+For the WaveJSON language reference and additional options such as bitfield diagrams,
+see the `WaveDrom tutorial <https://wavedrom.com/tutorial.html>`__ and the
+`sphinxcontrib-wavedrom documentation <https://github.com/bavovanachte/sphinx-wavedrom>`__.
+
+
+Summary
+~~~~~~~
 
 To conclude, while ready-to-use images drawn in graphic editors might be easier to handle for writers with little experience in creating diagrams, they have rather larger size based on their resolution. As for text-based Diagram as Code graphics, it would undoubtedly cost writers some time to get started and master, but they are smaller in size and easier to version with Git. Thus, it is recommended to use Diagram as Code to present pictures in your files.

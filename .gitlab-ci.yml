@@ -31,6 +31,8 @@ workflow:
     # Purge any old esp-docs versions
     - pip uninstall -y esp-docs
     - pip install .
+    - apt-get update && apt-get install -y graphviz
+    - dot -V
 
 test_uts:
   stage: test
