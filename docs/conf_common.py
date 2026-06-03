@@ -7,6 +7,7 @@ extensions += ['sphinx_copybutton',
                'esp_docs.esp_extensions.dummy_build_system',
                'esp_docs.esp_extensions.run_doxygen',
                'esp_docs.generic_extensions.hover_api',
+               'sphinx.ext.graphviz',
                ]
 
 esp_hover_api_enable = True
