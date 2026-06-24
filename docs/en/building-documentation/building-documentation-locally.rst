@@ -257,7 +257,7 @@ To build documentation locally in a Docker container, complete the steps below:
 2. Create a container for your project using the image provided by Espressif.
    ::
 
-    docker run -v $PWD:/esp-docs -w /esp-docs -it ciregistry.espressif.cn:8443/esp-idf-doc-env-v5.0
+    docker run -v $PWD:/esp-docs -w /esp-docs -it gitlab.espressif.cn:5050/ci/images/idf-v5.5-docs:1
 
 3. Configure your container by running ``pip install -U esp-docs``.
 

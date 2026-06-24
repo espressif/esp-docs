@@ -6,8 +6,8 @@ stages:
   - post_deploy
 
 variables:
-  # Versioned esp-idf-doc env image to use for all document building jobs
-  ESP_DOCS_ENV_IMAGE: "$CI_DOCKER_REGISTRY/esp-idf-doc-env-v5.5:2-1"
+  # Versioned esp-idf docs image to use for all document building jobs
+  ESP_DOCS_ENV_IMAGE: "$CI_REGISTRY/ci/images/idf-v5.5-docs:1"
   ESP_DOCS_PATH: "$CI_PROJECT_DIR"
   IDF_PATH: $CI_PROJECT_DIR/esp-idf
   IDF_REPO: ${GITLAB_SSH_SERVER}/espressif/esp-idf.git
