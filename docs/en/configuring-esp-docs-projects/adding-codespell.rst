@@ -98,7 +98,7 @@ If there are multiple possible corrections, ``codespell`` does not modify the fi
 Implement ``codespell`` in GitLab CI/CD
 ---------------------------------------
 
-To ensure spelling checks are enforced for all contributions, you can integrate ``codespell`` directly into the GitLab CI/CD pipeline. When configured, each Merge Request pipeline can trigger a codespell job that scans **only the modified files**. If spelling errors are found, the job fails, and the contributor must fix the typos locally before pushing the corrected commit.
+To ensure spelling checks are enforced for all contributions, you can integrate ``codespell`` into the GitLab CI/CD pipeline via ``pre-commit``. When configured, each Merge Request pipeline triggers a job that scans **only the modified files**. If spelling errors are found, the job fails, and the contributor must fix the typos locally before pushing the corrected commit.
 
 You can add ``codespell`` to your CI/CD process by either modifying ``.gitlab-ci.yml`` or, if ``pre-commit`` is already integrated (usually in ``.gitlab/ci/pre_commit.yml``), simply updating ``.pre-commit-config.yaml`` without changing any CI files.
 
@@ -113,16 +113,16 @@ You can add ``codespell`` to your CI/CD process by either modifying ``.gitlab-ci
           rules:
             - if: $CI_PIPELINE_SOURCE == "merge_request_event"
           before_script:
-            - pip install codespell
-            - git fetch origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME --depth=1
-            - git fetch origin $CI_COMMIT_REF_NAME --depth=1
-            - export MODIFIED_FILES="$(git diff --name-only origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME..origin/$CI_COMMIT_REF_NAME)"
+            - pip install pre-commit
+            - git fetch origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME --depth=100
+            - git fetch origin $CI_COMMIT_REF_NAME --depth=100
+            - export MODIFIED_FILES="$(git diff --name-only origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME...origin/$CI_COMMIT_REF_NAME)"
           script:
             - |
               if [ -n "$MODIFIED_FILES" ]; then
                 echo "Running codespell on changed files:"
                 echo "$MODIFIED_FILES"
-                codespell --config .codespellrc $MODIFIED_FILES
+                CI=true pre-commit run --files $MODIFIED_FILES
               else
                 echo "No modified files to check with codespell."
               fi
@@ -133,11 +133,11 @@ You can add ``codespell`` to your CI/CD process by either modifying ``.gitlab-ci
     - ``rules``: Defines conditions for when the job should run. For example, using ``if: $CI_PIPELINE_SOURCE == "merge_request_event"`` ensures the job only runs in pipelines triggered by a Merge Request, and not for regular branch pushes or scheduled pipelines.
     - ``before_script``:
 
-      - Installs ``codespell`` into the job environment.
+      - Installs ``pre-commit`` into the job environment.
       - Fetches the diff range between target and source branches.  
       - Collects the list of modified files for spell checking.
 
-    - ``script``: Runs ``codespell`` on modified files only. If spelling errors are detected, the job fails.
+    - ``script``: Runs ``codespell`` via ``pre-commit`` on modified files only. If spelling errors are detected, the job fails.
 
     .. note::
 
@@ -191,13 +191,13 @@ Steps
             - if: $CI_PIPELINE_SOURCE == "merge_request_event"  # Run this job only for merge request pipelines. 
           script:
             - pip install pre-commit
-            - git fetch origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME --depth=1  # Fetch target branch latest commit
-            - git fetch origin $CI_COMMIT_REF_NAME --depth=1  # Fetch source branch latest commit
+            - git fetch origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME --depth=100  # Fetch target branch with sufficient history to find merge base
+            - git fetch origin $CI_COMMIT_REF_NAME --depth=100  # Fetch source branch with sufficient history to find merge base
             - |
               echo "Target branch: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
               echo "Source branch: $CI_COMMIT_REF_NAME"
 
-              MODIFIED_FILES=$(git diff --name-only origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME..origin/$CI_COMMIT_REF_NAME)
+              MODIFIED_FILES=$(git diff --name-only origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME...origin/$CI_COMMIT_REF_NAME)
               echo "Modified files to check:"
               echo "$MODIFIED_FILES"
 
