@@ -55,7 +55,7 @@ test_browser:
   script:
     - pip install pytest-playwright
     - playwright install --with-deps chromium
-    - pytest test/browser_tests/ --browser chromium -v
+    - pytest test/browser_tests/ --browser chromium -v -p no:idf-ci
 
 test_builds:
   stage: test
