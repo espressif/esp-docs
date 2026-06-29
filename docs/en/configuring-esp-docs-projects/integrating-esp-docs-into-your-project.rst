@@ -119,7 +119,7 @@ The GitLab CI configuration file, ``.gitlab-ci.yml``, is where you add jobs to e
 
 In the ``.gitlab-ci.yml`` of your project, do the steps given below. For examples, please refer to `esp-docs/.gitlab-ci.yml <https://github.com/espressif/esp-docs/blob/master/.gitlab-ci.yml>`__ and `esp-idf/.gitlab/ci/docs.yml <https://github.com/espressif/esp-idf/blob/master/.gitlab/ci/docs.yml>`__.
 
-1. Use an appropriate docker image to build the documentation. For convenience, you can reuse the image used by ESP-IDF, ``$CI_DOCKER_REGISTRY/esp-idf-doc-env-v5.0:2-3``. For the latest version of this image, go to Documentation Team Site > Section ESP-Docs User Guide > esp-idf-doc-env image.
+1. Use an appropriate docker image to build the documentation. For convenience, you can reuse the image used by ESP-IDF, ``$CI_REGISTRY/ci/images/idf-v5.5-docs:1``. For the latest version of this image, go to CI Images Documentation > Docker Images > `Available Images <https://ci.gitlab-pages.espressif.cn:6688/images/docs/docker/available-images.html>`__.
 2. Add the jobs to build documentation in HTML and PDF. For examples, please refer to the ``build_esp_docs_html`` and ``build_esp_docs_pdf`` jobs in :project_file:`.gitlab-ci.yml`.
 3. In the above building documentation jobs, add ``pip install -r requirements.txt`` to install package dependencies.
 4. Add the jobs to deploy the built documentation to the server:
