@@ -26,7 +26,7 @@ Pictures could be built in documentation using directives and options. Writers c
 
     .. figure:: ../../_static/figure-raster-image-usage.png
         :align: center
-        :scale: 90%
+        :width: 70%
         :alt: Development of Applications
 
         This is the caption of the figure (optional)
@@ -35,7 +35,7 @@ Below is the image in PNG format added through the above directives and options:
 
     .. figure:: ../../_static/figure-raster-image-usage.png
         :align: center
-        :scale: 90%
+        :width: 70%
         :alt: Development of Applications
 
         This is the caption of the figure (optional)
@@ -69,16 +69,22 @@ For detailed information about how to use these directives, please refer to Sect
 
         Thus, it is recommended to use ``align:`` instead of ``figclass: align-`` in the documentation.
 
-    - For the ``:scale:`` option, the default is "100%", i.e. no scaling. As on the RTD page, only **700 px** can fit into the page, figures should be scaled to get properly presented on HTML pages. To figure out the percentage of scaling that should be used, please check the width and height of the original figure. For example, if the dimension of the original figure is 3452*1590, then ``:scale:20%`` (which results in 690*318, smaller than 700 px) should be adopted to keep the right proportion presented on the page.
+    - For the ``:width:`` and ``:scale:`` options, note that the text column width on RTD HTML pages is approximately **700 px**, so figures should be sized accordingly to display properly. Without either option, figures are displayed at their original pixel dimensions.
 
-        If a URL is provided as the figure path, and meanwhile the “scale” option is used, an error ``Could not obtain image size. :scale: option is ignored.`` might occur. At this time, you need to provide the image's original width and height explicitly using ``:width:`` and ``:height:`` like below::
+        - ``:width:`` (**recommended**): specify the image width as a percentage of the **available text column width** (e.g., ``:width: 70%``). The height is adjusted automatically to maintain the aspect ratio. Because this percentage is always relative to the text column width — approximately 700 px in HTML and the LaTeX ``\textwidth`` in PDF — all figures are displayed at a consistent size in both HTML and PDF output, regardless of their original dimensions.
+        - ``:scale:`` is an alternative, but it has several limitations:
 
-            .. figure:: https://dl.espressif.com/dl/schematics/pictures/esp-lyrap-lcd32-v1.1-3d.png
-                :align: center
-                :width: 2243px
-                :height: 1534px
-                :scale: 30%
-                :alt: EESP-LyraP-LCD32
+            - **Requires knowing the original dimensions**: Because ``:scale:`` is relative to the original pixel dimensions of the image, you need to know the original size and calculate the right percentage manually.  For example, if the original figure is 3452×1590 px, you need to calculate that ``:scale: 20%`` results in 690×318 px, which fits within the 700 px page width.
+            - **Not applicable to URL images without a workaround**: If a URL is provided as the figure path, an error ``Could not obtain image size. :scale: option is ignored.`` might occur. As a workaround, you need to provide the original width and height of the image explicitly::
+
+                    .. figure:: https://dl.espressif.com/dl/schematics/pictures/esp-lyrap-lcd32-v1.1-3d.png
+                        :align: center
+                        :width: 2243px
+                        :height: 1534px
+                        :scale: 30%
+                        :alt: ESP-LyraP-LCD32
+
+            - **Inconsistent sizes across figures**: Because ``:scale:`` is relative to each image's original pixel dimensions, the same percentage value produces different display sizes for images with different original sizes, which can lead to layout inconsistencies in both HTML and PDF output.
 
     - For the ``:alt:`` option, it shows the alternate description of figures. This description will be displayed when the figure is shown not properly on display. Normally, the caption of the figure would be placed here. If the figure is scaled, then the writer should also add **(Click to enlarge)** after the caption.
 
