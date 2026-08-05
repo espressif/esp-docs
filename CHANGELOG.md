@@ -1,3 +1,13 @@
+## v2.6.0 (2026-08-05)
+
+### Feat
+
+- add searchable Kconfig reference page and menuitem link role
+
+### Fix
+
+- correct existing codespell typos
+
 ## v2.5.1 (2026-04-15)
 
 ### Fix
