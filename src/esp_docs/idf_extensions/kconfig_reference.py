@@ -11,7 +11,16 @@ def setup(app):
     # has parsed the IDF project's information
     app.connect('project-build-info', generate_reference)
 
-    return {'parallel_read_safe': True, 'parallel_write_safe': True, 'version': '0.1'}
+    # Static assets for the reference page and the menupath chips. They belong
+    # to this extension (which owns the page), not to the role module.
+    app.add_css_file('kconfig.css')
+    app.add_js_file('kconfig.js')
+
+    # Keep the :menuitem: role behind the Kconfig-reference extension.
+    from . import menupath_role
+    menupath_role.setup(app)
+
+    return {'parallel_read_safe': True, 'parallel_write_safe': True, 'version': '0.2'}
 
 
 def generate_reference(app, project_description):
@@ -57,7 +66,7 @@ def generate_reference(app, project_description):
                     '--env', 'COMPONENT_KCONFIGS_PROJBUILD_SOURCE_FILE={}'.format(kconfig_projbuilds_source_path),
                     '--env', 'IDF_PATH={}'.format(app.config.project_path),
                     '--env', 'IDF_TARGET={}'.format(app.config.idf_target),
-                    '--output', 'docs', kconfig_inc_path + '.in'
+                    '--output', 'docs', kconfig_inc_path + '.in',
                     ]
     subprocess.check_call(confgen_args, cwd=app.config.project_path)
     copy_if_modified(kconfig_inc_path + '.in', kconfig_inc_path)
