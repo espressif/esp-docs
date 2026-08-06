@@ -13,6 +13,7 @@ from esp_docs.esp_extensions.run_doxygen import (
     get_api_name,
     get_rst_header,
     header_to_xml_path,
+    select_container,
     should_keep_api_reference,
 )
 
@@ -82,6 +83,26 @@ class TestGetRstHeader(unittest.TestCase):
         result = get_rst_header(name)
         lines = result.strip().split('\n')
         self.assertEqual(len(lines[0]), len(lines[1]))
+
+
+class TestSelectContainer(unittest.TestCase):
+
+    def test_removes_doxygen_container_prefix(self):
+        self.assertEqual(
+            select_container(
+                'union_foo\tunion foo\n'
+                'struct_bar\tstruct bar\n'
+                'class_baz\tclass baz\n',
+                'union',
+            ),
+            '.. doxygenunion:: foo\n',
+        )
+
+    def test_preserves_union_name_scope(self):
+        self.assertEqual(
+            select_container('union_foo\tunion namespace::foo\n', 'union'),
+            '.. doxygenunion:: namespace::foo\n',
+        )
 
 
 class TestModifiedFilesHelpers(unittest.TestCase):

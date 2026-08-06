@@ -344,6 +344,7 @@ def select_container(innerclass_list, container):
             if container == "struct" and line.find('::') > 0:
                 continue
             _, name = re.split(r'\t+', line)
+            name = name[len(container) + 1:]
 
             rst_output += '.. doxygen%s:: ' % (container)
             rst_output += name
