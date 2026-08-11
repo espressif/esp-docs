@@ -5,7 +5,7 @@ import unittest
 from contextlib import redirect_stdout
 
 from esp_docs.build_docs import print_sphinx_failure_summary
-from esp_docs.check_docs import sanitize_line, check_docs, group_log_messages
+from esp_docs.check_docs import sanitize_line, check_docs, format_warning_for_display, group_log_messages
 
 
 class TestSanitizeLine(unittest.TestCase):
@@ -47,6 +47,11 @@ class TestSanitizeLine(unittest.TestCase):
         result = sanitize_line(line)
         self.assertEqual(line, result)
 
+    def test_display_keeps_clickable_file_location(self):
+        line = '\x1B[31m/home/user/docs/index.rst:42: WARNING: broken link\x1B[0m'
+        result = format_warning_for_display(line)
+        self.assertEqual(result, '/home/user/docs/index.rst:42: WARNING: broken link')
+
 
 class TestCheckDocs(unittest.TestCase):
 
@@ -74,7 +79,8 @@ class TestCheckDocs(unittest.TestCase):
         self.assertEqual(result, 1)
 
     def test_new_warning_summary_mentions_fatal_warnings(self):
-        log = self._write_file('sphinx-warning-log.txt', ['index.rst:10: WARNING: unknown target'])
+        warning = os.path.join(self.temp_dir, 'index.rst') + ':10: WARNING: unknown target'
+        log = self._write_file('sphinx-warning-log.txt', [warning])
         known = self._write_file('known.txt', [])
         out = os.path.join(self.temp_dir, 'sanitized.txt')
 
@@ -88,14 +94,16 @@ class TestCheckDocs(unittest.TestCase):
         self.assertIn('Sphinx warnings are treated as errors (fatal)', output)
         self.assertIn('This job fails on new warnings.', output)
         self.assertIn('New sphinx warning entries: 1', output)
+        self.assertIn(warning, output)
+        self.assertNotIn('index.rst:line:', output)
 
     def test_multiline_warning_is_grouped_for_display(self):
         grouped = group_log_messages([
-            type('Message', (), {'sanitized_text': 'file.h:line: warning: bad docs\n'}),
-            type('Message', (), {'sanitized_text': "  parameter 'max'\n"}),
-        ], 'sanitized_text')
+            type('Message', (), {'original_text': 'file.h:42: warning: bad docs\n'}),
+            type('Message', (), {'original_text': "  parameter 'max'\n"}),
+        ], 'original_text')
 
-        self.assertEqual(grouped, ["file.h:line: warning: bad docs\n  parameter 'max'"])
+        self.assertEqual(grouped, ["file.h:42: warning: bad docs\n  parameter 'max'"])
 
     def test_missing_log_file_fails(self):
         known = self._write_file('known.txt', [])

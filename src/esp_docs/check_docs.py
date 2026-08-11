@@ -35,6 +35,11 @@ def sanitize_line(line):
     return line
 
 
+def format_warning_for_display(line):
+    """Remove terminal styling while preserving clickable file locations."""
+    return re.sub(SANITIZE_TERMINAL_CONTROL_REGEX, '', line)
+
+
 def supports_color():
     if os.environ.get('NO_COLOR'):
         return False
@@ -150,7 +155,8 @@ def check_docs(language, target, log_file, known_warnings_file, out_sanitized_lo
         display_log = format_path_for_display(log_file)
         display_sanitized_log = format_path_for_display(out_sanitized_log_file)
         display_known_warnings = format_path_for_display(known_warnings_file)
-        grouped_messages = group_log_messages(new_messages, 'sanitized_text')
+        grouped_messages = group_log_messages(new_messages, 'original_text')
+        grouped_messages = [format_warning_for_display(message) for message in grouped_messages]
 
         print('\n%s' % style_text('=== BUILD FAILED ===', color='red', bold=True))
         print(style_text('%s: %s warnings are treated as errors (fatal)' % (build_id, warning_type), color='red', bold=True))
