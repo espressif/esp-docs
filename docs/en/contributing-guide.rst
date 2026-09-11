@@ -29,6 +29,28 @@ Make Minor Changes
 - The Documentation Team will make bulk changes periodically based on such requests.
 
 
+Use the ESP-IDF Documentation Agent Guide
+-----------------------------------------
+
+ESP-Docs includes a versioned guide for AI coding agents that update ESP-IDF documentation for a chip target. After installing ESP-Docs, print the guide with:
+
+.. code-block:: bash
+
+   esp-docs agent-guide update-docs
+
+The command is read-only and writes the complete guide to standard output. It does not require an IDE-specific skill.
+
+To make local agents discover the guide, a downstream repository can add the following instruction to its ``AGENTS.md``:
+
+.. code-block:: markdown
+
+   When updating ESP-IDF documentation for a chip target, run
+   `esp-docs agent-guide update-docs` and follow the returned instructions
+   before editing documentation.
+
+The guide matches the installed ESP-Docs package version, so projects that pin ESP-Docs also pin the corresponding agent workflow.
+
+
 Commit Messages
 ---------------
 
