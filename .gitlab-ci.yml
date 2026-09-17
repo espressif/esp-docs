@@ -41,11 +41,14 @@ test_uts:
     - .before_script_prepare_build
   script:
     - cd test/unit_tests
+    - python test_agent_guide.py
     - python test_docs.py
     - python test_esp_extensions.py
     - python test_deploy.py
     - python test_sanitize_version.py
     - python test_hover_api.py
+    - esp-docs agent-guide update-docs > /tmp/update-docs-guide.md
+    - grep -q '^# ESP-IDF Target Documentation Update Guide$' /tmp/update-docs-guide.md
 
 test_browser:
   stage: test
