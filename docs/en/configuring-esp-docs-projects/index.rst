@@ -12,4 +12,3 @@
     collecting-user-analytics
     collecting-document-feedback
     adding-codespell
-    deploy-to-s3

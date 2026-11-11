@@ -9,7 +9,7 @@ The process to integrate ESP-Docs can be broken down into the following steps:
 
 .. contents::
   :local:
-  :depth: 1
+  :depth: 2
 
 .. _get-familiar-doc-folder:
 
@@ -119,27 +119,135 @@ The GitLab CI configuration file, ``.gitlab-ci.yml``, is where you add jobs to e
 
 In the ``.gitlab-ci.yml`` of your project, do the steps given below. For examples, please refer to `esp-docs/.gitlab-ci.yml <https://github.com/espressif/esp-docs/blob/master/.gitlab-ci.yml>`__ and `esp-idf/.gitlab/ci/docs.yml <https://github.com/espressif/esp-idf/blob/master/.gitlab/ci/docs.yml>`__.
 
-1. Use an appropriate docker image to build the documentation. For convenience, you can reuse the image used by ESP-IDF, ``$CI_REGISTRY/ci/images/idf-v5.5-docs:1``. For the latest version of this image, go to CI Images Documentation > Docker Images > `Available Images <https://ci.gitlab-pages.espressif.cn:6688/images/docs/docker/available-images.html>`__.
-2. Add the jobs to build documentation in HTML and PDF. For examples, please refer to the ``build_esp_docs_html`` and ``build_esp_docs_pdf`` jobs in :project_file:`.gitlab-ci.yml`.
-3. In the above building documentation jobs, add ``pip install -r requirements.txt`` to install package dependencies.
-4. Add the jobs to deploy the built documentation to the server:
+.. _build-documentation:
 
-  a. Copy and paste the ``.deploy_docs_template`` and ``deploy_docs_esp_docs`` jobs from :project_file:`.gitlab-ci.yml` to your ``.gitlab-ci.yml``.
-  b. Write the job for deploying your documentation based on the ``deploy_docs_esp_docs`` job.
+Build Documentation
+~~~~~~~~~~~~~~~~~~~
 
-.. note::
-  
-  If your project is hosted on GitLab and the updates made in GitLab later are synchronized to GitHub, in such case, please only run ``deploy_docs`` job after the job that synchronizes your repository to GitHub. This is crucial because if synchronization to GitHub fails, the links within your documentation that refer to the GitHub project may not function correctly.
+1. In your ``.gitlab-ci.yml``, add a template that installs the documentation packages in ``docs/requirements.txt`` and selects the Docker image. The HTML and PDF build jobs share this template.
 
-5. Configure the required environment variables depending on your project:
+   .. code-block:: yaml
 
-  a: ``ESP_DOCS_LATEST_BRANCH_NAME``: decides which git branch will be built and deployed as ``latest``. Defaults to ``master`` and should therefore be changed to e.g. ``main`` if that is the naming scheme of your master branch in your git repo.
+      .build_template:
+        stage: build
+        image: $ESP_DOCS_ENV_IMAGE
+        variables:
+          DOCS_DIR: $CI_PROJECT_DIR/docs
+        before_script:
+          - pip install -r docs/requirements.txt
 
-6. Configure the variables mentioned in the jobs that deploy documentation:
+   .. note::
 
-  a. Find out who the server's admin is. To know who this person is and more information about the variables, please go to Documentation Team Site > Section ESP-Docs User Guide > Deploying documentation to docs.espressif.com.
-  b. Ask the admin to create an SSH key for you and a directory for your documentation on the server.
-  c. Go to your project's **Settings** > **CI/CD** and expand the **Variables** section. Select **Add variable** and fill in the details for your variables. For more information on how to add a variable to a project, see the `GitLab documentation <https://docs.gitlab.com/ee/ci/variables/#add-a-cicd-variable-to-a-project>`__.
+      If you define ``ESP_DOCS_ENV_IMAGE`` once in the top-level ``variables`` section of ``.gitlab-ci.yml``, the build jobs and the deploy jobs then share ``image: $ESP_DOCS_ENV_IMAGE``. You can reuse the image used by ESP-IDF, such as ``$CI_REGISTRY/ci/images/idf-v5.5-docs:1``. For the latest version of this image, go to Documentation Team Site > Section ESP-Docs User Guide >  esp-idf-doc-env image.
+
+      The following snippet from :project_file:`.gitlab-ci.yml` shows that global variable:
+
+      .. literalinclude:: ../../../.gitlab-ci.yml
+          :language: yaml
+          :start-at: variables:
+          :end-before: ESP_DOCS_PATH:
+          :lineno-match:
+
+2. Add the HTML and PDF build jobs to your ``.gitlab-ci.yml``. The snippets below are from :project_file:`.gitlab-ci.yml`.
+
+   .. literalinclude:: ../../../.gitlab-ci.yml
+      :language: yaml
+      :start-at: build_esp_docs_html:
+      :end-before: build_idf_docs_html:
+      :lineno-match:
+
+3. Change these values in your ``.gitlab-ci.yml`` when your project differs from the snippets above:
+
+   - ``DOCS_DIR``: the directory the job enters before it runs ``build-docs``. The snippets above set ``$CI_PROJECT_DIR/docs``. ``build-docs`` uses the directory it is run from. It does not read ``DOCS_DIR``.
+   - ``ESP_DOCS_LATEST_BRANCH_NAME``: the branch to be built and published as ``latest``. If not configured, the default value is ``master``. Set this variable when the branch published as ``latest`` has another name, such as ``main``.
+
+.. _deploy-documentation:
+
+Deploy Documentation
+~~~~~~~~~~~~~~~~~~~~
+
+1. In your ``.gitlab-ci.yml``, add a deploy template. The template uses the same ``ESP_DOCS_ENV_IMAGE`` from the top-level ``variables`` section, so the deploy jobs use the same image as the build jobs.
+
+   .. code-block:: yaml
+
+      .deploy_docs_template:
+        stage: deploy
+        image: $ESP_DOCS_ENV_IMAGE
+        needs:
+          - build_esp_docs_html
+          - build_esp_docs_pdf
+        script:
+          - add_doc_server_ssh_keys $DOCS_DEPLOY_PRIVATEKEY $DOCS_DEPLOY_SERVER $DOCS_DEPLOY_SERVER_USER
+          - export GIT_VER=$(git describe --abbrev=10 --always)
+          - pip install -r ${CI_PROJECT_DIR}/docs/requirements.txt
+          - deploy-docs
+
+2. Add jobs to deploy docs to the preview server when the MR is open,  and to the production server when the MR is merged.
+
+   .. code-block:: yaml
+
+      deploy_docs_preview:
+        extends:
+          - .deploy_docs_template
+        rules:
+          - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+            changes:
+              - "docs/**/*"
+        variables:
+          TYPE: "preview"
+          DOCS_BUILD_DIR: "${CI_PROJECT_DIR}/docs/_build/"
+          DOCS_DEPLOY_PRIVATEKEY: "$DOCS_PREVIEW_DEPLOY_KEY"
+          DOCS_DEPLOY_SERVER: "$DOCS_PREVIEW_SERVER"
+          DOCS_DEPLOY_SERVER_USER: "$DOCS_PREVIEW_SERVER_USER"
+          DOCS_DEPLOY_PATH: "$DOCS_PREVIEW_PATH"
+          DOCS_DEPLOY_URL_BASE: "$DOCS_PREVIEW_SERVER_URL/your-project-name"
+
+      deploy_docs_production:
+        extends:
+          - .deploy_docs_template
+        rules:
+          - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+            changes:
+              - "docs/**/*"
+        variables:
+          TYPE: "production"
+          DOCS_BUILD_DIR: "${CI_PROJECT_DIR}/docs/_build/"
+          DOCS_DEPLOY_PRIVATEKEY: "$DOCS_PROD_DEPLOY_KEY"
+          DOCS_DEPLOY_SERVER: "$DOCS_PROD_SERVER"
+          DOCS_DEPLOY_SERVER_USER: "$DOCS_PROD_SERVER_USER"
+          DOCS_DEPLOY_PATH: "$DOCS_PROD_PATH"
+          DOCS_DEPLOY_URL_BASE: "https://docs.espressif.com/projects/your-project-name"
+
+   .. note::
+
+      If your project is hosted on GitLab and the updates made in GitLab later are synchronized to GitHub, run the deploy job after the job that synchronizes your repository to GitHub. If synchronization to GitHub fails, links in the documentation that refer to the GitHub project do not work.
+
+3. Change these values in your ``.gitlab-ci.yml`` when your project differs from the snippets above:
+
+   - ``DOCS_BUILD_DIR``: directory that contains the built HTML and PDF files. The snippets above set ``${CI_PROJECT_DIR}/docs/_build/``.
+   - ``DOCS_DEPLOY_URL_BASE``: base URL printed after deployment. The preview job uses ``$DOCS_PREVIEW_SERVER_URL/<project-path>``. The production job uses ``https://docs.espressif.com/projects/<project-name>``.
+   - ``DEPLOY_STABLE``: optionally set this to ``1`` on the production job when a stable release should also be published under ``stable``. For example of a stable release, see https://docs.espressif.com/projects/esp-idf/en/stable/esp32/index.html.
+
+4. Add the SSH private key, server host, SSH user, remote directory, and preview URL as CI/CD variables:
+
+   a. Find out who the server's admin is. To know who this person is, go to Documentation Team Site > Section ESP-Docs User Guide > Deploying documentation to docs.espressif.com.
+   b. Ask the admin to create an SSH key for you and a directory for your documentation on the server.
+   c. Go to your project's **Settings** > **CI/CD** and expand the **Variables** section. Select **Add variable** and fill in the details for your variables. For more information on how to add a variable to a project, see the `GitLab documentation <https://docs.gitlab.com/ee/ci/variables/#add-a-cicd-variable-to-a-project>`__.
+
+   ``deploy_docs_preview`` reads these variables:
+
+   - ``DOCS_PREVIEW_DEPLOY_KEY``: SSH private key. The job assigns it to ``DOCS_DEPLOY_PRIVATEKEY``.
+   - ``DOCS_PREVIEW_SERVER``: server host. The job assigns it to ``DOCS_DEPLOY_SERVER``.
+   - ``DOCS_PREVIEW_SERVER_USER``: SSH user. The job assigns it to ``DOCS_DEPLOY_SERVER_USER``.
+   - ``DOCS_PREVIEW_PATH``: directory on the server. The job assigns it to ``DOCS_DEPLOY_PATH``.
+   - ``DOCS_PREVIEW_SERVER_URL``: base URL of the preview server. The job uses it in ``DOCS_DEPLOY_URL_BASE``.
+
+   ``deploy_docs_production`` reads these variables:
+
+   - ``DOCS_PROD_DEPLOY_KEY``: SSH private key. The job assigns it to ``DOCS_DEPLOY_PRIVATEKEY``.
+   - ``DOCS_PROD_SERVER``: server host, such as ``docs.espressif.com``. The job assigns it to ``DOCS_DEPLOY_SERVER``.
+   - ``DOCS_PROD_SERVER_USER``: SSH user. The job assigns it to ``DOCS_DEPLOY_SERVER_USER``.
+   - ``DOCS_PROD_PATH``: directory on the server. The job assigns it to ``DOCS_DEPLOY_PATH``.
 
 
 What's Next?

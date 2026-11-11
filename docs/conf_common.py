@@ -38,3 +38,8 @@ linkcheck_exclude_documents = ['index',  # several false positives due to the wa
 # Measurement ID for Google Analytics
 
 google_analytics_id = 'G-F3R0PHFSWL'
+
+# The S3 deploy page is replaced by the Deploy Documentation subsection.
+html_redirect_pages = [
+    ('configuring-esp-docs-projects/deploy-to-s3', 'configuring-esp-docs-projects/integrating-esp-docs-into-your-project'),
+]
