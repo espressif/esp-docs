@@ -151,9 +151,9 @@ def write_git_clone_inc_files(templates, out_dir, version, ver_type, is_stable):
         return p
 
     if version == 'master':
-        clone_args = ''
+        clone_args = '--depth 1'
     else:
-        clone_args = '-b %s ' % version
+        clone_args = '-b %s --depth 1' % version
 
     with open(out_file('git-clone-bash'), 'w', encoding='utf-8') as f:
         f.write(templates['git-clone-bash'] % locals())
